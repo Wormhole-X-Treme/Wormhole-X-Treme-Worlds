@@ -60,6 +60,7 @@ public class WormholeXTremeWorlds extends JavaPlugin
         setThisLogger(getThisPlugin().getServer().getLogger());
         prettyLog(Level.INFO,true,getThisPlugin().getDescription().getAuthors().toString() + "Load Beginning." );
         // TODO: Add World loading for existing worlds here.
+        WormholeXTtremeWorldsConfig.readXmlConfig(getThisPlugin().getDescription());
         prettyLog(Level.INFO,true, "Load Completed.");
     }
 

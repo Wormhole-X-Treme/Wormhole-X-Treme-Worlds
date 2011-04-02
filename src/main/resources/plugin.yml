@@ -1,0 +1,12 @@
+name: WormholeXTremeWorlds
+main: com.wormhole_xtreme.worlds.WormholeXTremeWorlds
+version: 0.001
+author: By alron
+description: >
+             Wormhole X-Treme Worlds! World management for Wormhole X-Treme!
+             
+commands:
+  wxworlds:
+    description: Manage Worlds via Wormhole X-Treme Worlds
+    usage: |
+            /<command> 

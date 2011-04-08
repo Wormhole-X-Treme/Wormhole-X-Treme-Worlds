@@ -27,6 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.wormhole_xtreme.worlds.command.CommandUtilities;
+import com.wormhole_xtreme.worlds.config.XMLConfig;
 import com.wormhole_xtreme.worlds.plugin.HelpSupport;
 
 
@@ -60,7 +61,7 @@ public class WormholeXTremeWorlds extends JavaPlugin
         setThisLogger(getThisPlugin().getServer().getLogger());
         prettyLog(Level.INFO,true,getThisPlugin().getDescription().getAuthors().toString() + "Load Beginning." );
         // TODO: Add World loading for existing worlds here.
-        WormholeXTtremeWorldsConfig.readXmlConfig(getThisPlugin().getDescription());
+        XMLConfig.loadXmlConfig(getThisPlugin().getDescription());
         prettyLog(Level.INFO,true, "Load Completed.");
     }
 
@@ -70,6 +71,7 @@ public class WormholeXTremeWorlds extends JavaPlugin
     @Override
     public void onDisable() 
     {
+        XMLConfig.saveXmlConfig(getThisPlugin().getDescription());
         prettyLog(Level.INFO, true, "Successfully shutdown.");
     }
 

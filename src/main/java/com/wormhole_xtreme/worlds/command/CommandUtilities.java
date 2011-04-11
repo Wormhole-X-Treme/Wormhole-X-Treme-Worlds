@@ -31,6 +31,6 @@ public class CommandUtilities {
     
     public static void registerCommands()
     {
-        thisPlugin.getCommand("wxworlds").setExecutor(new Worlds());
+        thisPlugin.getCommand("wxw").setExecutor(new Worlds());
     }
 }

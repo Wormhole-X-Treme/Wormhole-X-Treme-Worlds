@@ -6,7 +6,7 @@ description: >
              Wormhole X-Treme Worlds! World management for Wormhole X-Treme!
              
 commands:
-  wxworlds:
+  wxw:
     description: Manage Worlds via Wormhole X-Treme Worlds
     usage: |
             /<command> 

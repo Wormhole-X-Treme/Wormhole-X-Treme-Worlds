@@ -32,7 +32,7 @@ public class ConfigManager {
     
     /** The Constant options. */
     public static final ConcurrentHashMap<OptionKeys, Option> options = new ConcurrentHashMap<OptionKeys,Option>();
-
+    
     /**
      * Sets the up options.
      *

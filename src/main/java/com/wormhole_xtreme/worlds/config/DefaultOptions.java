@@ -30,42 +30,42 @@ public class DefaultOptions {
     final static Option[] defaultOptions = {
         new Option(
                    OptionKeys.serverOptionPermissions,
-                   "Option: Enable or disable Permissions plugin support.",
+                   "Enable or disable Permissions plugin support.",
                    "boolean",
                    true,
                    "WormholeXTremeWorlds"
         ),
         new Option(
                    OptionKeys.serverOptionOpsBypassPermissions,
-                   "Option: Ops bypass Permissions plugin access checks.",
+                   "Ops bypass Permissions plugin access checks.",
                    "boolean",
                    true,
                    "WormholeXTremeWorlds"
         ),
         new Option(
                    OptionKeys.serverOptionIconomy,
-                   "Option: Enable or disable iConomy plugin support.",
+                   "Enable or disable iConomy plugin support.",
                    "boolean",
                    true,
                    "WormholeXTremeWorlds"
         ),
         new Option(
                    OptionKeys.serverOptionIconomyCostForNormalWorldGeneration,
-                   "Option: iConomy cost to generate a normal world.",
+                   "iConomy cost to generate a normal world.",
                    "double",
                    1000.0,
                    "WormholeXTremeWorlds"
         ),
         new Option(
                    OptionKeys.serverOptionIconomyCostForNetherWorldGeneration,
-                   "Option: iConomy cost to generate a nether world.",
+                   "iConomy cost to generate a nether world.",
                    "double",
                    2000.0,
                    "WormholeXTremeWorlds"
         ),
         new Option(
                    OptionKeys.serverOptionHelp,
-                   "Option: Enable or disable Help plugin support.",
+                   "Enable or disable Help plugin support.",
                    "boolean",
                    true,
                    "WormholeXTremeWorlds"

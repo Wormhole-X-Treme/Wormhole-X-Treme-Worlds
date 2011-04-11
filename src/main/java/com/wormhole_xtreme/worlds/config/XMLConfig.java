@@ -23,6 +23,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
 import java.util.logging.Level;
 
 import javax.xml.stream.XMLEventFactory;
@@ -93,7 +96,21 @@ public class XMLConfig
         }
         final String configFileLocation = directory.getPath() + File.separator + "config.xml";
         setConfigFile(new File(configFileLocation));
-        //saveConfig((Option[])Option);
+        Set<OptionKeys> keys = ConfigManager.options.keySet();
+        ArrayList<OptionKeys> list = new ArrayList<OptionKeys>(keys);
+        Collections.sort(list);
+        Option[] optionArray = new Option[list.size()];
+        int i = 0;
+        for (OptionKeys key : list)
+        {
+            Option o = ConfigManager.options.get(key);
+            if (o != null)
+            {
+                optionArray[i] = new Option(o.getOptionKey(), o.getOptionDescription(), o.getOptionType(), o.getOptionValue(), o.getOptionPlugin());
+                i++;
+            }
+        }
+        saveConfig(optionArray);
         thisPlugin.prettyLog(Level.INFO, false, "Configuration saved.");
     }
     
@@ -119,8 +136,7 @@ public class XMLConfig
             thisPlugin.prettyLog(Level.WARNING, false, "No configuration file found, generating fresh.");
             saveConfig(DefaultOptions.defaultOptions);
         }
-        readConfig();
-        
+        readConfig();  
     }
 
 
@@ -135,7 +151,7 @@ public class XMLConfig
         {
             OptionKeys optionName = null;
             String optionType = null;
-            String optionValue = null;
+            Object optionValue = null;
             String optionDescription = null;
             boolean v = false;
             boolean t = false;
@@ -175,29 +191,58 @@ public class XMLConfig
 
             if (optionName != null)
             {
-                thisPlugin.prettyLog(Level.CONFIG, false, optionName + " : " + optionType + " : " + optionValue);
-                final Option[] defaultOptions =  DefaultOptions.defaultOptions;
+                final Option[] defaultOptions =  DefaultOptions.defaultOptions.clone();
                 for (int id = 0; id < defaultOptions.length; id++)
                 {
-                    if (defaultOptions[i].getOptionKey() == optionName)
+                    if (defaultOptions[id].getOptionKey() == optionName)
                     {
-                        if (optionType == null)
+                        if (optionType == null || optionType != defaultOptions[id].getOptionType())
                         {
-                            optionType = defaultOptions[i].getOptionType();
+                            optionType = defaultOptions[id].getOptionType();
                         }
-                        if ( optionValue == null)
+                        if ( optionValue == null || !verifyOptionValue(optionType, optionValue))
                         {
-                            optionValue = defaultOptions[i].getOptionValue().toString();
+                            optionValue = defaultOptions[id].getOptionValue().toString();
                         }
-                        optionDescription = defaultOptions[i].getOptionDescription();
+                        optionDescription = defaultOptions[id].getOptionDescription();
+                        break;
                     }
                 }
-                final Option option = new Option(optionName, optionDescription, optionType, optionValue , "WormholeXTremeWorlds");
+                thisPlugin.prettyLog(Level.CONFIG, false,"Got from XML read: " + optionName + ", " + optionDescription + ", " + optionType + ", " + optionValue + ", WormholeXTremeWorlds");
+                Option option = new Option(optionName, optionDescription, optionType, optionValue , "WormholeXTremeWorlds");
                 ConfigManager.options.put(optionName, option);
             }
         }
     }
-
+    
+    private static boolean verifyOptionValue(String optionType, Object optionValue)
+    {
+        if (optionType.trim().equals("boolean"))
+        {
+            String oV = (String) optionValue;
+            if (oV.contains("true") || oV.contains("false"))
+            {
+                return true;
+            }
+        }
+        else if (optionType.trim().equals("double"))
+        {
+            try
+            {
+                double test = Double.valueOf(((String) optionValue).trim()).doubleValue();
+                if (test >= 0.0)
+                {
+                    return true;
+                }
+            } 
+            catch (NumberFormatException nfe) 
+            {
+               return false; 
+            }
+        }
+        return false;
+    }
+    
     private static void saveConfig(Option[] option) throws FileNotFoundException, XMLStreamException
     {
         final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();

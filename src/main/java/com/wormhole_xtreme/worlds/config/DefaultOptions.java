@@ -30,42 +30,42 @@ public class DefaultOptions {
     final static Option[] defaultOptions = {
         new Option(
                    OptionKeys.serverOptionPermissions,
-                   "Enable or disable Permissions plugin support.",
+                   "Option: Enable or disable Permissions plugin support. Default: true",
                    "boolean",
                    true,
                    "WormholeXTremeWorlds"
         ),
         new Option(
                    OptionKeys.serverOptionOpsBypassPermissions,
-                   "Ops bypass Permissions plugin access checks.",
+                   "Option: Ops bypass Permissions plugin access checks. Default: true",
                    "boolean",
                    true,
                    "WormholeXTremeWorlds"
         ),
         new Option(
                    OptionKeys.serverOptionIconomy,
-                   "Enable or disable iConomy plugin support.",
+                   "Option: Enable or disable iConomy plugin support. Default: true",
                    "boolean",
                    true,
                    "WormholeXTremeWorlds"
         ),
         new Option(
                    OptionKeys.serverOptionIconomyCostForNormalWorldGeneration,
-                   "iConomy cost to generate a normal world.",
+                   "Option: iConomy cost to generate a normal world. Default: 1000.0",
                    "double",
                    1000.0,
                    "WormholeXTremeWorlds"
         ),
         new Option(
                    OptionKeys.serverOptionIconomyCostForNetherWorldGeneration,
-                   "iConomy cost to generate a nether world.",
+                   "Option: iConomy cost to generate a nether world. Default: 2000.0",
                    "double",
                    2000.0,
                    "WormholeXTremeWorlds"
         ),
         new Option(
                    OptionKeys.serverOptionHelp,
-                   "Enable or disable Help plugin support.",
+                   "Option: Enable or disable Help plugin support. Default: true",
                    "boolean",
                    true,
                    "WormholeXTremeWorlds"

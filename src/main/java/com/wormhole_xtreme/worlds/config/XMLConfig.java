@@ -53,10 +53,18 @@ import com.wormhole_xtreme.worlds.config.ConfigManager.OptionKeys;
 public class XMLConfig 
 {
 
+    /** The Constant thisPlugin. */
     private final static WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
+    
+    /** The config file. */
     private static File configFile = null;
 
     
+    /**
+     * Load xml config.
+     *
+     * @param desc the {@link PluginDescriptionFile}
+     */
     public static void loadXmlConfig(PluginDescriptionFile desc)
     {
         try 
@@ -68,6 +76,12 @@ public class XMLConfig
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Save xml config.
+     *
+     * @param desc the {@link PluginDescriptionFile}
+     */
     public static void saveXmlConfig(PluginDescriptionFile desc)
     {
         try 
@@ -79,7 +93,15 @@ public class XMLConfig
             e.printStackTrace();
         }
     }
-    private static void writeXmlConfig(PluginDescriptionFile desc) throws Exception
+    
+    /**
+     * Write xml config.
+     *
+     * @param desc the {@link PluginDescriptionFile}
+     * @throws FileNotFoundException the file not found exception
+     * @throws XMLStreamException the xML stream exception
+     */
+    private static void writeXmlConfig(PluginDescriptionFile desc) throws FileNotFoundException, XMLStreamException
     {
         final File directory = new File("plugins" + File.separator + desc.getName() + File.separator);
         if (!directory.exists())
@@ -114,7 +136,14 @@ public class XMLConfig
         thisPlugin.prettyLog(Level.INFO, false, "Configuration saved.");
     }
     
-    private static void readXmlConfig(PluginDescriptionFile desc) throws Exception
+    /**
+     * Read xml config.
+     *
+     * @param desc the {@link PluginDescriptionFile}
+     * @throws XMLStreamException 
+     * @throws FileNotFoundException 
+     */
+    private static void readXmlConfig(PluginDescriptionFile desc) throws FileNotFoundException, XMLStreamException
     {
         final File directory = new File("plugins" + File.separator + desc.getName() + File.separator);
         if (!directory.exists())
@@ -140,6 +169,12 @@ public class XMLConfig
     }
 
 
+    /**
+     * Read config.
+     *
+     * @throws FileNotFoundException the file not found exception
+     * @throws XMLStreamException the xML stream exception
+     */
     private static void readConfig() throws FileNotFoundException, XMLStreamException 
     {
         //List<Option> configItems = new ArrayList<Option>();
@@ -215,6 +250,13 @@ public class XMLConfig
         }
     }
     
+    /**
+     * Verify option value.
+     *
+     * @param optionType the option type
+     * @param optionValue the option value
+     * @return true, if successful
+     */
     private static boolean verifyOptionValue(String optionType, Object optionValue)
     {
         if (optionType.trim().equals("boolean"))
@@ -243,6 +285,13 @@ public class XMLConfig
         return false;
     }
     
+    /**
+     * Save config.
+     *
+     * @param option the option
+     * @throws FileNotFoundException the file not found exception
+     * @throws XMLStreamException the xML stream exception
+     */
     private static void saveConfig(Option[] option) throws FileNotFoundException, XMLStreamException
     {
         final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
@@ -252,19 +301,29 @@ public class XMLConfig
         final StartDocument startDocument = eventFactory.createStartDocument();
         eventWriter.add(startDocument);
         eventWriter.add(end);
-        final StartElement configStartElement = eventFactory.createStartElement("","","config");
+        final StartElement configStartElement = eventFactory.createStartElement("","","WormholeXTremeWorlds");
         eventWriter.add(configStartElement);
         eventWriter.add(end);
         for (int i = 0; i < option.length; i++)
         {
             createNode(eventWriter, option[i].getOptionKey(), option[i].getOptionType() , option[i].getOptionValue().toString(), option[i].getOptionDescription());
         }
-        eventWriter.add(eventFactory.createEndElement("","","config"));
+        eventWriter.add(eventFactory.createEndElement("","","WormholeXTremeWorlds"));
         eventWriter.add(end);
         eventWriter.add(eventFactory.createEndDocument());
         eventWriter.close();
     }
     
+    /**
+     * Creates the node.
+     *
+     * @param eventWriter the event writer
+     * @param name the name
+     * @param type the type
+     * @param value the value
+     * @param description the description
+     * @throws XMLStreamException the xML stream exception
+     */
     private static void createNode(XMLEventWriter eventWriter, OptionKeys name, String type, String value, String description) throws XMLStreamException
     {
         final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
@@ -305,10 +364,20 @@ public class XMLConfig
         eventWriter.add(end);
     }
     
+    /**
+     * Sets the config file.
+     *
+     * @param configFile the new config file
+     */
     private static void setConfigFile(File configFile) {
         XMLConfig.configFile = configFile;
     }
 
+    /**
+     * Gets the config file.
+     *
+     * @return the config file
+     */
     private static File getConfigFile() {
         return configFile;
     }

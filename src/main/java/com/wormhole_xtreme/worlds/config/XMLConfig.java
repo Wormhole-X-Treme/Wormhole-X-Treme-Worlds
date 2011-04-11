@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
@@ -34,8 +33,6 @@ import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartDocument;
-import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -143,6 +140,7 @@ public class XMLConfig
     private static void readXmlConfig(PluginDescriptionFile desc) throws FileNotFoundException, XMLStreamException
     {
         final File directory = new File("plugins" + File.separator + desc.getName() + File.separator);
+        
         if (!directory.exists())
         {
             try 
@@ -155,6 +153,7 @@ public class XMLConfig
                 thisPlugin.prettyLog(Level.SEVERE, false, "Uable to create config directory: " + directory.toString());
             }
         }
+        
         final String configFileLocation = directory.getPath() + File.separator + "config.xml";
         setConfigFile(new File(configFileLocation));
         if (!getConfigFile().exists())
@@ -175,9 +174,9 @@ public class XMLConfig
     private static void readConfig() throws FileNotFoundException, XMLStreamException 
     {
         final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-        final InputStream in = new FileInputStream(getConfigFile());
-        final XMLEventReader eventReader = inputFactory.createXMLEventReader(in);
+        final XMLEventReader eventReader = inputFactory.createXMLEventReader(new FileInputStream(getConfigFile()));
         XMLEvent event;
+        
         while (eventReader.hasNext())
         {
             OptionKeys optionName = null;
@@ -239,6 +238,7 @@ public class XMLConfig
                         break;
                     }
                 }
+                
                 thisPlugin.prettyLog(Level.CONFIG, false,"Got from XML read: " + optionName + ", " + optionDescription + ", " + optionType + ", " + optionValue + ", WormholeXTremeWorlds");
                 Option option = new Option(optionName, optionDescription, optionType, optionValue , "WormholeXTremeWorlds");
                 ConfigManager.options.put(optionName, option);
@@ -294,16 +294,17 @@ public class XMLConfig
         final XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(getConfigFile()));
         final XMLEventFactory eventFactory = XMLEventFactory.newFactory();
         final XMLEvent end = eventFactory.createDTD("\n");
-        final StartDocument startDocument = eventFactory.createStartDocument();
-        eventWriter.add(startDocument);
+        
+        eventWriter.add(eventFactory.createStartDocument());
         eventWriter.add(end);
-        final StartElement configStartElement = eventFactory.createStartElement("","","WormholeXTremeWorlds");
-        eventWriter.add(configStartElement);
+        eventWriter.add(eventFactory.createStartElement("","","WormholeXTremeWorlds"));
         eventWriter.add(end);
+        
         for (int i = 0; i < option.length; i++)
         {
             createNode(eventWriter, option[i].getOptionKey(), option[i].getOptionType() , option[i].getOptionValue().toString(), option[i].getOptionDescription());
         }
+        
         eventWriter.add(eventFactory.createEndElement("","","WormholeXTremeWorlds"));
         eventWriter.add(end);
         eventWriter.add(eventFactory.createEndDocument());

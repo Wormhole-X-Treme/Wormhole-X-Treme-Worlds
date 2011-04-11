@@ -34,9 +34,6 @@ import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Characters;
-import javax.xml.stream.events.Comment;
-import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartDocument;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
@@ -177,7 +174,6 @@ public class XMLConfig
      */
     private static void readConfig() throws FileNotFoundException, XMLStreamException 
     {
-        //List<Option> configItems = new ArrayList<Option>();
         final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         final InputStream in = new FileInputStream(getConfigFile());
         final XMLEventReader eventReader = inputFactory.createXMLEventReader(in);

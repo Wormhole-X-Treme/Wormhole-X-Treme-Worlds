@@ -217,8 +217,7 @@ public class XMLConfig {
                 }
 
                 thisPlugin.prettyLog(Level.CONFIG, false, "Got from XML read: " + optionName + ", " + optionDescription + ", " + optionType + ", " + optionValue + ", WormholeXTremeWorlds");
-                final Option option = new Option(optionName, optionDescription, optionType, optionValue, "WormholeXTremeWorlds");
-                ConfigManager.options.put(optionName, option);
+                ConfigManager.options.put(optionName, new Option(optionName, optionDescription, optionType, optionValue, "WormholeXTremeWorlds"));
             }
         }
     }

@@ -1,28 +1,60 @@
-/**
- *
+/*
+ * Wormhole X-Treme Worlds Plugin for Bukkit
+ * Copyright (C) 2011 Dean Bailey
+ * 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.wormhole_xtreme.worlds.world;
 
 import org.bukkit.Location;
 
 /**
- * @author alron
+ * The Class World.
  * 
+ * @author alron
  */
 public class World {
 
-    public String worldName = "";
-    public String worldOwner = null;
-    public World thisWorld = null;
-    public Location worldCustomSpawn = null;
-    public boolean allowHostiles = true;
-    public boolean allowNeutrals = true;
+    /** The world name. */
+    private String worldName = "";
 
+    /** The world owner. */
+    private String worldOwner = null;
+
+    /** The this world. */
+    private World thisWorld = null;
+
+    /** The world custom spawn. */
+    private Location worldCustomSpawn = null;
+
+    /** The allow hostiles. */
+    private boolean allowHostiles = true;
+
+    /** The allow neutrals. */
+    private boolean allowNeutrals = true;
+
+    /**
+     * Instantiates a new world.
+     */
     public World() {
 
     }
 
     /**
+     * Gets the world name.
+     * 
      * @return the worldName
      */
     public String getWorldName() {
@@ -31,6 +63,8 @@ public class World {
 
 
     /**
+     * Sets the world name.
+     * 
      * @param worldName
      *            the worldName to set
      */
@@ -40,6 +74,8 @@ public class World {
 
 
     /**
+     * Gets the world owner.
+     * 
      * @return the worldOwner
      */
     public String getWorldOwner() {
@@ -48,6 +84,8 @@ public class World {
 
 
     /**
+     * Sets the world owner.
+     * 
      * @param worldOwner
      *            the worldOwner to set
      */
@@ -57,6 +95,8 @@ public class World {
 
 
     /**
+     * Gets the this world.
+     * 
      * @return the thisWorld
      */
     public World getThisWorld() {
@@ -65,6 +105,8 @@ public class World {
 
 
     /**
+     * Sets the this world.
+     * 
      * @param thisWorld
      *            the thisWorld to set
      */
@@ -74,6 +116,8 @@ public class World {
 
 
     /**
+     * Gets the world custom spawn.
+     * 
      * @return the worldCustomSpawn
      */
     public Location getWorldCustomSpawn() {
@@ -82,6 +126,8 @@ public class World {
 
 
     /**
+     * Sets the world custom spawn.
+     * 
      * @param worldCustomSpawn
      *            the worldCustomSpawn to set
      */
@@ -91,6 +137,8 @@ public class World {
 
 
     /**
+     * Checks if is allow hostiles.
+     * 
      * @return the allowHostiles
      */
     public boolean isAllowHostiles() {
@@ -99,6 +147,8 @@ public class World {
 
 
     /**
+     * Sets the allow hostiles.
+     * 
      * @param allowHostiles
      *            the allowHostiles to set
      */
@@ -108,6 +158,8 @@ public class World {
 
 
     /**
+     * Checks if is the allow neutrals.
+     * 
      * @return the allowNeutrals
      */
     public boolean isAllowNeutrals() {
@@ -116,6 +168,8 @@ public class World {
 
 
     /**
+     * Sets the allow neutrals.
+     * 
      * @param allowNeutrals
      *            the allowNeutrals to set
      */

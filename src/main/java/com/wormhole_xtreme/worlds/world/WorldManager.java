@@ -20,6 +20,8 @@ package com.wormhole_xtreme.worlds.world;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.bukkit.entity.Player;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class WorldManager.
@@ -29,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WorldManager {
 
     /** The world list. */
-    private static ConcurrentHashMap<String, World> worldList = new ConcurrentHashMap<String, World>();
+    private static ConcurrentHashMap<String, WormholeWorld> worldList = new ConcurrentHashMap<String, WormholeWorld>();
 
     /**
      * Gets the world.
@@ -38,7 +40,7 @@ public class WorldManager {
      *            the world name
      * @return the world
      */
-    public static World getWorld(final String worldName) {
+    public static WormholeWorld getWorld(final String worldName) {
         if (worldList.containsKey(worldName)) {
             return worldList.get(worldName);
         }
@@ -53,7 +55,7 @@ public class WorldManager {
      * @param world
      *            the world
      */
-    public static void addWorld(final World world) {
+    public static void addWorld(final WormholeWorld world) {
         if (world != null) {
             worldList.put(world.getWorldName(), world);
         }
@@ -65,9 +67,24 @@ public class WorldManager {
      * @param world
      *            the world
      */
-    public static void removeWorld(final World world) {
+    public static void removeWorld(final WormholeWorld world) {
         if (world != null) {
             worldList.remove(world);
         }
+    }
+    
+    public static boolean createWorld(Player player, String worldName, String[] options)
+    {
+        if (worldName != null && getWorld(worldName) == null && player != null)
+        {
+            WormholeWorld world = new WormholeWorld();
+            world.setWorldName(worldName);
+            world.setWorldOwner(player.getName());
+            //world.setThisWorld()
+        
+            addWorld(world);
+            return true;
+        }
+        return false;
     }
 }

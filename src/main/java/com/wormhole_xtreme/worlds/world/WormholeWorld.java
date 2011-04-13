@@ -19,13 +19,14 @@
 package com.wormhole_xtreme.worlds.world;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 
 /**
  * The Class World.
  * 
  * @author alron
  */
-public class World {
+public class WormholeWorld {
 
     /** The world name. */
     private String worldName = "";
@@ -48,7 +49,7 @@ public class World {
     /**
      * Instantiates a new world.
      */
-    public World() {
+    public WormholeWorld() {
 
     }
 

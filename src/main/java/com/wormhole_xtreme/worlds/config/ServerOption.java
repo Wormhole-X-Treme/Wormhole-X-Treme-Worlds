@@ -18,7 +18,7 @@
  */
 package com.wormhole_xtreme.worlds.config;
 
-import com.wormhole_xtreme.worlds.config.ConfigManager.OptionKeys;
+import com.wormhole_xtreme.worlds.config.ConfigManager.ServerOptionKeys;
 
 
 /**
@@ -26,10 +26,10 @@ import com.wormhole_xtreme.worlds.config.ConfigManager.OptionKeys;
  * 
  * @author alron
  */
-public class Option {
+public class ServerOption {
 
     /** The option key. */
-    private OptionKeys optionKey;
+    private ServerOptionKeys optionKey;
 
     /** The option description. */
     private String optionDescription;
@@ -57,7 +57,7 @@ public class Option {
      * @param optionPlugin
      *            the option plugin
      */
-    public Option(final OptionKeys optionKey, final String optionDescription, final String optionType,
+    public ServerOption(final ServerOptionKeys optionKey, final String optionDescription, final String optionType,
         final Object optionValue, final String optionPlugin) {
         if ((optionKey != null) && (optionDescription != null) && (optionValue != null) && (optionPlugin != null)) {
             setOptionKey(optionKey);
@@ -74,7 +74,7 @@ public class Option {
      * @param optionKey
      *            the new option key
      */
-    private void setOptionKey(final OptionKeys optionKey) {
+    private void setOptionKey(final ServerOptionKeys optionKey) {
         this.optionKey = optionKey;
     }
 
@@ -83,7 +83,7 @@ public class Option {
      * 
      * @return the option key
      */
-    public OptionKeys getOptionKey() {
+    public ServerOptionKeys getOptionKey() {
         return optionKey;
     }
 

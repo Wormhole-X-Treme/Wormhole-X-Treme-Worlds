@@ -21,6 +21,7 @@ package com.wormhole_xtreme.worlds.world;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class World.
  * 
@@ -45,6 +46,9 @@ public class WormholeWorld {
 
     /** The allow neutrals. */
     private boolean allowNeutrals = true;
+
+    /** The nether world. */
+    private boolean netherWorld = false;
 
     /**
      * Instantiates a new world.
@@ -176,6 +180,25 @@ public class WormholeWorld {
      */
     public void setAllowNeutrals(final boolean allowNeutrals) {
         this.allowNeutrals = allowNeutrals;
+    }
+
+    /**
+     * Sets the nether world.
+     * 
+     * @param netherWorld
+     *            the new nether world
+     */
+    public void setNetherWorld(final boolean netherWorld) {
+        this.netherWorld = netherWorld;
+    }
+
+    /**
+     * Checks if is nether world.
+     * 
+     * @return true, if is nether world
+     */
+    public boolean isNetherWorld() {
+        return netherWorld;
     }
 
 

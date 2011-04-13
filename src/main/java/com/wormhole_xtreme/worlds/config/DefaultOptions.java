@@ -18,7 +18,7 @@
  */
 package com.wormhole_xtreme.worlds.config;
 
-import com.wormhole_xtreme.worlds.config.ConfigManager.OptionKeys;
+import com.wormhole_xtreme.worlds.config.ConfigManager.ServerOptionKeys;
 
 /**
  * @author alron
@@ -27,11 +27,11 @@ import com.wormhole_xtreme.worlds.config.ConfigManager.OptionKeys;
 public class DefaultOptions {
 
     /** The Constant defaultOptions. */
-    final static Option[] defaultOptions = {
-        new Option(OptionKeys.serverOptionPermissions, "Option: Enable or disable Permissions plugin support. Default: true", "boolean", true, "WormholeXTremeWorlds"),
-        new Option(OptionKeys.serverOptionOpsBypassPermissions, "Option: Ops bypass Permissions plugin access checks. Default: true", "boolean", true, "WormholeXTremeWorlds"),
-        new Option(OptionKeys.serverOptionIconomy, "Option: Enable or disable iConomy plugin support. Default: true", "boolean", true, "WormholeXTremeWorlds"),
-        new Option(OptionKeys.serverOptionIconomyCostForNormalWorldGeneration, "Option: iConomy cost to generate a normal world. Default: 1000.0", "double", 1000.0, "WormholeXTremeWorlds"),
-        new Option(OptionKeys.serverOptionIconomyCostForNetherWorldGeneration, "Option: iConomy cost to generate a nether world. Default: 2000.0", "double", 2000.0, "WormholeXTremeWorlds"),
-        new Option(OptionKeys.serverOptionHelp, "Option: Enable or disable Help plugin support. Default: true", "boolean", true, "WormholeXTremeWorlds"),};
+    final static ServerOption[] defaultServerOptions = {
+        new ServerOption(ServerOptionKeys.serverOptionPermissions, "Option: Enable or disable Permissions plugin support. Default: true", "boolean", true, "WormholeXTremeWorlds"),
+        new ServerOption(ServerOptionKeys.serverOptionOpsBypassPermissions, "Option: Ops bypass Permissions plugin access checks. Default: true", "boolean", true, "WormholeXTremeWorlds"),
+        new ServerOption(ServerOptionKeys.serverOptionIconomy, "Option: Enable or disable iConomy plugin support. Default: true", "boolean", true, "WormholeXTremeWorlds"),
+        new ServerOption(ServerOptionKeys.serverOptionIconomyCostForNormalWorldGeneration, "Option: iConomy cost to generate a normal world. Default: 1000.0", "double", 1000.0, "WormholeXTremeWorlds"),
+        new ServerOption(ServerOptionKeys.serverOptionIconomyCostForNetherWorldGeneration, "Option: iConomy cost to generate a nether world. Default: 2000.0", "double", 2000.0, "WormholeXTremeWorlds"),
+        new ServerOption(ServerOptionKeys.serverOptionHelp, "Option: Enable or disable Help plugin support. Default: true", "boolean", true, "WormholeXTremeWorlds"),};
 }

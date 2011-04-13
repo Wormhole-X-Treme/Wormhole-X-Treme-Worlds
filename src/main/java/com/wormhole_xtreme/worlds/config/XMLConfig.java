@@ -38,7 +38,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
-import com.wormhole_xtreme.worlds.config.ConfigManager.OptionKeys;
+import com.wormhole_xtreme.worlds.config.ConfigManager.ServerOptionKeys;
 
 /**
  * The Class WormholeXTtremeWorldsConfig.
@@ -107,15 +107,15 @@ public class XMLConfig {
         }
         final String configFileLocation = directory.getPath() + File.separator + "config.xml";
         setConfigFile(new File(configFileLocation));
-        final Set<OptionKeys> keys = ConfigManager.options.keySet();
-        final ArrayList<OptionKeys> list = new ArrayList<OptionKeys>(keys);
+        final Set<ServerOptionKeys> keys = ConfigManager.serverOptions.keySet();
+        final ArrayList<ServerOptionKeys> list = new ArrayList<ServerOptionKeys>(keys);
         Collections.sort(list);
-        final Option[] optionArray = new Option[list.size()];
+        final ServerOption[] optionArray = new ServerOption[list.size()];
         int i = 0;
-        for (final OptionKeys key : list) {
-            final Option o = ConfigManager.options.get(key);
+        for (final ServerOptionKeys key : list) {
+            final ServerOption o = ConfigManager.serverOptions.get(key);
             if (o != null) {
-                optionArray[i] = new Option(o.getOptionKey(), o.getOptionDescription(), o.getOptionType(), o.getOptionValue(), o.getOptionPlugin());
+                optionArray[i] = new ServerOption(o.getOptionKey(), o.getOptionDescription(), o.getOptionType(), o.getOptionValue(), o.getOptionPlugin());
                 i++;
             }
         }
@@ -148,7 +148,7 @@ public class XMLConfig {
         setConfigFile(new File(configFileLocation));
         if (!getConfigFile().exists()) {
             thisPlugin.prettyLog(Level.WARNING, false, "No configuration file found, generating fresh.");
-            saveConfig(DefaultOptions.defaultOptions);
+            saveConfig(DefaultOptions.defaultServerOptions);
         }
         readConfig();
     }
@@ -168,7 +168,7 @@ public class XMLConfig {
         XMLEvent event;
 
         while (eventReader.hasNext()) {
-            OptionKeys optionName = null;
+            ServerOptionKeys optionName = null;
             String optionType = null;
             Object optionValue = null;
             String optionDescription = null;
@@ -186,7 +186,7 @@ public class XMLConfig {
                         v = true;
                     }
                     else if (elementType.startsWith("serverOption")) {
-                        optionName = OptionKeys.valueOf(elementType);
+                        optionName = ServerOptionKeys.valueOf(elementType);
                     }
                 }
                 else if (event.isCharacters() && t) {
@@ -202,8 +202,8 @@ public class XMLConfig {
             }
 
             if (optionName != null) {
-                final Option[] defaultOptions = DefaultOptions.defaultOptions.clone();
-                for (final Option defaultOption : defaultOptions) {
+                final ServerOption[] defaultOptions = DefaultOptions.defaultServerOptions.clone();
+                for (final ServerOption defaultOption : defaultOptions) {
                     if (defaultOption.getOptionKey() == optionName) {
                         if ((optionType == null) || (optionType != defaultOption.getOptionType())) {
                             optionType = defaultOption.getOptionType();
@@ -217,7 +217,7 @@ public class XMLConfig {
                 }
 
                 thisPlugin.prettyLog(Level.CONFIG, false, "Got from XML read: " + optionName + ", " + optionDescription + ", " + optionType + ", " + optionValue + ", WormholeXTremeWorlds");
-                ConfigManager.options.put(optionName, new Option(optionName, optionDescription, optionType, optionValue, "WormholeXTremeWorlds"));
+                ConfigManager.serverOptions.put(optionName, new ServerOption(optionName, optionDescription, optionType, optionValue, "WormholeXTremeWorlds"));
             }
         }
     }
@@ -262,7 +262,7 @@ public class XMLConfig {
      * @throws XMLStreamException
      *             the xML stream exception
      */
-    private static void saveConfig(final Option[] option) throws FileNotFoundException, XMLStreamException {
+    private static void saveConfig(final ServerOption[] option) throws FileNotFoundException, XMLStreamException {
         final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
         final XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(getConfigFile()));
         final XMLEventFactory eventFactory = XMLEventFactory.newFactory();
@@ -273,7 +273,7 @@ public class XMLConfig {
         eventWriter.add(eventFactory.createStartElement("", "", "WormholeXTremeWorlds"));
         eventWriter.add(end);
 
-        for (final Option element : option) {
+        for (final ServerOption element : option) {
             createNode(eventWriter, element.getOptionKey(), element.getOptionType(), element.getOptionValue().toString(), element.getOptionDescription());
         }
 
@@ -299,7 +299,7 @@ public class XMLConfig {
      * @throws XMLStreamException
      *             the xML stream exception
      */
-    private static void createNode(final XMLEventWriter eventWriter, final OptionKeys name, final String type, final String value, final String description) throws XMLStreamException {
+    private static void createNode(final XMLEventWriter eventWriter, final ServerOptionKeys name, final String type, final String value, final String description) throws XMLStreamException {
         final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
         final XMLEvent end = eventFactory.createDTD("\n");
         final XMLEvent tab = eventFactory.createDTD("\t");

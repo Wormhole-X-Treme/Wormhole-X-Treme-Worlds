@@ -22,7 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
 
-// TODO: Auto-generated Javadoc
+import com.wormhole_xtreme.worlds.config.ConfigManager.WorldOptionKeys;
+
+
 /**
  * The Class WorldManager.
  * 
@@ -72,16 +74,49 @@ public class WorldManager {
             worldList.remove(world);
         }
     }
-    
-    public static boolean createWorld(Player player, String worldName, String[] options)
-    {
-        if (worldName != null && getWorld(worldName) == null && player != null)
-        {
-            WormholeWorld world = new WormholeWorld();
+
+    /**
+     * Creates the world.
+     * 
+     * @param player
+     *            the player
+     * @param worldName
+     *            the world name
+     * @param options
+     *            the options
+     * @return true, if successful
+     */
+    public static boolean createWorld(final Player player, final String worldName, final WorldOptionKeys[] options) {
+        if ((worldName != null) && (getWorld(worldName) == null) && (player != null) && (options != null)) {
+            final WormholeWorld world = new WormholeWorld();
+            boolean generate = false;
+            boolean connect = false;
             world.setWorldName(worldName);
             world.setWorldOwner(player.getName());
-            //world.setThisWorld()
-        
+            for (final WorldOptionKeys option : options) {
+                if (option == WorldOptionKeys.worldOptionNether) {
+                    world.setNetherWorld(true);
+                }
+                else if (option == WorldOptionKeys.worldOptionNoHostiles) {
+                    world.setAllowHostiles(false);
+                }
+                else if (option == WorldOptionKeys.worldOptionNoNeutrals) {
+                    world.setAllowNeutrals(false);
+                }
+                else if (option == WorldOptionKeys.worldOptionGenerate) {
+                    generate = true;
+                }
+                else if (option == WorldOptionKeys.worldOptionConnect) {
+                    connect = true;
+                }
+            }
+            if (generate) {
+
+            }
+            if (connect) {
+
+            }
+
             addWorld(world);
             return true;
         }

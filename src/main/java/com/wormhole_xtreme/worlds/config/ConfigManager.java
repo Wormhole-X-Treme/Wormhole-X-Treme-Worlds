@@ -31,7 +31,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 public class ConfigManager {
 
     /** The Constant options. */
-    public static final ConcurrentHashMap<OptionKeys, Option> options = new ConcurrentHashMap<OptionKeys, Option>();
+    public static final ConcurrentHashMap<ServerOptionKeys, ServerOption> serverOptions = new ConcurrentHashMap<ServerOptionKeys, ServerOption>();
 
     /**
      * Sets the up options.
@@ -51,8 +51,8 @@ public class ConfigManager {
      * @param optionValue
      *            the option value
      */
-    private static void setOptionValue(final OptionKeys optionKey, final Object optionValue) {
-        final Option o = options.get(optionKey);
+    private static void setOptionValue(final ServerOptionKeys optionKey, final Object optionValue) {
+        final ServerOption o = serverOptions.get(optionKey);
         if (optionValue != null) {
             o.setOptionValue(optionValue);
         }
@@ -65,7 +65,7 @@ public class ConfigManager {
      *            the new server option permissions
      */
     public static void setServerOptionPermissions(final boolean b) {
-        ConfigManager.setOptionValue(OptionKeys.serverOptionPermissions, b);
+        ConfigManager.setOptionValue(ServerOptionKeys.serverOptionPermissions, b);
     }
 
     /**
@@ -75,7 +75,7 @@ public class ConfigManager {
      *            the new server option ops bypass permissions
      */
     public static void setServerOptionOpsBypassPermissions(final boolean b) {
-        ConfigManager.setOptionValue(OptionKeys.serverOptionOpsBypassPermissions, b);
+        ConfigManager.setOptionValue(ServerOptionKeys.serverOptionOpsBypassPermissions, b);
     }
 
     /**
@@ -85,7 +85,7 @@ public class ConfigManager {
      *            the new server option iconomy
      */
     public static void setServerOptionIconomy(final boolean b) {
-        ConfigManager.setOptionValue(OptionKeys.serverOptionIconomy, b);
+        ConfigManager.setOptionValue(ServerOptionKeys.serverOptionIconomy, b);
     }
 
     /**
@@ -95,7 +95,7 @@ public class ConfigManager {
      *            the new iconomy cost for normal world generation
      */
     public static void setIconomyCostForNormalWorldGeneration(final double d) {
-        ConfigManager.setOptionValue(OptionKeys.serverOptionIconomyCostForNormalWorldGeneration, d);
+        ConfigManager.setOptionValue(ServerOptionKeys.serverOptionIconomyCostForNormalWorldGeneration, d);
     }
 
     /**
@@ -105,7 +105,7 @@ public class ConfigManager {
      *            the new iconomy cost for nether world generation
      */
     public static void setIconomyCostForNetherWorldGeneration(final double d) {
-        ConfigManager.setOptionValue(OptionKeys.serverOptionIconomyCostForNetherWorldGeneration, d);
+        ConfigManager.setOptionValue(ServerOptionKeys.serverOptionIconomyCostForNetherWorldGeneration, d);
     }
 
     /**
@@ -115,13 +115,13 @@ public class ConfigManager {
      *            the new world option world list
      */
     public static void setWorldOptionWorldList(final String[] s) {
-        ConfigManager.setOptionValue(OptionKeys.worldOptionWorldList, s);
+        ConfigManager.setOptionValue(ServerOptionKeys.worldOptionWorldList, s);
     }
 
     /**
      * The Enum OptionKeys.
      */
-    public enum OptionKeys {
+    public enum ServerOptionKeys {
 
         /** The server option permissions. */
         serverOptionPermissions,
@@ -151,8 +151,11 @@ public class ConfigManager {
         worldOptionNetherDefaults;
     }
 
-    public enum WorldKeys {
-        worldOptionNetherWorld,
-        worldOptionLoadWorld
+    public enum WorldOptionKeys {
+        worldOptionNether,
+        worldOptionNoHostiles,
+        worldOptionNoNeutrals,
+        worldOptionGenerate,
+        worldOptionConnect
     }
 }

@@ -29,6 +29,7 @@ import com.nijiko.permissions.PermissionHandler;
 import com.wormhole_xtreme.worlds.command.CommandUtilities;
 import com.wormhole_xtreme.worlds.config.XMLConfig;
 import com.wormhole_xtreme.worlds.plugin.HelpSupport;
+import com.wormhole_xtreme.worlds.plugin.PermissionsSupport;
 
 
 /**
@@ -82,6 +83,7 @@ public class WormholeXTremeWorlds extends JavaPlugin
     public void onEnable() 
     {
         prettyLog(Level.INFO, true, "Enable Beginning.");
+        PermissionsSupport.enablePermissions();
         HelpSupport.enableHelp();
         CommandUtilities.registerCommands();
         HelpSupport.registerHelpCommands();

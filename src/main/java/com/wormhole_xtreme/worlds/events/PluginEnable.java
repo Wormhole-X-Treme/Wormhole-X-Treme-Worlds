@@ -22,6 +22,7 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
 
 import com.wormhole_xtreme.worlds.plugin.HelpSupport;
+import com.wormhole_xtreme.worlds.plugin.PermissionsSupport;
 
 /**
  * The Class Plugin.
@@ -40,7 +41,7 @@ public class PluginEnable extends ServerListener
         final String enableEventPluginName = pluginEnableEvent.getPlugin().getDescription().getName();
         if (enableEventPluginName.equals("Permissions"))
         {
-            
+           PermissionsSupport.enablePermissions(); 
         }
         else if (enableEventPluginName.equals("Help"))
         {

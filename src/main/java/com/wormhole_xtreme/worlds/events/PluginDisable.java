@@ -22,6 +22,7 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.ServerListener;
 
 import com.wormhole_xtreme.worlds.plugin.HelpSupport;
+import com.wormhole_xtreme.worlds.plugin.PermissionsSupport;
 
 
 /**
@@ -40,7 +41,7 @@ public class PluginDisable extends ServerListener {
         final String disableEventPluginName = pluginDisableEvent.getPlugin().getDescription().getName();
         if (disableEventPluginName.equals("Permissions"))
         {
-            
+           PermissionsSupport.disablePermissions(); 
         }
         else if (disableEventPluginName.equals("Help"))
         {

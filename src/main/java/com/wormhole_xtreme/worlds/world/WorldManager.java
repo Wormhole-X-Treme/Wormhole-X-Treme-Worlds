@@ -18,10 +18,12 @@
  */
 package com.wormhole_xtreme.worlds.world;
 
+import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.entity.Player;
-
+import org.bukkit.World.Environment;
+import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ConfigManager.WorldOptionKeys;
 
 
@@ -34,6 +36,49 @@ public class WorldManager {
 
     /** The world list. */
     private static ConcurrentHashMap<String, WormholeWorld> worldList = new ConcurrentHashMap<String, WormholeWorld>();
+
+    /** The Constant thisPlugin. */
+    private final static WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
+
+    /**
+     * Gets the all worlds.
+     * 
+     * @return the all worlds
+     */
+    public static WormholeWorld[] getAllWorlds() {
+        final Set<String> keys = worldList.keySet();
+        final ArrayList<String> list = new ArrayList<String>(keys);
+        final WormholeWorld[] wormholeWorlds = new WormholeWorld[list.size()];
+        int i = 0;
+        for (final String key : list) {
+            final WormholeWorld w = worldList.get(key);
+            if (w != null) {
+                wormholeWorlds[i] = w;
+                i++;
+            }
+        }
+        return wormholeWorlds;
+    }
+
+    /**
+     * Gets the all world names.
+     * 
+     * @return the all world names
+     */
+    public static String[] getAllWorldNames() {
+        final Set<String> keys = worldList.keySet();
+        final ArrayList<String> list = new ArrayList<String>(keys);
+        final String[] wormholeWorlds = new String[list.size()];
+        int i = 0;
+        for (final String key : list) {
+            final WormholeWorld w = worldList.get(key);
+            if (w != null) {
+                wormholeWorlds[i] = w.getWorldName();
+                i++;
+            }
+        }
+        return wormholeWorlds;
+    }
 
     /**
      * Gets the world.
@@ -71,9 +116,10 @@ public class WorldManager {
      */
     public static void removeWorld(final WormholeWorld world) {
         if (world != null) {
-            worldList.remove(world);
+            worldList.remove(world.getWorldName());
         }
     }
+
 
     /**
      * Creates the world.
@@ -82,42 +128,65 @@ public class WorldManager {
      *            the player
      * @param worldName
      *            the world name
-     * @param options
-     *            the options
+     * @param worldOptionKeys
+     *            the world option keys
+     * @param worldSeed
+     *            the world seed
      * @return true, if successful
      */
-    public static boolean createWorld(final Player player, final String worldName, final WorldOptionKeys[] options) {
-        if ((worldName != null) && (getWorld(worldName) == null) && (player != null) && (options != null)) {
-            final WormholeWorld world = new WormholeWorld();
-            boolean generate = false;
+    public static boolean createWorld(final String playerName, final String worldName, final WorldOptionKeys[] worldOptionKeys, final long worldSeed) {
+        if ((worldName != null) && (getWorld(worldName) == null) && (playerName != null)) {
+            final WormholeWorld wormholeWorld = new WormholeWorld();
+            Environment worldEnvironment = Environment.NORMAL;
             boolean connect = false;
-            world.setWorldName(worldName);
-            world.setWorldOwner(player.getName());
-            for (final WorldOptionKeys option : options) {
-                if (option == WorldOptionKeys.worldOptionNether) {
-                    world.setNetherWorld(true);
-                }
-                else if (option == WorldOptionKeys.worldOptionNoHostiles) {
-                    world.setAllowHostiles(false);
-                }
-                else if (option == WorldOptionKeys.worldOptionNoNeutrals) {
-                    world.setAllowNeutrals(false);
-                }
-                else if (option == WorldOptionKeys.worldOptionGenerate) {
-                    generate = true;
-                }
-                else if (option == WorldOptionKeys.worldOptionConnect) {
-                    connect = true;
+            boolean seed = false;
+            wormholeWorld.setWorldName(worldName);
+            wormholeWorld.setWorldOwner(playerName);
+            if (worldOptionKeys != null) {
+                for (final WorldOptionKeys worldOptionKey : worldOptionKeys) {
+                    if (worldOptionKey == WorldOptionKeys.worldOptionNether) {
+                        wormholeWorld.setNetherWorld(true);
+                    }
+                    else if (worldOptionKey == WorldOptionKeys.worldOptionNoHostiles) {
+                        wormholeWorld.setAllowHostiles(false);
+                    }
+                    else if (worldOptionKey == WorldOptionKeys.worldOptionNoNeutrals) {
+                        wormholeWorld.setAllowNeutrals(false);
+                    }
+                    else if (worldOptionKey == WorldOptionKeys.worldOptionConnect) {
+                        connect = true;
+                    }
+                    else if (worldOptionKey == WorldOptionKeys.worldOptionSeed) {
+                        seed = true;
+                    }
                 }
             }
-            if (generate) {
 
+
+            if (wormholeWorld.isNetherWorld()) {
+                worldEnvironment = Environment.NETHER;
             }
+            if (thisPlugin.getServer().getWorld(worldName) == null) {
+                // Send Generating new world message
+                if (seed) {
+                    wormholeWorld.setThisWorld(thisPlugin.getServer().createWorld(wormholeWorld.getWorldName(), worldEnvironment, worldSeed));
+                }
+                else {
+                    wormholeWorld.setThisWorld(thisPlugin.getServer().createWorld(wormholeWorld.getWorldName(), worldEnvironment));
+                }
+                wormholeWorld.getThisWorld().save();
+            }
+            else {
+                // send connecting to existing world message
+                wormholeWorld.setThisWorld(thisPlugin.getServer().getWorld(worldName));
+            }
+            wormholeWorld.setWorldCustomSpawn(wormholeWorld.getThisWorld().getSpawnLocation());
+            
             if (connect) {
-
+                wormholeWorld.setAutoconnectWorld(true);
             }
 
-            addWorld(world);
+            addWorld(wormholeWorld);
             return true;
         }
         return false;

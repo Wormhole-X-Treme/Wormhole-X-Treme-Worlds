@@ -18,13 +18,33 @@
  */
 package com.wormhole_xtreme.worlds.events;
 
-import org.bukkit.event.server.ServerListener;
+import java.util.logging.Level;
+
+import org.bukkit.World;
+import org.bukkit.event.world.WorldListener;
+import org.bukkit.event.world.WorldSaveEvent;
+
+import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 
 /**
  * The Class WorldSave.
  * 
  * @author alron
  */
-public class WorldSave extends ServerListener {
+public class WorldSave extends WorldListener {
+
+    /** The Constant thisPlugin. */
+    private static final WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
+
+    /* (non-Javadoc)
+     * @see org.bukkit.event.world.WorldListener#onWorldSave(org.bukkit.event.world.WorldSaveEvent)
+     */
+    @Override
+    public void onWorldSave(final WorldSaveEvent event) {
+        final World world = event.getWorld();
+        if (world != null) {
+            thisPlugin.prettyLog(Level.INFO, false, "Caught World Save: " + world.getName());
+        }
+    }
 
 }

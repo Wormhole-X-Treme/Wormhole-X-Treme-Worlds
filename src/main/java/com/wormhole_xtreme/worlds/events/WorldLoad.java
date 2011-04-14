@@ -18,7 +18,13 @@
  */
 package com.wormhole_xtreme.worlds.events;
 
+import java.util.logging.Level;
+
+import org.bukkit.World;
 import org.bukkit.event.world.WorldListener;
+import org.bukkit.event.world.WorldLoadEvent;
+
+import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 
 /**
  * The Class World.
@@ -27,4 +33,17 @@ import org.bukkit.event.world.WorldListener;
  */
 public class WorldLoad extends WorldListener {
 
+    /** The Constant thisPlugin. */
+    private static final WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
+
+    /* (non-Javadoc)
+     * @see org.bukkit.event.world.WorldListener#onWorldLoad(org.bukkit.event.world.WorldLoadEvent)
+     */
+    @Override
+    public void onWorldLoad(final WorldLoadEvent event) {
+        final World world = event.getWorld();
+        if (world != null) {
+            thisPlugin.prettyLog(Level.INFO, false, "World Load Caught: " + world.getName());
+        }
+    }
 }

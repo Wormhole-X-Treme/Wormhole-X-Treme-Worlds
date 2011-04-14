@@ -50,6 +50,9 @@ public class WormholeWorld {
     /** The nether world. */
     private boolean netherWorld = false;
 
+    /** The autoconnect world. */
+    private boolean autoconnectWorld = false;
+
     /**
      * Instantiates a new world.
      */
@@ -201,5 +204,23 @@ public class WormholeWorld {
         return netherWorld;
     }
 
+    /**
+     * Sets the autoconnect world.
+     * 
+     * @param autoconnectWorld
+     *            the new autoconnect world
+     */
+    public void setAutoconnectWorld(final boolean autoconnectWorld) {
+        this.autoconnectWorld = autoconnectWorld;
+    }
+
+    /**
+     * Checks if is autoconnect world.
+     * 
+     * @return true, if is autoconnect world
+     */
+    public boolean isAutoconnectWorld() {
+        return autoconnectWorld;
+    }
 
 }

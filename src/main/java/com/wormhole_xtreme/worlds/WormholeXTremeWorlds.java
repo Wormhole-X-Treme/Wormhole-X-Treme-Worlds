@@ -28,6 +28,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.nijiko.permissions.PermissionHandler;
 import com.wormhole_xtreme.worlds.command.CommandUtilities;
 import com.wormhole_xtreme.worlds.config.XMLConfig;
+import com.wormhole_xtreme.worlds.events.EventUtilities;
 import com.wormhole_xtreme.worlds.plugin.HelpSupport;
 import com.wormhole_xtreme.worlds.plugin.PermissionsSupport;
 
@@ -79,6 +80,7 @@ public class WormholeXTremeWorlds extends JavaPlugin {
     @Override
     public void onEnable() {
         prettyLog(Level.INFO, true, "Enable Beginning.");
+        EventUtilities.registerEvents();
         PermissionsSupport.enablePermissions();
         HelpSupport.enableHelp();
         CommandUtilities.registerCommands();

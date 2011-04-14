@@ -155,7 +155,7 @@ public class ConfigManager {
         worldOptionNether,
         worldOptionNoHostiles,
         worldOptionNoNeutrals,
-        worldOptionGenerate,
+        worldOptionSeed,
         worldOptionConnect
     }
 }

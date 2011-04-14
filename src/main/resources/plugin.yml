@@ -9,4 +9,4 @@ commands:
   wxw:
     description: Manage Worlds via Wormhole X-Treme Worlds
     usage: |
-            /<command> 
+            /<command> [create|remove|modify|info|list|go] <args>

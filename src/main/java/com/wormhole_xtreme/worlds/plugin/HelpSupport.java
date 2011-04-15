@@ -26,6 +26,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
+import com.wormhole_xtreme.worlds.config.ConfigManager;
 
 /**
  * The Class PluginUtilities.
@@ -34,38 +35,57 @@ import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
  */
 public class HelpSupport {
 
+    /** The Constant thisPlugin. */
     private static final WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
+
+    /** The Constant pluginManager. */
     private static final PluginManager pluginManager = WormholeXTremeWorlds.getThisPlugin().getServer().getPluginManager();
 
+    /**
+     * Enable help.
+     */
     public static void enableHelp() {
-        if (WormholeXTremeWorlds.getHelp() == null) {
-            final Plugin helpTest = pluginManager.getPlugin("Help");
-            if (helpTest != null) {
-                final String version = helpTest.getDescription().getVersion();
-                if (!version.startsWith("0.2")) {
-                    thisPlugin.prettyLog(Level.WARNING, false, "Not a support version of Help: " + version + " Recommended is: 0.2.x");
+        if (ConfigManager.getServerOptionHelp()) {
+            if (WormholeXTremeWorlds.getHelp() == null) {
+                final Plugin helpTest = pluginManager.getPlugin("Help");
+                if (helpTest != null) {
+                    final String version = helpTest.getDescription().getVersion();
+                    if (!version.startsWith("0.2")) {
+                        thisPlugin.prettyLog(Level.WARNING, false, "Not a support version of Help: " + version + " Recommended is: 0.2.x");
+                    }
+                    try {
+                        WormholeXTremeWorlds.setHelp((Help) helpTest);
+                        thisPlugin.prettyLog(Level.INFO, false, "Attached to Help version: " + version);
+                    }
+                    catch (final ClassCastException e) {
+                        thisPlugin.prettyLog(Level.WARNING, false, "Failed to get cast to Help: " + e.getMessage());
+                    }
                 }
-                try {
-                    WormholeXTremeWorlds.setHelp((Help) helpTest);
-                    thisPlugin.prettyLog(Level.INFO, false, "Attached to Help version: " + version);
-                }
-                catch (final ClassCastException e) {
-                    thisPlugin.prettyLog(Level.WARNING, false, "Failed to get cast to Help: " + e.getMessage());
+                else {
+                    thisPlugin.prettyLog(Level.INFO, false, "Help plugin is not yet available; there will be no Help integration until it is loaded.");
                 }
             }
-            else {
-                thisPlugin.prettyLog(Level.INFO, false, "Help plugin is not yet available; there will be no Help integration until it is loaded.");
-            }
+        }
+        else {
+            thisPlugin.prettyLog(Level.INFO, false, "Help Plugin support disabled via config.xml");
         }
     }
 
+    /**
+     * Disable help.
+     */
     public static void disableHelp() {
-        if (WormholeXTremeWorlds.getHelp() != null) {
-            WormholeXTremeWorlds.setHelp(null);
-            thisPlugin.prettyLog(Level.INFO, false, "Detached from Help plugin.");
+        if (ConfigManager.getServerOptionHelp()) {
+            if (WormholeXTremeWorlds.getHelp() != null) {
+                WormholeXTremeWorlds.setHelp(null);
+                thisPlugin.prettyLog(Level.INFO, false, "Detached from Help plugin.");
+            }
         }
     }
 
+    /**
+     * Register help commands.
+     */
     public static void registerHelpCommands() {
         // TODO: Add help commands to register here.
     }

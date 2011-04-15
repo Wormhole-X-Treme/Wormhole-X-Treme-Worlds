@@ -31,6 +31,7 @@ import com.wormhole_xtreme.worlds.config.XMLConfig;
 import com.wormhole_xtreme.worlds.events.EventUtilities;
 import com.wormhole_xtreme.worlds.plugin.HelpSupport;
 import com.wormhole_xtreme.worlds.plugin.PermissionsSupport;
+import com.wormhole_xtreme.worlds.world.WorldManager;
 
 
 /**
@@ -60,8 +61,8 @@ public class WormholeXTremeWorlds extends JavaPlugin {
         setThisPlugin(this);
         setThisLogger(getThisPlugin().getServer().getLogger());
         prettyLog(Level.INFO, true, getThisPlugin().getDescription().getAuthors().toString() + "Load Beginning.");
-        // TODO: Add World loading for existing worlds here.
         XMLConfig.loadXmlConfig(getThisPlugin().getDescription());
+        WorldManager.loadAutoconnectWorlds();
         prettyLog(Level.INFO, true, "Load Completed.");
     }
 

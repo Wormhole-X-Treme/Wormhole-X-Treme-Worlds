@@ -38,8 +38,11 @@ public class WormholeWorld {
     /** The this world. */
     private World thisWorld = null;
 
+    /** The world spawn. */
+    private Location worldSpawn = null;
+
     /** The world custom spawn. */
-    private Location worldCustomSpawn = null;
+    private int[] worldCustomSpawn = null;
 
     /** The allow hostiles. */
     private boolean allowHostiles = true;
@@ -51,7 +54,7 @@ public class WormholeWorld {
     private boolean netherWorld = false;
 
     /** The autoconnect world. */
-    private boolean autoconnectWorld = false;
+    private boolean autoconnectWorld = true;
 
     /**
      * Instantiates a new world.
@@ -128,19 +131,19 @@ public class WormholeWorld {
      * 
      * @return the worldCustomSpawn
      */
-    public Location getWorldCustomSpawn() {
-        return worldCustomSpawn;
+    public Location getWorldSpawn() {
+        return worldSpawn;
     }
 
 
     /**
      * Sets the world custom spawn.
      * 
-     * @param worldCustomSpawn
-     *            the worldCustomSpawn to set
+     * @param worldSpawn
+     *            the new world custom spawn
      */
-    public void setWorldCustomSpawn(final Location worldCustomSpawn) {
-        this.worldCustomSpawn = worldCustomSpawn;
+    public void setWorldSpawn(final Location worldSpawn) {
+        this.worldSpawn = worldSpawn;
     }
 
 
@@ -221,6 +224,25 @@ public class WormholeWorld {
      */
     public boolean isAutoconnectWorld() {
         return autoconnectWorld;
+    }
+
+    /**
+     * Sets the world custom spawn.
+     * 
+     * @param worldCustomSpawn
+     *            the new world custom spawn
+     */
+    public void setWorldCustomSpawn(final int[] worldCustomSpawn) {
+        this.worldCustomSpawn = worldCustomSpawn.clone();
+    }
+
+    /**
+     * Gets the world custom spawn.
+     * 
+     * @return the world custom spawn
+     */
+    public int[] getWorldCustomSpawn() {
+        return worldCustomSpawn.clone();
     }
 
 }

@@ -21,6 +21,7 @@ package com.wormhole_xtreme.worlds.events;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
 
+import com.wormhole_xtreme.worlds.config.ConfigManager;
 import com.wormhole_xtreme.worlds.plugin.HelpSupport;
 import com.wormhole_xtreme.worlds.plugin.PermissionsSupport;
 
@@ -37,10 +38,10 @@ public class PluginEnable extends ServerListener {
     @Override
     public void onPluginEnable(final PluginEnableEvent pluginEnableEvent) {
         final String enableEventPluginName = pluginEnableEvent.getPlugin().getDescription().getName();
-        if (enableEventPluginName.equals("Permissions")) {
+        if (enableEventPluginName.equals("Permissions") && ConfigManager.getServerOptionPermissions()) {
             PermissionsSupport.enablePermissions();
         }
-        else if (enableEventPluginName.equals("Help")) {
+        else if (enableEventPluginName.equals("Help") && ConfigManager.getServerOptionHelp()) {
             HelpSupport.enableHelp();
             HelpSupport.registerHelpCommands();
         }

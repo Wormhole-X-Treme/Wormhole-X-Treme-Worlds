@@ -22,11 +22,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 import java.util.logging.Level;
 
+import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
@@ -39,6 +41,8 @@ import org.bukkit.plugin.PluginDescriptionFile;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ConfigManager.ServerOptionKeys;
+import com.wormhole_xtreme.worlds.world.WorldManager;
+import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
 /**
  * The Class WormholeXTtremeWorldsConfig.
@@ -53,6 +57,11 @@ public class XMLConfig {
     /** The config file. */
     private static File configFile = null;
 
+    /** The config directory. */
+    private static File configDirectory = null;
+
+    /** The world config directory. */
+    private static File worldConfigDirectory = null;
 
     /**
      * Load xml config.
@@ -85,6 +94,58 @@ public class XMLConfig {
     }
 
     /**
+     * Prepare config directories.
+     * 
+     * @param desc
+     *            the desc
+     * @return true, if successful
+     * @throws FileNotFoundException
+     *             the file not found exception
+     * @throws XMLStreamException
+     *             the xML stream exception
+     */
+    private static boolean prepareConfig(final PluginDescriptionFile desc) throws FileNotFoundException, XMLStreamException {
+        setConfigDirectory(new File("plugins" + File.separator + desc.getName() + File.separator));
+        setWorldConfigDirectory(new File(getConfigDirectory().getPath() + File.separator + "worlds" + File.separator));
+        setConfigFile(new File(getConfigDirectory().getPath() + File.separator + "config.xml"));
+
+        if (!getConfigDirectory().exists()) {
+            if (getConfigDirectory().mkdir()) {
+                thisPlugin.prettyLog(Level.CONFIG, false, "Created config directory: " + getConfigDirectory().toString());
+            }
+            else {
+                thisPlugin.prettyLog(Level.SEVERE, false, "Uable to create config directory: " + getConfigDirectory().toString());
+                return false;
+            }
+        }
+        if (!getWorldConfigDirectory().exists()) {
+            if (getWorldConfigDirectory().mkdir()) {
+                thisPlugin.prettyLog(Level.CONFIG, false, "Created world config directory: " + getWorldConfigDirectory().toString());
+            }
+            else {
+                thisPlugin.prettyLog(Level.SEVERE, false, "Uable to create world config directory: " + getWorldConfigDirectory().toString());
+                return false;
+            }
+        }
+        if (!getConfigFile().exists()) {
+            thisPlugin.prettyLog(Level.WARNING, false, "No configuration file found, generating fresh.");
+            FileOutputStream fileOutputStream = null;
+            try {
+                fileOutputStream = new FileOutputStream(getConfigFile());
+                saveConfigFile(fileOutputStream, DefaultOptions.defaultServerOptions, null);
+            }
+            finally {
+                try {
+                    fileOutputStream.close();
+                }
+                catch (final IOException e) {
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * Write xml config.
      * 
      * @param desc
@@ -95,76 +156,223 @@ public class XMLConfig {
      *             the xML stream exception
      */
     private static void writeXmlConfig(final PluginDescriptionFile desc) throws FileNotFoundException, XMLStreamException {
-        final File directory = new File("plugins" + File.separator + desc.getName() + File.separator);
-        if (!directory.exists()) {
+        if (!prepareConfig(desc)) {
+            return;
+        }
+
+        if (getConfigDirectory().exists()) {
+            final Set<ServerOptionKeys> keys = ConfigManager.serverOptions.keySet();
+            final ArrayList<ServerOptionKeys> list = new ArrayList<ServerOptionKeys>(keys);
+            Collections.sort(list);
+            final ServerOption[] optionArray = new ServerOption[list.size()];
+            int i = 0;
+            for (final ServerOptionKeys key : list) {
+                final ServerOption o = ConfigManager.serverOptions.get(key);
+                if (o != null) {
+                    optionArray[i] = new ServerOption(o.getOptionKey(), o.getOptionDescription(), o.getOptionType(), o.getOptionValue(), o.getOptionPlugin());
+                    i++;
+                }
+            }
+
+            FileOutputStream fileOutputStream = null;
             try {
-                directory.mkdir();
-                thisPlugin.prettyLog(Level.CONFIG, false, "Created config directory: " + directory.toString());
+                fileOutputStream = new FileOutputStream(getConfigFile());
+                saveConfigFile(fileOutputStream, optionArray, null);
+                thisPlugin.prettyLog(Level.INFO, false, "Configuration saved.");
+
             }
-            catch (final Exception e) {
-                thisPlugin.prettyLog(Level.SEVERE, false, "Uable to create config directory: " + directory.toString());
-            }
-        }
-        final String configFileLocation = directory.getPath() + File.separator + "config.xml";
-        setConfigFile(new File(configFileLocation));
-        final Set<ServerOptionKeys> keys = ConfigManager.serverOptions.keySet();
-        final ArrayList<ServerOptionKeys> list = new ArrayList<ServerOptionKeys>(keys);
-        Collections.sort(list);
-        final ServerOption[] optionArray = new ServerOption[list.size()];
-        int i = 0;
-        for (final ServerOptionKeys key : list) {
-            final ServerOption o = ConfigManager.serverOptions.get(key);
-            if (o != null) {
-                optionArray[i] = new ServerOption(o.getOptionKey(), o.getOptionDescription(), o.getOptionType(), o.getOptionValue(), o.getOptionPlugin());
-                i++;
+            finally {
+                try {
+                    fileOutputStream.close();
+                }
+                catch (final IOException e) {
+                }
             }
         }
-        saveConfig(optionArray);
-        thisPlugin.prettyLog(Level.INFO, false, "Configuration saved.");
+        if (getWorldConfigDirectory().exists()) {
+            final WormholeWorld[] wormholeWorlds = WorldManager.getAllWorlds();
+            for (final WormholeWorld wormholeWorld : wormholeWorlds) {
+                if (wormholeWorld != null) {
+                    final String worldName = wormholeWorld.getWorldName();
+                    FileOutputStream fileOutputStream = null;
+                    try {
+                        fileOutputStream = new FileOutputStream(getWorldConfigDirectory() + File.separator + worldName + ".xml");
+                        saveConfigFile(fileOutputStream, null, wormholeWorld);
+                        thisPlugin.prettyLog(Level.INFO, false, "World Configuration saved: " + worldName);
+                    }
+                    finally {
+                        try {
+                            fileOutputStream.close();
+                        }
+                        catch (final IOException e) {
+                        }
+                    }
+                }
+            }
+
+        }
     }
+
 
     /**
      * Read xml config.
      * 
      * @param desc
      *            the {@link PluginDescriptionFile}
-     * @throws XMLStreamException
-     * @throws FileNotFoundException
-     */
-    private static void readXmlConfig(final PluginDescriptionFile desc) throws FileNotFoundException, XMLStreamException {
-        final File directory = new File("plugins" + File.separator + desc.getName() + File.separator);
-
-        if (!directory.exists()) {
-            try {
-                directory.mkdir();
-                thisPlugin.prettyLog(Level.CONFIG, false, "Created config directory: " + directory.toString());
-            }
-            catch (final Exception e) {
-                thisPlugin.prettyLog(Level.SEVERE, false, "Uable to create config directory: " + directory.toString());
-            }
-        }
-
-        final String configFileLocation = directory.getPath() + File.separator + "config.xml";
-        setConfigFile(new File(configFileLocation));
-        if (!getConfigFile().exists()) {
-            thisPlugin.prettyLog(Level.WARNING, false, "No configuration file found, generating fresh.");
-            saveConfig(DefaultOptions.defaultServerOptions);
-        }
-        readConfig();
-    }
-
-
-    /**
-     * Read config.
-     * 
      * @throws FileNotFoundException
      *             the file not found exception
      * @throws XMLStreamException
      *             the xML stream exception
      */
-    private static void readConfig() throws FileNotFoundException, XMLStreamException {
-        final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-        final XMLEventReader eventReader = inputFactory.createXMLEventReader(new FileInputStream(getConfigFile()));
+    private static void readXmlConfig(final PluginDescriptionFile desc) throws FileNotFoundException, XMLStreamException {
+        if (!prepareConfig(desc)) {
+            return;
+        }
+        if (getConfigFile().exists()) {
+            FileInputStream fileInputStream = null;
+            try {
+                fileInputStream = new FileInputStream(getConfigFile());
+                readConfigFile(fileInputStream);
+                thisPlugin.prettyLog(Level.INFO, false, "Config Loaded");
+            }
+            finally {
+                try {
+                    fileInputStream.close();
+                }
+                catch (final IOException e) {
+                }
+            }
+        }
+        if (getWorldConfigDirectory().exists()) {
+            for (final File worldFile : getWorldConfigDirectory().listFiles()) {
+                if (!worldFile.isDirectory() && !worldFile.isHidden() && worldFile.getPath().endsWith("xml")) {
+                    FileInputStream fileInputStream = null;
+                    try {
+                        fileInputStream = new FileInputStream(worldFile);
+                        readWorldConfigFile(fileInputStream);
+                        thisPlugin.prettyLog(Level.INFO, false, "World Config Loaded: " + worldFile.getName());
+                    }
+                    finally {
+                        try {
+                            fileInputStream.close();
+                        }
+                        catch (final IOException e) {
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Read world config file.
+     * 
+     * @param fileInputStream
+     *            the file input stream
+     * @throws XMLStreamException
+     *             the xML stream exception
+     * @throws FactoryConfigurationError
+     *             the factory configuration error
+     */
+    private static void readWorldConfigFile(final FileInputStream fileInputStream) throws XMLStreamException, FactoryConfigurationError {
+        final XMLEventReader eventReader = XMLInputFactory.newInstance().createXMLEventReader(fileInputStream);
+        XMLEvent event;
+        String worldName = null, worldOwner = null, worldCustomSpawn = null;
+        boolean allowHostiles = true, allowNeutrals = true, netherWorld = false, autoconnectWorld = true;
+        while (eventReader.hasNext()) {
+            String optionName = null;
+            String optionType = null;
+            Object optionValue = null;
+            boolean v = false;
+            boolean t = false;
+            int i = 0;
+            while ((i < 2) && eventReader.hasNext()) {
+                event = eventReader.nextEvent();
+                if (event.isStartElement()) {
+                    final String elementType = event.asStartElement().getName().toString();
+                    if (elementType.equals("type")) {
+                        t = true;
+                    }
+                    else if (elementType.equals("value")) {
+                        v = true;
+                    }
+                    else {
+                        optionName = elementType;
+                    }
+                }
+                else if (event.isCharacters() && t) {
+                    t = false;
+                    i++;
+                    optionType = event.asCharacters().getData();
+                }
+                else if (event.isCharacters() && v) {
+                    v = false;
+                    i++;
+                    optionValue = event.asCharacters().getData();
+                }
+            }
+            if (optionName != null) {
+                thisPlugin.prettyLog(Level.CONFIG, false, "Got from World XML read: " + optionName + ", " + optionType + ", " + optionValue);
+                if (optionName.equals("worldName")) {
+                    worldName = String.valueOf(optionValue).trim();
+                }
+                else if (optionName.equals("worldOwner")) {
+                    worldOwner = String.valueOf(optionValue).trim();
+                }
+                else if (optionName.equals("worldCustomSpawn")) {
+                    worldCustomSpawn = String.valueOf(optionValue).trim();
+                }
+                else if (optionName.equals("allowHostiles")) {
+                    allowHostiles = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
+                else if (optionName.equals("allowNeutrals")) {
+                    allowNeutrals = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
+                else if (optionName.equals("netherWorld")) {
+                    netherWorld = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
+                else if (optionName.equals("autoconnectWorld")) {
+                    autoconnectWorld = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
+            }
+        }
+        if ((worldName != null) && (worldOwner != null) && (worldCustomSpawn != null)) {
+            final WormholeWorld world = new WormholeWorld();
+            world.setWorldName(worldName);
+            world.setWorldOwner(worldOwner);
+            final int[] wcs = {
+                Integer.valueOf(worldCustomSpawn.split("\\|")[0]),Integer.valueOf(worldCustomSpawn.split("\\|")[1]),
+                Integer.valueOf(worldCustomSpawn.split("\\|")[2])};
+            world.setWorldCustomSpawn(wcs);
+            if (!allowHostiles) {
+                world.setAllowHostiles(allowHostiles);
+            }
+            if (!allowNeutrals) {
+                world.setAllowHostiles(allowNeutrals);
+            }
+            if (netherWorld) {
+                world.setNetherWorld(netherWorld);
+            }
+            if (!autoconnectWorld) {
+                world.setAutoconnectWorld(autoconnectWorld);
+            }
+            WorldManager.addWorld(world);
+        }
+    }
+
+    /**
+     * Read config.
+     * 
+     * @param fileInputStream
+     *            the file input stream
+     * @throws XMLStreamException
+     *             the xML stream exception
+     * @throws FactoryConfigurationError
+     *             the factory configuration error
+     */
+    private static void readConfigFile(final FileInputStream fileInputStream) throws XMLStreamException, FactoryConfigurationError {
+        final XMLEventReader eventReader = XMLInputFactory.newInstance().createXMLEventReader(fileInputStream);
         XMLEvent event;
 
         while (eventReader.hasNext()) {
@@ -205,7 +413,7 @@ public class XMLConfig {
                 final ServerOption[] defaultOptions = DefaultOptions.defaultServerOptions.clone();
                 for (final ServerOption defaultOption : defaultOptions) {
                     if (defaultOption.getOptionKey() == optionName) {
-                        if ((optionType == null) || (optionType != defaultOption.getOptionType())) {
+                        if ((optionType == null) || (!optionType.equals(defaultOption.getOptionType()))) {
                             optionType = defaultOption.getOptionType();
                         }
                         if ((optionValue == null) || !verifyOptionValue(optionType, optionValue)) {
@@ -255,16 +463,19 @@ public class XMLConfig {
     /**
      * Save config.
      * 
-     * @param option
-     *            the option
-     * @throws FileNotFoundException
-     *             the file not found exception
+     * @param fileOutputStream
+     *            the file stream
+     * @param options
+     *            the options
+     * @param world
+     *            the world
      * @throws XMLStreamException
      *             the xML stream exception
+     * @throws FactoryConfigurationError
+     *             the factory configuration error
      */
-    private static void saveConfig(final ServerOption[] option) throws FileNotFoundException, XMLStreamException {
-        final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-        final XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(getConfigFile()));
+    private static void saveConfigFile(final FileOutputStream fileOutputStream, final ServerOption[] options, final WormholeWorld world) throws XMLStreamException, FactoryConfigurationError {
+        final XMLEventWriter eventWriter = XMLOutputFactory.newInstance().createXMLEventWriter(fileOutputStream);
         final XMLEventFactory eventFactory = XMLEventFactory.newFactory();
         final XMLEvent end = eventFactory.createDTD("\n");
 
@@ -272,16 +483,26 @@ public class XMLConfig {
         eventWriter.add(end);
         eventWriter.add(eventFactory.createStartElement("", "", "WormholeXTremeWorlds"));
         eventWriter.add(end);
-
-        for (final ServerOption element : option) {
-            createNode(eventWriter, element.getOptionKey(), element.getOptionType(), element.getOptionValue().toString(), element.getOptionDescription());
+        if (options != null) {
+            for (final ServerOption element : options) {
+                createConfigNode(eventWriter, element.getOptionKey().toString(), element.getOptionType(), element.getOptionValue().toString(), element.getOptionDescription());
+            }
         }
-
+        else if (world != null) {
+            createConfigNode(eventWriter, "worldName", "String", world.getWorldName(), "The name of this world. Do not change unless you have renamed the world on disk.");
+            createConfigNode(eventWriter, "worldOwner", "String", world.getWorldOwner(), "The owner of this world. Can be any player. Factors into permissions and iConomy support.");
+            createConfigNode(eventWriter, "worldCustomSpawn", "int[]", world.getWorldCustomSpawn()[0] + "|" + world.getWorldCustomSpawn()[1] + "|" + world.getWorldCustomSpawn()[2], "World custom spawn location in X|Y|Z ints.");
+            createConfigNode(eventWriter, "allowHostiles", "boolean", Boolean.valueOf(world.isAllowHostiles()).toString(), "Are hostiles allowed on this world?");
+            createConfigNode(eventWriter, "allowNeutrals", "boolean", Boolean.valueOf(world.isAllowNeutrals()).toString(), "Are neutrals allowed on this world?");
+            createConfigNode(eventWriter, "netherWorld", "boolean", Boolean.valueOf(world.isNetherWorld()).toString(), "Is this a nether world? BE SURE TO HAVE THIS RIGHT!");
+            createConfigNode(eventWriter, "autoconnectWorld", "boolean", Boolean.valueOf(world.isAutoconnectWorld()).toString(), "Does this world automatically get loaded at server start? Non connected worlds can be loaded in game as needed.");
+        }
         eventWriter.add(eventFactory.createEndElement("", "", "WormholeXTremeWorlds"));
         eventWriter.add(end);
         eventWriter.add(eventFactory.createEndDocument());
         eventWriter.close();
     }
+
 
     /**
      * Creates the node.
@@ -299,17 +520,16 @@ public class XMLConfig {
      * @throws XMLStreamException
      *             the xML stream exception
      */
-    private static void createNode(final XMLEventWriter eventWriter, final ServerOptionKeys name, final String type, final String value, final String description) throws XMLStreamException {
+    private static void createConfigNode(final XMLEventWriter eventWriter, final String name, final String type, final String value, final String description) throws XMLStreamException {
         final XMLEventFactory eventFactory = XMLEventFactory.newInstance();
         final XMLEvent end = eventFactory.createDTD("\n");
         final XMLEvent tab = eventFactory.createDTD("\t");
-        final String optionName = name.toString();
 
         eventWriter.add(tab);
         eventWriter.add(eventFactory.createComment(description));
         eventWriter.add(end);
         eventWriter.add(tab);
-        eventWriter.add(eventFactory.createStartElement("", "", optionName));
+        eventWriter.add(eventFactory.createStartElement("", "", name));
         eventWriter.add(end);
         eventWriter.add(tab);
         eventWriter.add(tab);
@@ -324,7 +544,7 @@ public class XMLConfig {
         eventWriter.add(eventFactory.createEndElement("", "", "value"));
         eventWriter.add(end);
         eventWriter.add(tab);
-        eventWriter.add(eventFactory.createEndElement("", "", optionName));
+        eventWriter.add(eventFactory.createEndElement("", "", name));
         eventWriter.add(end);
         eventWriter.add(end);
     }
@@ -346,5 +566,55 @@ public class XMLConfig {
      */
     private static File getConfigFile() {
         return configFile;
+    }
+
+    /**
+     * Sets the config directory.
+     * 
+     * @param configDirectory
+     *            the new config directory
+     */
+    private static void setConfigDirectory(final File configDirectory) {
+        XMLConfig.configDirectory = configDirectory;
+    }
+
+    /**
+     * Gets the config directory.
+     * 
+     * @return the config directory
+     */
+    private static File getConfigDirectory() {
+        return configDirectory;
+    }
+
+    /**
+     * Gets the world config directory.
+     * 
+     * @return the worldConfigDirectory
+     */
+    private static File getWorldConfigDirectory() {
+        return worldConfigDirectory;
+    }
+
+    /**
+     * Sets the world config directory.
+     * 
+     * @param worldConfigDirectory
+     *            the worldConfigDirectory to set
+     */
+    private static void setWorldConfigDirectory(final File worldConfigDirectory) {
+        XMLConfig.worldConfigDirectory = worldConfigDirectory;
+    }
+
+    /**
+     * @param worldName
+     */
+    public static void deleteXmlWorldConfig(final String worldName) {
+        final File deleteWorld = new File(getWorldConfigDirectory() + File.separator + worldName + ".xml");
+        if (deleteWorld.exists()) {
+            if (!deleteWorld.delete()) {
+                thisPlugin.prettyLog(Level.WARNING, false, "Unable to delete config file for world: " + worldName);
+            }
+        }
     }
 }

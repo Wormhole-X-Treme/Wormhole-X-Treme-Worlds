@@ -20,8 +20,6 @@ package com.wormhole_xtreme.worlds.config;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.plugin.PluginDescriptionFile;
-
 
 /**
  * The Class ConfigManager.
@@ -32,16 +30,6 @@ public class ConfigManager {
 
     /** The Constant options. */
     public static final ConcurrentHashMap<ServerOptionKeys, ServerOption> serverOptions = new ConcurrentHashMap<ServerOptionKeys, ServerOption>();
-
-    /**
-     * Sets the up options.
-     * 
-     * @param desc
-     *            the new up options
-     */
-    public static void setupOptions(final PluginDescriptionFile desc) {
-        XMLConfig.loadXmlConfig(desc);
-    }
 
     /**
      * Sets the option value.
@@ -59,6 +47,17 @@ public class ConfigManager {
     }
 
     /**
+     * Gets the server option.
+     * 
+     * @param serverOptionKey
+     *            the server option key
+     * @return the server option
+     */
+    private static ServerOption getServerOption(final ServerOptionKeys serverOptionKey) {
+        return serverOptions.get(serverOptionKey);
+    }
+
+    /**
      * Sets the server option permissions.
      * 
      * @param b
@@ -66,6 +65,21 @@ public class ConfigManager {
      */
     public static void setServerOptionPermissions(final boolean b) {
         ConfigManager.setOptionValue(ServerOptionKeys.serverOptionPermissions, b);
+    }
+
+    /**
+     * Gets the server option permissions.
+     * 
+     * @return the server option permissions
+     */
+    public static boolean getServerOptionPermissions() {
+        final ServerOption o = getServerOption(ServerOptionKeys.serverOptionPermissions);
+        if (o != null) {
+            return Boolean.valueOf(o.getOptionValue().toString());
+        }
+        else {
+            return true;
+        }
     }
 
     /**
@@ -79,6 +93,21 @@ public class ConfigManager {
     }
 
     /**
+     * Gets the server option ops bypass permissions.
+     * 
+     * @return the server option ops bypass permissions
+     */
+    public static boolean getServerOptionOpsBypassPermissions() {
+        final ServerOption o = getServerOption(ServerOptionKeys.serverOptionOpsBypassPermissions);
+        if (o != null) {
+            return Boolean.valueOf(o.getOptionValue().toString());
+        }
+        else {
+            return true;
+        }
+    }
+
+    /**
      * Sets the server option iconomy.
      * 
      * @param b
@@ -86,6 +115,21 @@ public class ConfigManager {
      */
     public static void setServerOptionIconomy(final boolean b) {
         ConfigManager.setOptionValue(ServerOptionKeys.serverOptionIconomy, b);
+    }
+
+    /**
+     * Gets the server option iconomy.
+     * 
+     * @return the server option iconomy
+     */
+    public static boolean getServerOptionIconomy() {
+        final ServerOption o = getServerOption(ServerOptionKeys.serverOptionIconomy);
+        if (o != null) {
+            return Boolean.valueOf(o.getOptionValue().toString());
+        }
+        else {
+            return true;
+        }
     }
 
     /**
@@ -109,13 +153,28 @@ public class ConfigManager {
     }
 
     /**
-     * Sets the world option world list.
+     * Sets the server option help.
      * 
-     * @param s
-     *            the new world option world list
+     * @param b
+     *            the new server option help
      */
-    public static void setWorldOptionWorldList(final String[] s) {
-        ConfigManager.setOptionValue(ServerOptionKeys.worldOptionWorldList, s);
+    public static void setServerOptionHelp(final boolean b) {
+        ConfigManager.setOptionValue(ServerOptionKeys.serverOptionHelp, b);
+    }
+
+    /**
+     * Gets the server option help.
+     * 
+     * @return the server option help
+     */
+    public static boolean getServerOptionHelp() {
+        final ServerOption o = getServerOption(ServerOptionKeys.serverOptionHelp);
+        if (o != null) {
+            return Boolean.valueOf(o.getOptionValue().toString());
+        }
+        else {
+            return true;
+        }
     }
 
     /**
@@ -140,22 +199,26 @@ public class ConfigManager {
 
         /** The server option help. */
         serverOptionHelp,
-
-        /** The world option world list. */
-        worldOptionWorldList,
-
-        /** The world option normal defaults. */
-        worldOptionNormalDefaults,
-
-        /** The world option nether defaults. */
-        worldOptionNetherDefaults;
     }
 
+    /**
+     * The Enum WorldOptionKeys.
+     */
     public enum WorldOptionKeys {
+        
+        /** The world option nether. */
         worldOptionNether,
+        
+        /** The world option no hostiles. */
         worldOptionNoHostiles,
+        
+        /** The world option no neutrals. */
         worldOptionNoNeutrals,
+        
+        /** The world option seed. */
         worldOptionSeed,
-        worldOptionConnect
+        
+        /** The world option no connect. */
+        worldOptionNoConnect
     }
 }

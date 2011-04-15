@@ -1,5 +1,20 @@
-/**
- *
+/*
+ * Wormhole X-Treme Worlds Plugin for Bukkit
+ * Copyright (C) 2011 Dean Bailey
+ * 
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 package com.wormhole_xtreme.worlds.plugin;
 
@@ -10,42 +25,61 @@ import org.bukkit.plugin.PluginManager;
 
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
+import com.wormhole_xtreme.worlds.config.ConfigManager;
+
 
 /**
- * @author alron
+ * The Class PermissionsSupport.
  * 
+ * @author alron
  */
 public class PermissionsSupport {
 
+    /** The Constant thisPlugin. */
     private static final WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
+
+    /** The Constant pluginManager. */
     private static final PluginManager pluginManager = WormholeXTremeWorlds.getThisPlugin().getServer().getPluginManager();
 
+    /**
+     * Enable permissions.
+     */
     public static void enablePermissions() {
-        if (WormholeXTremeWorlds.getPermissionHandler() == null) {
-            final Plugin test = pluginManager.getPlugin("Permissions");
-            if (test != null) {
-                final String version = test.getDescription().getVersion();
-                if (!version.equals("2.4") && !version.startsWith("2.5") && !version.startsWith("2.6")) {
-                    thisPlugin.prettyLog(Level.WARNING, false, "Not a supported version of Permissions. Recommended is 2.6.x");
+        if (ConfigManager.getServerOptionPermissions()) {
+            if (WormholeXTremeWorlds.getPermissionHandler() == null) {
+                final Plugin test = pluginManager.getPlugin("Permissions");
+                if (test != null) {
+                    final String version = test.getDescription().getVersion();
+                    if (!version.startsWith("2.5") && !version.startsWith("2.6") && !version.startsWith("2.7")) {
+                        thisPlugin.prettyLog(Level.WARNING, false, "Not a supported version of Permissions. Recommended is 2.7.x");
+                    }
+                    try {
+                        WormholeXTremeWorlds.setPermissionHandler(((Permissions) test).getHandler());
+                        thisPlugin.prettyLog(Level.INFO, false, "Attached to Permissions version " + version);
+                    }
+                    catch (final ClassCastException e) {
+                        thisPlugin.prettyLog(Level.WARNING, false, "Failed to get cast to Permissions: " + e.getMessage());
+                    }
                 }
-                try {
-                    WormholeXTremeWorlds.setPermissionHandler(((Permissions) test).getHandler());
-                    thisPlugin.prettyLog(Level.INFO, false, "Attached to Permissions version " + version);
-                }
-                catch (final ClassCastException e) {
-                    thisPlugin.prettyLog(Level.WARNING, false, "Failed to get cast to Permissions: " + e.getMessage());
+                else {
+                    thisPlugin.prettyLog(Level.INFO, false, "Permission Plugin not yet available.");
                 }
             }
-            else {
-                thisPlugin.prettyLog(Level.INFO, false, "Permission Plugin not yet available.");
-            }
+        }
+        else {
+            thisPlugin.prettyLog(Level.INFO, false, "Permission Plugin support disabled via config.xml");
         }
     }
 
+    /**
+     * Disable permissions.
+     */
     public static void disablePermissions() {
-        if (WormholeXTremeWorlds.getPermissionHandler() != null) {
-            WormholeXTremeWorlds.setPermissionHandler(null);
-            thisPlugin.prettyLog(Level.INFO, false, "Detached from Permissions plugin.");
+        if (ConfigManager.getServerOptionPermissions()) {
+            if (WormholeXTremeWorlds.getPermissionHandler() != null) {
+                WormholeXTremeWorlds.setPermissionHandler(null);
+                thisPlugin.prettyLog(Level.INFO, false, "Detached from Permissions plugin.");
+            }
         }
     }
 }

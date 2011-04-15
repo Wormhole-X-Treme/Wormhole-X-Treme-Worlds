@@ -30,6 +30,8 @@ import org.bukkit.entity.Player;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ConfigManager.WorldOptionKeys;
+import com.wormhole_xtreme.worlds.permissions.PermissionsManager;
+import com.wormhole_xtreme.worlds.permissions.PermissionsManager.PermissionType;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
@@ -59,6 +61,9 @@ class Wxw implements CommandExecutor {
                 else if (cleanArgs[0].equalsIgnoreCase("remove")) {
                     return doRemoveWorld(sender, CommandUtilities.commandRemover(cleanArgs));
                 }
+                else if (cleanArgs[0].equalsIgnoreCase("connect")) {
+                    return doConnectWorld(sender, CommandUtilities.commandRemover(cleanArgs));
+                }
                 else if (cleanArgs[0].equalsIgnoreCase("modify")) {
                     return doModifyWorld(sender, CommandUtilities.commandRemover(cleanArgs));
                 }
@@ -67,7 +72,16 @@ class Wxw implements CommandExecutor {
                 }
                 else if (cleanArgs[0].equalsIgnoreCase("go")) {
                     if (CommandUtilities.playerCheck(sender)) {
-                        return goGoWorld((Player) sender, CommandUtilities.commandRemover(cleanArgs));
+                        return doGoWorld((Player) sender, CommandUtilities.commandRemover(cleanArgs));
+                    }
+                    else {
+                        sender.sendMessage("This is an in game only command");
+                        return true;
+                    }
+                }
+                else if (cleanArgs[0].equalsIgnoreCase("setspawn")) {
+                    if (CommandUtilities.playerCheck(sender)) {
+                        return doSetSpawnWorld((Player) sender, CommandUtilities.commandRemover(cleanArgs));
                     }
                     else {
                         sender.sendMessage("This is an in game only command");
@@ -76,6 +90,25 @@ class Wxw implements CommandExecutor {
                 }
             }
         }
+        return false;
+    }
+
+    /**
+     * @param sender
+     * @param commandRemover
+     * @return
+     */
+    private boolean doConnectWorld(final CommandSender sender, final String[] commandRemover) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /**
+     * @param sender
+     * @param commandRemover
+     * @return
+     */
+    private boolean doSetSpawnWorld(final Player sender, final String[] args) {
         return false;
     }
 
@@ -199,6 +232,7 @@ class Wxw implements CommandExecutor {
                         }
                         if (doAutoload && (autoloadCount == 1)) {
                             world.setAutoconnectWorld(autoload);
+                            WorldManager.connectWorld(world);
                         }
                         else if (doAutoload) {
                             sender.sendMessage("Conflicting or multiple autoload commands specified.");
@@ -209,6 +243,7 @@ class Wxw implements CommandExecutor {
                         else if (playerName != null) {
                             sender.sendMessage("Conflicting or multiple owner commands specified.");
                         }
+                        WorldManager.addWorld(world);
                         final String[] w = new String[1];
                         w[0] = worldName;
                         return doInfoWorld(sender, w);
@@ -239,7 +274,7 @@ class Wxw implements CommandExecutor {
     }
 
     /**
-     * Go go world.
+     * Do go world.
      * 
      * @param sender
      *            the sender
@@ -247,14 +282,24 @@ class Wxw implements CommandExecutor {
      *            the args
      * @return true, if successful
      */
-    private static boolean goGoWorld(final Player player, final String[] args) {
-        if ((args != null) && (args.length >= 1)) {
-            // TODO: Add world teleportation logic calls here
-            player.sendMessage("go: " + Arrays.toString(args));
+    private static boolean doGoWorld(final Player player, final String[] args) {
+        if ((args != null) && (args.length == 1)) {
+
+            final WormholeWorld wormholeWorld = WorldManager.getWorld(args[0]);
+            if (wormholeWorld != null) {
+                if (PermissionsManager.checkPermissions(player, wormholeWorld, PermissionType.go)) {
+                    player.teleport(wormholeWorld.getWorldSpawn());
+                }
+                else {
+                    player.sendMessage("Permission denied!");
+                }
+            }
+            else {
+                player.sendMessage("World does not exist, or is not configured with WXW: " + args[0]);
+            }
         }
         else {
-            // TODO: Add help output here
-            return false;
+            player.sendMessage("This command requires a single argument - worldname. Nothing more, nothing less.");
         }
         return true;
     }
@@ -270,10 +315,23 @@ class Wxw implements CommandExecutor {
      */
     private static boolean doRemoveWorld(final CommandSender sender, final String[] args) {
         if ((args != null) && (args.length >= 1)) {
-            final WormholeWorld world = WorldManager.getWorld(args[0]);
-            if (world != null) {
-                WorldManager.removeWorld(world);
-                sender.sendMessage("Removed world: " + args[0] + " World will become unavailable at next server restart.");
+            final WormholeWorld wormholeWorld = WorldManager.getWorld(args[0]);
+            if (wormholeWorld != null) {
+                boolean allowed = false;
+                if (CommandUtilities.playerCheck(sender))
+                {
+                    allowed = PermissionsManager.checkPermissions((Player)sender, wormholeWorld, PermissionType.remove);
+                }
+                else {
+                    allowed = true;
+                }
+                if (allowed) {
+                    WorldManager.removeWorld(wormholeWorld);
+                    sender.sendMessage("Removed world: " + args[0] + ". Deleted world config file, world will be unavailable at next server restart.");
+                }
+                else {
+                    sender.sendMessage("You lack the permissions to do this.");
+                }
             }
             else {
                 sender.sendMessage("Specified world does not exist: " + args[0]);
@@ -325,8 +383,8 @@ class Wxw implements CommandExecutor {
                 else if (atlc.startsWith("-nether")) {
                     worldOptionKeyList.add(WorldOptionKeys.worldOptionNether);
                 }
-                else if (atlc.startsWith("-autoload")) {
-                    worldOptionKeyList.add(WorldOptionKeys.worldOptionConnect);
+                else if (atlc.startsWith("-noautoload")) {
+                    worldOptionKeyList.add(WorldOptionKeys.worldOptionNoConnect);
                 }
                 else if (atlc.startsWith("-nohostiles")) {
                     worldOptionKeyList.add(WorldOptionKeys.worldOptionNoHostiles);
@@ -379,7 +437,7 @@ class Wxw implements CommandExecutor {
         }
         else {
             sender.sendMessage("Required Args: -name <WorldName>");
-            sender.sendMessage("Optional Args: -owner <Owner>, -seed <seed>, -nether, -autoload, -nohostiles, -noneutrals, ");
+            sender.sendMessage("Optional Args: -owner <Owner>, -seed <seed>, -nether, -noautoload, -nohostiles, -noneutrals, ");
             return true;
         }
     }

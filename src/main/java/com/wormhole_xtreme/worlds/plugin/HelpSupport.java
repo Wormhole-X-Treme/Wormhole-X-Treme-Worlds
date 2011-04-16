@@ -27,6 +27,7 @@ import org.bukkit.plugin.PluginManager;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ConfigManager;
+import com.wormhole_xtreme.worlds.permissions.PermissionType;
 
 /**
  * The Class PluginUtilities.
@@ -87,6 +88,31 @@ public class HelpSupport {
      * Register help commands.
      */
     public static void registerHelpCommands() {
-        // TODO: Add help commands to register here.
+        if (WormholeXTremeWorlds.getHelp() != null && ConfigManager.getServerOptionHelp()) {
+            WormholeXTremeWorlds.getHelp().registerCommand("wxw", "Wormhole X-Treme Worlds administration, configuration and utilities command", thisPlugin, true);
+            if (WormholeXTremeWorlds.getPermissionHandler() != null && ConfigManager.getServerOptionPermissions()) {
+
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw go [world]", "Go to spawn of specified world.", thisPlugin, PermissionType.GO.getPermission());
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw list", "List all loaded and configured worlds.", thisPlugin, PermissionType.LIST.getPermission());
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw remove [world]", "Remove world from configuration.", thisPlugin, PermissionType.REMOVE.getPermission());
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw connect [world]", "Load unloaded world.", thisPlugin, PermissionType.CONNECT.getPermission());
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw modify [args]", "Modify settings of specified world.", thisPlugin, PermissionType.MODIFY.getPermission());
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw info [world]", "Get info about specified world.", thisPlugin, PermissionType.INFO.getPermission());
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw setspawn", "Set spawn of current world to current location.", thisPlugin, PermissionType.SET_SPAWN.getPermission());
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw create [args]", "Create new world with specified args.", thisPlugin, PermissionType.CREATE.getPermission());
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw spawn", "Go to spawn of current world.", thisPlugin, PermissionType.SPAWN.getPermission());
+            }
+            else {
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw go [world]", "Go to spawn of specified world.", thisPlugin, "OP");
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw list", "List all loaded and configured worlds.", thisPlugin,"OP");
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw remove [world]", "Remove world from configuration.", thisPlugin, "OP");
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw connect [world]", "Load unloaded world.", thisPlugin, "OP");
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw modify [args]", "Modify settings of specified world.", thisPlugin, "OP");
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw info [world]", "Get info about specified world.", thisPlugin, "OP");
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw setspawn", "Set spawn of current world to current location.", thisPlugin, "OP");
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw create [args]", "Create new world with specified args.", thisPlugin, "OP");
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw spawn", "Go to spawn of current world.", thisPlugin, "OP");
+            }
+        }
     }
 }

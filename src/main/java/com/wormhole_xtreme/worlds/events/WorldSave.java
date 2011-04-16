@@ -43,7 +43,7 @@ public class WorldSave extends WorldListener {
     public void onWorldSave(final WorldSaveEvent event) {
         final World world = event.getWorld();
         if (world != null) {
-            thisPlugin.prettyLog(Level.INFO, false, "Caught World Save: " + world.getName());
+            thisPlugin.prettyLog(Level.FINE, false, "Caught World Save: " + world.getName());
         }
     }
 

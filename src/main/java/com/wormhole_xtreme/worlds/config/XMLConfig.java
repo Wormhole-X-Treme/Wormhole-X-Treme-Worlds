@@ -394,7 +394,12 @@ public class XMLConfig {
                         v = true;
                     }
                     else if (elementType.startsWith("serverOption")) {
-                        optionName = ServerOptionKeys.valueOf(elementType);
+                        try {
+                            optionName = ServerOptionKeys.valueOf(elementType);
+                        }
+                        catch (IllegalArgumentException e) {
+                            optionName = null;
+                        }
                     }
                 }
                 else if (event.isCharacters() && t) {
@@ -426,6 +431,12 @@ public class XMLConfig {
 
                 thisPlugin.prettyLog(Level.CONFIG, false, "Got from XML read: " + optionName + ", " + optionDescription + ", " + optionType + ", " + optionValue + ", WormholeXTremeWorlds");
                 ConfigManager.serverOptions.put(optionName, new ServerOption(optionName, optionDescription, optionType, optionValue, "WormholeXTremeWorlds"));
+            }
+        }
+        for (ServerOption defaultOption : DefaultOptions.defaultServerOptions) {
+            if (!ConfigManager.serverOptions.containsKey(defaultOption.getOptionKey())) {
+                ConfigManager.serverOptions.put(defaultOption.getOptionKey(), defaultOption);
+                thisPlugin.prettyLog(Level.CONFIG, false, "Added default config for missing ServerOption: " + defaultOption.getOptionKey().toString() );
             }
         }
     }

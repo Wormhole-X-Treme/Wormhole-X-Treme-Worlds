@@ -21,7 +21,9 @@ package com.wormhole_xtreme.worlds.command;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,8 +32,8 @@ import org.bukkit.entity.Player;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ConfigManager.WorldOptionKeys;
-import com.wormhole_xtreme.worlds.permissions.PermissionsManager;
-import com.wormhole_xtreme.worlds.permissions.PermissionsManager.PermissionType;
+import com.wormhole_xtreme.worlds.config.ResponseType;
+import com.wormhole_xtreme.worlds.permissions.PermissionType;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
@@ -42,15 +44,19 @@ import com.wormhole_xtreme.worlds.world.WormholeWorld;
  */
 class Wxw implements CommandExecutor {
 
+    /** The Constant thisPlugin. */
+    private static final WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
+
     /* (non-Javadoc)
      * @see org.bukkit.command.CommandExecutor#onCommand(org.bukkit.command.CommandSender, org.bukkit.command.Command, java.lang.String, java.lang.String[])
      */
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
-        // TODO: Add initial permissions calls here
         final String[] cleanArgs = CommandUtilities.commandCleaner(args);
         if (cleanArgs != null) {
-            sender.sendMessage("wxw: " + Arrays.toString(cleanArgs));
+            if (CommandUtilities.playerCheck(sender)) {
+                thisPlugin.prettyLog(Level.FINE, false, "Command \"wxw\" args: \"" + Arrays.toString(cleanArgs) + "\"");
+            }
             if (cleanArgs.length >= 1) {
                 if (cleanArgs[0].equalsIgnoreCase("list")) {
                     return doListWorlds(sender);
@@ -75,17 +81,22 @@ class Wxw implements CommandExecutor {
                         return doGoWorld((Player) sender, CommandUtilities.commandRemover(cleanArgs));
                     }
                     else {
-                        sender.sendMessage("This is an in game only command");
+                        sender.sendMessage(ResponseType.ERROR_IN_GAME_ONLY.toString());
                         return true;
                     }
                 }
                 else if (cleanArgs[0].equalsIgnoreCase("setspawn")) {
                     if (CommandUtilities.playerCheck(sender)) {
-                        return doSetSpawnWorld((Player) sender, CommandUtilities.commandRemover(cleanArgs));
+                        return doSetSpawnWorld((Player) sender);
                     }
                     else {
-                        sender.sendMessage("This is an in game only command");
+                        sender.sendMessage(ResponseType.ERROR_IN_GAME_ONLY.toString());
                         return true;
+                    }
+                }
+                else if (cleanArgs[0].equalsIgnoreCase("spawn")) {
+                    if (CommandUtilities.playerCheck(sender)) {
+                        return doSpawnWorld((Player) sender);
                     }
                 }
             }
@@ -94,22 +105,98 @@ class Wxw implements CommandExecutor {
     }
 
     /**
-     * @param sender
-     * @param commandRemover
-     * @return
+     * Do spawn world.
+     * 
+     * @param player
+     *            the player
+     * @return true, if successful
      */
-    private boolean doConnectWorld(final CommandSender sender, final String[] commandRemover) {
-        // TODO Auto-generated method stub
-        return false;
+    private boolean doSpawnWorld(final Player player) {
+        if (PermissionType.SPAWN.checkPermission(player)) {
+            final WormholeWorld wormholeWorld = WorldManager.getWorld(player.getWorld().getName());
+            if (wormholeWorld != null) {
+                player.teleport(wormholeWorld.getWorldSpawn());
+            }
+            else {
+                player.sendMessage(ResponseType.ERROR_COMMAND_ONLY_MANAGED_WORLD.toString() + "spawn");
+            }
+        }
+        else {
+            player.sendMessage(ResponseType.ERROR_PERMISSION_NO.toString());
+        }
+        return true;
     }
 
     /**
+     * Do connect world.
+     * 
      * @param sender
-     * @param commandRemover
-     * @return
+     *            the sender
+     * @param args
+     *            the args
+     * @return true, if successful
      */
-    private boolean doSetSpawnWorld(final Player sender, final String[] args) {
-        return false;
+    private static boolean doConnectWorld(final CommandSender sender, final String[] args) {
+        boolean allowed = false;
+        if (CommandUtilities.playerCheck(sender)) {
+            allowed = PermissionType.CONNECT.checkPermission((Player) sender);
+        }
+        else {
+            allowed = true;
+        }
+        if (allowed) {
+            if ((args != null) && (args.length == 1)) {
+                final WormholeWorld wormholeWorld = WorldManager.getWorld(args[0]);
+                if (wormholeWorld != null) {
+                    WorldManager.connectWorld(wormholeWorld);
+                    sender.sendMessage(ResponseType.NORMAL_HEADER + "Connected world: " + args[0]);
+                }
+                else {
+                    sender.sendMessage(ResponseType.ERROR_COMMAND_ONLY_MANAGED_WORLD.toString() + "connect");
+                }
+            }
+            else {
+                sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + "connect");
+            }
+        }
+        else {
+            sender.sendMessage(ResponseType.ERROR_PERMISSION_NO.toString());
+        }
+        return true;
+    }
+
+    /**
+     * Do set spawn world.
+     * 
+     * @param player
+     *            the player
+     * @return true, if successful
+     */
+    private static boolean doSetSpawnWorld(final Player player) {
+        if (PermissionType.SET_SPAWN.checkPermission(player)) {
+            final Location playerLocation = player.getLocation();
+            final World playerWorld = playerLocation.getWorld();
+            final WormholeWorld playerWormholeWorld = WorldManager.getWorld(playerWorld.getName());
+            if (playerWormholeWorld != null) {
+                if (playerWorld.setSpawnLocation((int) playerLocation.getX(), (int) playerLocation.getY(), (int) playerLocation.getZ())) {
+                    playerWormholeWorld.setWorldSpawn(playerLocation);
+                    playerWormholeWorld.setWorldCustomSpawn(new int[]{
+                        (int) playerLocation.getX(),(int) playerLocation.getY(),(int) playerLocation.getZ()});
+                    WorldManager.addWorld(playerWormholeWorld);
+                    player.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Spawn for world \"" + playerWorld.getName() + "\" set to current location.");
+                }
+                else {
+                    player.sendMessage(ResponseType.ERROR_HEADER.toString() + "Unable to set spawn for world \"" + playerWorld.getName() + "\"!");
+                }
+            }
+            else {
+                player.sendMessage(ResponseType.ERROR_COMMAND_ONLY_MANAGED_WORLD.toString() + "setspawn");
+            }
+        }
+        else {
+            player.sendMessage(ResponseType.ERROR_PERMISSION_NO.toString());
+        }
+        return true;
     }
 
     /**
@@ -122,20 +209,32 @@ class Wxw implements CommandExecutor {
      * @return true, if successful
      */
     private static boolean doInfoWorld(final CommandSender sender, final String[] args) {
-        if ((args != null) && (args.length == 1)) {
-            final WormholeWorld world = WorldManager.getWorld(args[0]);
-            if (world != null) {
-                sender.sendMessage("World: " + args[0] + " Owner: " + world.getWorldOwner() + " Nether: " + world.isNetherWorld());
-                sender.sendMessage("Hostiles: " + world.isAllowHostiles() + " Neutrals: " + world.isAllowNeutrals());
-                sender.sendMessage("Autoload at start: " + world.isAutoconnectWorld());
+        boolean allowed = false;
+        if (CommandUtilities.playerCheck(sender)) {
+            allowed = PermissionType.INFO.checkPermission((Player) sender);
+        }
+        else {
+            allowed = true;
+        }
+        if (allowed) {
+            if ((args != null) && (args.length == 1)) {
+                final WormholeWorld world = WorldManager.getWorld(args[0]);
+                if (world != null) {
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "World: " + args[0] + " Owner: " + world.getWorldOwner() + " Nether: " + world.isNetherWorld());
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Hostiles: " + world.isAllowHostiles() + " Neutrals: " + world.isAllowNeutrals());
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Autoload at start: " + world.isAutoconnectWorld());
+                }
+                else {
+                    sender.sendMessage(ResponseType.ERROR_WORLD_NOT_EXIST.toString() + args[0]);
+                    sender.sendMessage(ResponseType.ERROR_WORLD_MAY_BE_ON_DISK.toString());
+                }
             }
             else {
-                sender.sendMessage("World does not exist: " + args[0]);
-                sender.sendMessage("World may exist on disk, but has not been registered with Wormholw X-Treme Worlds.");
+                sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + "info");
             }
         }
         else {
-            sender.sendMessage("Requires world name as an argument.");
+            sender.sendMessage(ResponseType.ERROR_PERMISSION_NO.toString());
         }
         return true;
     }
@@ -150,156 +249,164 @@ class Wxw implements CommandExecutor {
      * @return true, if successful
      */
     private static boolean doModifyWorld(final CommandSender sender, final String[] args) {
-        if ((args != null) && (args.length >= 1)) {
-            sender.sendMessage("modify: " + Arrays.toString(args));
-            String worldName = null, playerName = null;
-            boolean doHostiles = false, hostiles = false, doNeutrals = false, neutrals = false, doAutoload = false, autoload = false;
-            int hostileCount = 0, neutralCount = 0, autoloadCount = 0, nameCount = 0, playerCount = 0;
-            for (final String arg : args) {
-                final String atlc = arg.toLowerCase();
-                if (atlc.startsWith("-name")) {
-                    if (atlc.contains("|")) {
-                        worldName = arg.split("\\|")[1].trim();
-                        nameCount++;
-                    }
-                    else {
-                        sender.sendMessage("Must specify world name with -name command");
-                        return true;
-                    }
-                }
-                else if (atlc.startsWith("-owner")) {
-                    if (atlc.contains("|")) {
-                        playerName = arg.split("\\|")[1].trim();
-                        playerCount++;
-                    }
-                    else {
-                        if (CommandUtilities.playerCheck(sender)) {
-                            playerName = ((Player) sender).getName();
-                            playerCount++;
+        boolean allowed = false;
+        if (CommandUtilities.playerCheck(sender)) {
+            allowed = PermissionType.MODIFY.checkPermission((Player) sender);
+        }
+        else {
+            allowed = true;
+        }
+        if (allowed) {
+            if ((args != null) && (args.length >= 1)) {
+                String worldName = null, playerName = null;
+                boolean doHostiles = false, hostiles = false, doNeutrals = false, neutrals = false, doAutoload = false, autoload = false;
+                int hostileCount = 0, neutralCount = 0, autoloadCount = 0, nameCount = 0, playerCount = 0;
+                for (final String arg : args) {
+                    final String atlc = arg.toLowerCase();
+                    if (atlc.startsWith("-name")) {
+                        if (atlc.contains("|")) {
+                            worldName = arg.split("\\|")[1].trim();
+                            nameCount++;
                         }
                         else {
-                            sender.sendMessage("Must specifiy owner when adding worlds from console.");
+                            sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + "-name");
                             return true;
                         }
                     }
+                    else if (atlc.startsWith("-owner")) {
+                        if (atlc.contains("|")) {
+                            playerName = arg.split("\\|")[1].trim();
+                            playerCount++;
+                        }
+                        else {
+                            if (CommandUtilities.playerCheck(sender)) {
+                                playerName = ((Player) sender).getName();
+                                playerCount++;
+                            }
+                            else {
+                                sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_OWNER_ON_CONSOLE.toString() + "-owner");
+                                return true;
+                            }
+                        }
+                    }
+                    else if (atlc.startsWith("-autoload")) {
+                        doAutoload = true;
+                        autoload = true;
+                        autoloadCount++;
+                    }
+                    else if (atlc.startsWith("-noautoload")) {
+                        doAutoload = true;
+                        autoload = false;
+                        autoloadCount++;
+                    }
+                    else if (atlc.startsWith("-hostiles")) {
+                        doHostiles = true;
+                        hostiles = true;
+                        hostileCount++;
+                    }
+                    else if (atlc.startsWith("-nohostiles")) {
+                        doHostiles = true;
+                        hostiles = false;
+                        hostileCount++;
+                    }
+                    else if (atlc.startsWith("-neutrals")) {
+                        doNeutrals = true;
+                        neutrals = true;
+                        neutralCount++;
+                    }
+                    else if (atlc.startsWith("-noneutrals")) {
+                        doNeutrals = true;
+                        neutrals = false;
+                        neutralCount++;
+                    }
                 }
-                else if (atlc.startsWith("-autoload")) {
-                    doAutoload = true;
-                    autoload = true;
-                    autoloadCount++;
-                }
-                else if (atlc.startsWith("-noautoload")) {
-                    doAutoload = true;
-                    autoload = false;
-                    autoloadCount++;
-                }
-                else if (atlc.startsWith("-hostiles")) {
-                    doHostiles = true;
-                    hostiles = true;
-                    hostileCount++;
-                }
-                else if (atlc.startsWith("-nohostiles")) {
-                    doHostiles = true;
-                    hostiles = false;
-                    hostileCount++;
-                }
-                else if (atlc.startsWith("-neutrals")) {
-                    doNeutrals = true;
-                    neutrals = true;
-                    neutralCount++;
-                }
-                else if (atlc.startsWith("-noneutrals")) {
-                    doNeutrals = true;
-                    neutrals = false;
-                    neutralCount++;
-                }
-            }
-            if ((worldName != null) && (nameCount == 1)) {
-                final WormholeWorld world = WorldManager.getWorld(worldName);
-                if (world != null) {
-                    if (doHostiles || doNeutrals || doAutoload || (playerName != null)) {
-                        if (doHostiles && (hostileCount == 1)) {
-                            world.setAllowHostiles(hostiles);
+                if ((worldName != null) && (nameCount == 1)) {
+                    final WormholeWorld world = WorldManager.getWorld(worldName);
+                    if (world != null) {
+                        if (doHostiles || doNeutrals || doAutoload || (playerName != null)) {
+                            if (doHostiles && (hostileCount == 1)) {
+                                world.setAllowHostiles(hostiles);
+                            }
+                            else if (doHostiles) {
+                                sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting or multiple hostile commands specified.");
+                            }
+                            if (doNeutrals && (neutralCount == 1)) {
+                                world.setAllowNeutrals(neutrals);
+                            }
+                            else if (doNeutrals) {
+                                sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting or multiple neutral commands specified.");
+                            }
+                            if (doAutoload && (autoloadCount == 1)) {
+                                world.setAutoconnectWorld(autoload);
+                                WorldManager.connectWorld(world);
+                            }
+                            else if (doAutoload) {
+                                sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting or multiple autoload commands specified.");
+                            }
+                            if ((playerName != null) && (playerCount == 1)) {
+                                world.setWorldOwner(playerName);
+                            }
+                            else if (playerName != null) {
+                                sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting or multiple owner commands specified.");
+                            }
+                            WorldManager.addWorld(world);
+                            final String[] w = new String[1];
+                            w[0] = worldName;
+                            return doInfoWorld(sender, w);
                         }
-                        else if (doHostiles) {
-                            sender.sendMessage("Conflicting or multiple hostile commands specified.");
+                        else {
+                            sender.sendMessage(ResponseType.ERROR_NO_ARGS_GIVEN.toString() + "modify");
+                            sender.sendMessage(ResponseType.NORMAL_COMMAND_REQUIRED_ARGS.toString());
+                            sender.sendMessage(ResponseType.NORMAL_MODIFY_COMMAND_OPTIONAL_ARGS.toString());
                         }
-                        if (doNeutrals && (neutralCount == 1)) {
-                            world.setAllowNeutrals(neutrals);
-                        }
-                        else if (doNeutrals) {
-                            sender.sendMessage("Conflicting or multiple neutral commands specified.");
-                        }
-                        if (doAutoload && (autoloadCount == 1)) {
-                            world.setAutoconnectWorld(autoload);
-                            WorldManager.connectWorld(world);
-                        }
-                        else if (doAutoload) {
-                            sender.sendMessage("Conflicting or multiple autoload commands specified.");
-                        }
-                        if ((playerName != null) && (playerCount == 1)) {
-                            world.setWorldOwner(playerName);
-                        }
-                        else if (playerName != null) {
-                            sender.sendMessage("Conflicting or multiple owner commands specified.");
-                        }
-                        WorldManager.addWorld(world);
-                        final String[] w = new String[1];
-                        w[0] = worldName;
-                        return doInfoWorld(sender, w);
                     }
                     else {
-                        sender.sendMessage("No Modification commands specified.");
-                        sender.sendMessage("Required Args: -name <WorldName>");
-                        sender.sendMessage("Optional Args: -owner <Owner>, -(no)autoload, -(no)hostiles, -(no)neutrals, ");
-                        return true;
+                        sender.sendMessage(ResponseType.ERROR_WORLD_NOT_EXIST.toString() + worldName);
                     }
                 }
                 else {
-                    sender.sendMessage("Specified world invalid.");
-                    return true;
+                    sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Must specify a single world to modify.");
                 }
-
             }
             else {
-                sender.sendMessage("Must specify a single world to modify.");
-                return true;
+                sender.sendMessage(ResponseType.ERROR_NO_ARGS_GIVEN.toString() + "modify");
+                sender.sendMessage(ResponseType.NORMAL_COMMAND_REQUIRED_ARGS.toString());
+                sender.sendMessage(ResponseType.NORMAL_MODIFY_COMMAND_OPTIONAL_ARGS.toString());
             }
         }
         else {
-            sender.sendMessage("Required Args: -name <WorldName>");
-            sender.sendMessage("Optional Args: -owner <Owner>, -(no)autoload, -(no)hostiles, -(no)neutrals, ");
-            return true;
+            sender.sendMessage(ResponseType.ERROR_PERMISSION_NO.toString());
         }
+        return true;
     }
 
     /**
      * Do go world.
      * 
-     * @param sender
-     *            the sender
+     * @param player
+     *            the player
      * @param args
      *            the args
      * @return true, if successful
      */
     private static boolean doGoWorld(final Player player, final String[] args) {
-        if ((args != null) && (args.length == 1)) {
-
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(args[0]);
-            if (wormholeWorld != null) {
-                if (PermissionsManager.checkPermissions(player, wormholeWorld, PermissionType.go)) {
+        if (PermissionType.GO.checkPermission(player)) {
+            if ((args != null) && (args.length == 1)) {
+                final WormholeWorld wormholeWorld = WorldManager.getWorld(args[0]);
+                if (wormholeWorld != null) {
                     player.teleport(wormholeWorld.getWorldSpawn());
                 }
                 else {
-                    player.sendMessage("Permission denied!");
+                    player.sendMessage(ResponseType.ERROR_WORLD_NOT_EXIST.toString() + args[0]);
                 }
             }
             else {
-                player.sendMessage("World does not exist, or is not configured with WXW: " + args[0]);
+                player.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + "go");
             }
+
         }
         else {
-            player.sendMessage("This command requires a single argument - worldname. Nothing more, nothing less.");
+            player.sendMessage(ResponseType.ERROR_PERMISSION_NO.toString());
         }
         return true;
     }
@@ -314,31 +421,30 @@ class Wxw implements CommandExecutor {
      * @return true, if successful
      */
     private static boolean doRemoveWorld(final CommandSender sender, final String[] args) {
-        if ((args != null) && (args.length >= 1)) {
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(args[0]);
-            if (wormholeWorld != null) {
-                boolean allowed = false;
-                if (CommandUtilities.playerCheck(sender))
-                {
-                    allowed = PermissionsManager.checkPermissions((Player)sender, wormholeWorld, PermissionType.remove);
-                }
-                else {
-                    allowed = true;
-                }
-                if (allowed) {
+        boolean allowed = false;
+        if (CommandUtilities.playerCheck(sender)) {
+            allowed = PermissionType.REMOVE.checkPermission((Player) sender);
+        }
+        else {
+            allowed = true;
+        }
+        if (allowed) {
+            if ((args != null) && (args.length >= 1)) {
+                final WormholeWorld wormholeWorld = WorldManager.getWorld(args[0]);
+                if (wormholeWorld != null) {
                     WorldManager.removeWorld(wormholeWorld);
-                    sender.sendMessage("Removed world: " + args[0] + ". Deleted world config file, world will be unavailable at next server restart.");
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Removed world: " + args[0] + ". Deleted world config file, world will be unavailable at next server restart.");
                 }
                 else {
-                    sender.sendMessage("You lack the permissions to do this.");
+                    sender.sendMessage(ResponseType.ERROR_WORLD_NOT_EXIST.toString() + args[0]);
                 }
             }
             else {
-                sender.sendMessage("Specified world does not exist: " + args[0]);
+                sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + "remove");
             }
         }
         else {
-            sender.sendMessage("World to be removed must be specified. This command will not delete the world on disk, just remove the WXW configuration for the specified world.");
+            sender.sendMessage(ResponseType.ERROR_PERMISSION_NO.toString());
         }
         return true;
     }
@@ -353,93 +459,108 @@ class Wxw implements CommandExecutor {
      * @return true, if successful
      */
     private static boolean doCreateWorld(final CommandSender sender, final String[] args) {
-        if ((args != null) && (args.length >= 1)) {
-            sender.sendMessage("create: " + Arrays.toString(args));
-            String playerName = null;
-            String worldName = null;
-            long worldSeed = 0;
-            final ArrayList<WorldOptionKeys> worldOptionKeyList = new ArrayList<WorldOptionKeys>();
+        boolean allowed = false;
+        if (CommandUtilities.playerCheck(sender)) {
+            allowed = PermissionType.CREATE.checkPermission((Player) sender);
+        }
+        else {
+            allowed = true;
+        }
+        if (allowed) {
+            if ((args != null) && (args.length >= 1)) {
+                String playerName = null;
+                String worldName = null;
+                long worldSeed = 0;
+                final ArrayList<WorldOptionKeys> worldOptionKeyList = new ArrayList<WorldOptionKeys>();
 
-            for (final String arg : args) {
-                final String atlc = arg.toLowerCase();
-                if (atlc.startsWith("-owner")) {
-                    if (atlc.contains("|")) {
-                        playerName = arg.split("\\|")[1].trim();
-                    }
-                    else {
-                        sender.sendMessage("Must specify player name with -owner command");
-                        return true;
-                    }
-                }
-                else if (atlc.startsWith("-name")) {
-                    if (atlc.contains("|")) {
-                        worldName = arg.split("\\|")[1].trim();
-                    }
-                    else {
-                        sender.sendMessage("Must specify world name with -name command");
-                        return true;
-                    }
-                }
-                else if (atlc.startsWith("-nether")) {
-                    worldOptionKeyList.add(WorldOptionKeys.worldOptionNether);
-                }
-                else if (atlc.startsWith("-noautoload")) {
-                    worldOptionKeyList.add(WorldOptionKeys.worldOptionNoConnect);
-                }
-                else if (atlc.startsWith("-nohostiles")) {
-                    worldOptionKeyList.add(WorldOptionKeys.worldOptionNoHostiles);
-                }
-                else if (atlc.startsWith("-noneutrals")) {
-                    worldOptionKeyList.add(WorldOptionKeys.worldOptionNoNeutrals);
-                }
-                else if (atlc.startsWith("-seed")) {
-                    if (atlc.contains("|")) {
-                        try {
-                            worldSeed = Long.valueOf(arg.split("\\|")[1].trim());
-                            worldOptionKeyList.add(WorldOptionKeys.worldOptionSeed);
+                for (final String arg : args) {
+                    final String atlc = arg.toLowerCase();
+                    if (atlc.startsWith("-owner")) {
+                        if (atlc.contains("|")) {
+                            playerName = arg.split("\\|")[1].trim();
                         }
-                        catch (final NumberFormatException e) {
-                            sender.sendMessage("Must specify numeric seed value with the -seed command");
+                        else {
+                            if (CommandUtilities.playerCheck(sender)) {
+                                playerName = ((Player) sender).getName();
+                            }
+                            else {
+                                sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_OWNER_ON_CONSOLE.toString() + "-owner");
+                                return true;
+                            }
+                        }
+                    }
+                    else if (atlc.startsWith("-name")) {
+                        if (atlc.contains("|")) {
+                            worldName = arg.split("\\|")[1].trim();
+                        }
+                        else {
+                            sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + "-name");
                             return true;
                         }
                     }
+                    else if (atlc.startsWith("-nether")) {
+                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNether);
+                    }
+                    else if (atlc.startsWith("-noautoload")) {
+                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoConnect);
+                    }
+                    else if (atlc.startsWith("-nohostiles")) {
+                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoHostiles);
+                    }
+                    else if (atlc.startsWith("-noneutrals")) {
+                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoNeutrals);
+                    }
+                    else if (atlc.startsWith("-seed")) {
+                        if (atlc.contains("|")) {
+                            try {
+                                worldSeed = Long.valueOf(arg.split("\\|")[1].trim());
+                                worldOptionKeyList.add(WorldOptionKeys.worldOptionSeed);
+                            }
+                            catch (final NumberFormatException e) {
+                                sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_NUMBER.toString() + "-seed");
+                                return true;
+                            }
+                        }
+                        else {
+                            sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_NUMBER.toString() + "-seed");
+                            return true;
+                        }
+                    }
+
+                }
+
+                if (worldName == null) {
+                    sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + "create");
+                    return true;
+                }
+
+                if (playerName == null) {
+                    if (CommandUtilities.playerCheck(sender)) {
+                        playerName = ((Player) sender).getName();
+                    }
                     else {
-                        sender.sendMessage("Must specify seed value with the -seed command");
+                        sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_OWNER_ON_CONSOLE.toString() + "create");
                         return true;
                     }
                 }
-
-            }
-
-            if (worldName == null) {
-                sender.sendMessage("Must specify world name to create world.");
-                return true;
-            }
-
-            if (playerName == null) {
-                if (CommandUtilities.playerCheck(sender)) {
-                    playerName = ((Player) sender).getName();
+                final WorldOptionKeys[] worldOptionKeys = worldOptionKeyList.toArray(new WorldOptionKeys[worldOptionKeyList.size()]);
+                if (WorldManager.createWorld(playerName, worldName, worldOptionKeys, worldSeed)) {
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "World: " + worldName + " created with owner: " + playerName);
                 }
                 else {
-                    sender.sendMessage("Must specifiy owner when adding worlds from console.");
-                    return true;
+                    sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "World Creation Failed?!");
                 }
             }
-            final WorldOptionKeys[] worldOptionKeys = worldOptionKeyList.toArray(new WorldOptionKeys[worldOptionKeyList.size()]);
-            if (WorldManager.createWorld(playerName, worldName, worldOptionKeys, worldSeed)) {
-                sender.sendMessage("World: " + worldName + " created with owner: " + playerName);
-                return true;
-            }
             else {
-                sender.sendMessage("World Creation Failed?!");
-                return true;
+                sender.sendMessage(ResponseType.ERROR_NO_ARGS_GIVEN.toString() + "create");
+                sender.sendMessage(ResponseType.NORMAL_COMMAND_REQUIRED_ARGS.toString());
+                sender.sendMessage(ResponseType.NORMAL_CREATE_COMMAND_OPTIONAL_ARGS.toString());
             }
         }
         else {
-            sender.sendMessage("Required Args: -name <WorldName>");
-            sender.sendMessage("Optional Args: -owner <Owner>, -seed <seed>, -nether, -noautoload, -nohostiles, -noneutrals, ");
-            return true;
+            sender.sendMessage(ResponseType.ERROR_PERMISSION_NO.toString());
         }
+        return true;
     }
 
     /**
@@ -450,31 +571,43 @@ class Wxw implements CommandExecutor {
      * @return true, if successful
      */
     private static boolean doListWorlds(final CommandSender sender) {
-        final List<World> worldLoadedList = WormholeXTremeWorlds.getThisPlugin().getServer().getWorlds();
-        final String[] wormholeWorldNames = WorldManager.getAllWorldNames();
-        if (worldLoadedList != null) {
-            final StringBuilder s = new StringBuilder();
-            int i = 0;
-            for (final World world : worldLoadedList) {
-                i++;
-                s.append(world.getName());
-                if (i < worldLoadedList.size()) {
-                    s.append(", ");
-                }
-            }
-            sender.sendMessage("List - loaded worlds: " + s.toString());
+        boolean allowed = false;
+        if (CommandUtilities.playerCheck(sender)) {
+            allowed = PermissionType.LIST.checkPermission((Player) sender);
         }
-        if (wormholeWorldNames != null) {
-            final StringBuilder s = new StringBuilder();
-            int i = 0;
-            for (final String worldName : wormholeWorldNames) {
-                i++;
-                s.append(worldName);
-                if (i < wormholeWorldNames.length) {
-                    s.append(", ");
+        else {
+            allowed = true;
+        }
+        if (allowed) {
+            final List<World> worldLoadedList = WormholeXTremeWorlds.getThisPlugin().getServer().getWorlds();
+            final String[] wormholeWorldNames = WorldManager.getAllWorldNames();
+            if (worldLoadedList != null) {
+                final StringBuilder s = new StringBuilder();
+                int i = 0;
+                for (final World world : worldLoadedList) {
+                    i++;
+                    s.append(world.getName());
+                    if (i < worldLoadedList.size()) {
+                        s.append(", ");
+                    }
                 }
+                sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Loaded worlds: " + s.toString());
             }
-            sender.sendMessage("List - configured worlds: " + s.toString());
+            if (wormholeWorldNames != null) {
+                final StringBuilder s = new StringBuilder();
+                int i = 0;
+                for (final String worldName : wormholeWorldNames) {
+                    i++;
+                    s.append(worldName);
+                    if (i < wormholeWorldNames.length) {
+                        s.append(", ");
+                    }
+                }
+                sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Configured worlds: " + s.toString());
+            }
+        }
+        else {
+            sender.sendMessage(ResponseType.ERROR_PERMISSION_NO.toString());
         }
         return true;
     }

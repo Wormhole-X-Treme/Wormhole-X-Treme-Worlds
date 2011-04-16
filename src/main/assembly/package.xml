@@ -18,13 +18,6 @@
                 <include>gpl.txt</include>
             </includes>
         </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/src/main/resources/Worlds/</directory>
-            <outputDirectory>/plugins/WormholeXTreme/Worlds/</outputDirectory>
-            <includes>
-                <include>*.world</include>
-            </includes>
-        </fileSet>
     </fileSets>
     <files>
         <file>

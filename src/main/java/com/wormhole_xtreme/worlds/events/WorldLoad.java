@@ -43,7 +43,7 @@ public class WorldLoad extends WorldListener {
     public void onWorldLoad(final WorldLoadEvent event) {
         final World world = event.getWorld();
         if (world != null) {
-            thisPlugin.prettyLog(Level.INFO, false, "World Load Caught: " + world.getName());
+            thisPlugin.prettyLog(Level.FINE, false, "World Load Caught: " + world.getName());
         }
     }
 }

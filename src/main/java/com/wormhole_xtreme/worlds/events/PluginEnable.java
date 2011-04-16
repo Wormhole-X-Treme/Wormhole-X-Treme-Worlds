@@ -40,6 +40,7 @@ public class PluginEnable extends ServerListener {
         final String enableEventPluginName = pluginEnableEvent.getPlugin().getDescription().getName();
         if (enableEventPluginName.equals("Permissions") && ConfigManager.getServerOptionPermissions()) {
             PermissionsSupport.enablePermissions();
+            HelpSupport.registerHelpCommands();
         }
         else if (enableEventPluginName.equals("Help") && ConfigManager.getServerOptionHelp()) {
             HelpSupport.enableHelp();

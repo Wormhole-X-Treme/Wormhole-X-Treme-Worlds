@@ -24,8 +24,9 @@ import java.util.logging.Level;
 
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Animals;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.WaterMob;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ConfigManager.WorldOptionKeys;
@@ -107,7 +108,7 @@ public class WorldManager {
         for (final WormholeWorld wormholeWorld : getAllWorlds()) {
             if (wormholeWorld.isAutoconnectWorld()) {
                 connectWorld(wormholeWorld);
-                
+
             }
         }
     }
@@ -120,11 +121,12 @@ public class WorldManager {
      */
     public static void clearWorldCreatures(final WormholeWorld wormholeWorld) {
         if (!wormholeWorld.isAllowHostiles() || !wormholeWorld.isAllowNeutrals()) {
-            final List<Entity> entityList = wormholeWorld.getThisWorld().getEntities();
-            for (final Entity entity : entityList) {
-                if ((!wormholeWorld.isAllowHostiles() && (entity instanceof Monster)) || (!wormholeWorld.isAllowHostiles() && (entity instanceof Animals))) {
+            final List<LivingEntity> entityList = wormholeWorld.getThisWorld().getLivingEntities();
+
+            for (final LivingEntity entity : entityList) {
+                if ((!wormholeWorld.isAllowHostiles() && (entity instanceof Monster)) || (!wormholeWorld.isAllowNeutrals() && ((entity instanceof Animals) || (entity instanceof WaterMob)))) {
+                    thisPlugin.prettyLog(Level.FINE, false, "Removed entity: " + entity);
                     entity.remove();
-                    thisPlugin.prettyLog(Level.FINE, false, "Removed entity: " + entity.getEntityId());
                 }
             }
         }

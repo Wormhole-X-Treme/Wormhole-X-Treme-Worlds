@@ -13,7 +13,7 @@ Command List with Permissions Nodes:
     '/wxw go [world]' - Go to spawn of specified world. - wxw.admin.go
     '/wxw list' - List all loaded and configured worlds. - wxw.admin.list
     '/wxw remove [world]' - Remove world from configuration. - wxw.admin.remove
-    '/wxw connect [world]' - Load unloaded world. - wxw.admin.connect
+    '/wxw load [world]' - Load unloaded world. - wxw.admin.load
     '/wxw modify [args]' - Modify settings of specified world. - wxw.admin.modify
     '/wxw info [world]' - Get info about specified world. - wxw.admin.info
     '/wxw setspawn' - Set spawn of current world to current location. - wxw.admin.setspawn

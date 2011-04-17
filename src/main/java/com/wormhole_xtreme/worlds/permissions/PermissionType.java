@@ -44,7 +44,7 @@ public enum PermissionType {
     REMOVE("wxw.admin.remove"),
 
     /** The connect permission. */
-    CONNECT("wxw.admin.connect"),
+    LOAD("wxw.admin.load"),
 
     /** The modify permission. */
     MODIFY("wxw.admin.modify"),

@@ -1,4 +1,4 @@
-v0.1.1 -
+v0.1.1 - 2011.04.17 07:15 PST :
 
 - We now store the world seed in our world config files. The seed value is based on what the world actually uses.
   This allows users to add worlds and have a valid seed stored in their config for later use. When the seed is a
@@ -13,6 +13,12 @@ v0.1.1 -
   
 - Minor performance change to our internal prettyLog method. Check to make sure system log even is appropriate
   for the log type we are generating.
+
+- Changed connect command to load. Kept connect as alias for compatibility.
+
+- Fixed a few NPE when trying to teleport to a world that is not loaded.
+
+- Info command now shows world seed.
 
 v0.1 - 2011.04.16 06:48 PST :
 

@@ -67,8 +67,8 @@ class Wxw implements CommandExecutor {
                 else if (cleanArgs[0].equalsIgnoreCase("remove")) {
                     return doRemoveWorld(sender, CommandUtilities.commandRemover(cleanArgs));
                 }
-                else if (cleanArgs[0].equalsIgnoreCase("connect")) {
-                    return doConnectWorld(sender, CommandUtilities.commandRemover(cleanArgs));
+                else if (cleanArgs[0].equalsIgnoreCase("connect") || cleanArgs[0].equalsIgnoreCase("load")) {
+                    return doLoadWorld(sender, CommandUtilities.commandRemover(cleanArgs), cleanArgs[0]);
                 }
                 else if (cleanArgs[0].equalsIgnoreCase("modify")) {
                     return doModifyWorld(sender, CommandUtilities.commandRemover(cleanArgs));
@@ -136,10 +136,10 @@ class Wxw implements CommandExecutor {
      *            the args
      * @return true, if successful
      */
-    private static boolean doConnectWorld(final CommandSender sender, final String[] args) {
+    private static boolean doLoadWorld(final CommandSender sender, final String[] args, final String commandName) {
         boolean allowed = false;
         if (CommandUtilities.playerCheck(sender)) {
-            allowed = PermissionType.CONNECT.checkPermission((Player) sender);
+            allowed = PermissionType.LOAD.checkPermission((Player) sender);
         }
         else {
             allowed = true;
@@ -152,11 +152,11 @@ class Wxw implements CommandExecutor {
                     sender.sendMessage(ResponseType.NORMAL_HEADER + "Connected world: " + args[0]);
                 }
                 else {
-                    sender.sendMessage(ResponseType.ERROR_COMMAND_ONLY_MANAGED_WORLD.toString() + "connect");
+                    sender.sendMessage(ResponseType.ERROR_COMMAND_ONLY_MANAGED_WORLD.toString() + commandName);
                 }
             }
             else {
-                sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + "connect");
+                sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + commandName);
             }
         }
         else {
@@ -220,9 +220,9 @@ class Wxw implements CommandExecutor {
             if ((args != null) && (args.length == 1)) {
                 final WormholeWorld world = WorldManager.getWorld(args[0]);
                 if (world != null) {
-                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "World: " + args[0] + " Owner: " + world.getWorldOwner() + " Nether: " + world.isNetherWorld());
-                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Hostiles: " + world.isAllowHostiles() + " Neutrals: " + world.isAllowNeutrals());
-                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Autoload at start: " + world.isAutoconnectWorld());
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "World: \"" + args[0] + "\" Owner: \"" + world.getWorldOwner() + "\" Nether: \"" + world.isNetherWorld() + "\"");
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Hostiles: \"" + world.isAllowHostiles() + "\" Neutrals: \"" + world.isAllowNeutrals() + "\"");
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Autoload at start: \"" + world.isAutoconnectWorld() + "\" Seed: \"" + world.getWorldSeed() + "\"");
                 }
                 else {
                     sender.sendMessage(ResponseType.ERROR_WORLD_NOT_EXIST.toString() + args[0]);
@@ -350,7 +350,9 @@ class Wxw implements CommandExecutor {
                                 sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting or multiple owner commands specified.");
                             }
                             WorldManager.addWorld(world);
-                            WorldManager.clearWorldCreatures(world);
+                            if (thisPlugin.getServer().getWorld(worldName) != null) {
+                                WorldManager.clearWorldCreatures(world);
+                            }
                             final String[] w = new String[1];
                             w[0] = worldName;
                             return doInfoWorld(sender, w);
@@ -394,7 +396,7 @@ class Wxw implements CommandExecutor {
         if (PermissionType.GO.checkPermission(player)) {
             if ((args != null) && (args.length == 1)) {
                 final WormholeWorld wormholeWorld = WorldManager.getWorld(args[0]);
-                if (wormholeWorld != null) {
+                if ((wormholeWorld != null) && (thisPlugin.getServer().getWorld(args[0]) != null)) {
                     player.teleport(wormholeWorld.getWorldSpawn());
                 }
                 else {

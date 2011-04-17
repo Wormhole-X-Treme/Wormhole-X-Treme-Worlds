@@ -95,7 +95,7 @@ public class HelpSupport {
                 WormholeXTremeWorlds.getHelp().registerCommand("wxw go [world]", "Go to spawn of specified world.", thisPlugin, PermissionType.GO.getPermission());
                 WormholeXTremeWorlds.getHelp().registerCommand("wxw list", "List all loaded and configured worlds.", thisPlugin, PermissionType.LIST.getPermission());
                 WormholeXTremeWorlds.getHelp().registerCommand("wxw remove [world]", "Remove world from configuration.", thisPlugin, PermissionType.REMOVE.getPermission());
-                WormholeXTremeWorlds.getHelp().registerCommand("wxw connect [world]", "Load unloaded world.", thisPlugin, PermissionType.CONNECT.getPermission());
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw connect [world]", "Load unloaded world.", thisPlugin, PermissionType.LOAD.getPermission());
                 WormholeXTremeWorlds.getHelp().registerCommand("wxw modify [args]", "Modify settings of specified world.", thisPlugin, PermissionType.MODIFY.getPermission());
                 WormholeXTremeWorlds.getHelp().registerCommand("wxw info [world]", "Get info about specified world.", thisPlugin, PermissionType.INFO.getPermission());
                 WormholeXTremeWorlds.getHelp().registerCommand("wxw setspawn", "Set spawn of current world to current location.", thisPlugin, PermissionType.SET_SPAWN.getPermission());

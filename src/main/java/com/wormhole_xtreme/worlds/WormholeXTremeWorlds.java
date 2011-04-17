@@ -141,17 +141,15 @@ public class WormholeXTremeWorlds extends JavaPlugin {
      * 
      */
     public void prettyLog(final Level severity, final boolean version, final String message) {
-        if (severity.intValue() >= getThisLogger().getLevel().intValue() ) {
-            final String prettyName = ("[" + getThisPlugin().getDescription().getName() + "]");
-            final String prettyVersion = ("[v" + getThisPlugin().getDescription().getVersion() + "]");
-            String prettyLogLine = prettyName;
-            if (version) {
-                prettyLogLine += prettyVersion;
-                getThisLogger().log(severity, prettyLogLine + message);
-            }
-            else {
-                getThisLogger().log(severity, prettyLogLine + message);
-            }
+        final String prettyName = ("[" + getThisPlugin().getDescription().getName() + "]");
+        final String prettyVersion = ("[v" + getThisPlugin().getDescription().getVersion() + "]");
+        String prettyLogLine = prettyName;
+        if (version) {
+            prettyLogLine += prettyVersion;
+            getThisLogger().log(severity, prettyLogLine + message);
+        }
+        else {
+            getThisLogger().log(severity, prettyLogLine + message);
         }
     }
 

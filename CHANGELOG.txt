@@ -1,3 +1,7 @@
+v0.1.2 - 2011.04.17 08:41 PST :
+
+- Reverted optimization in prettyLog. Apparently causes problems on some setups.
+
 v0.1.1 - 2011.04.17 07:15 PST :
 
 - We now store the world seed in our world config files. The seed value is based on what the world actually uses.

@@ -350,6 +350,7 @@ class Wxw implements CommandExecutor {
                                 sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting or multiple owner commands specified.");
                             }
                             WorldManager.addWorld(world);
+                            WorldManager.clearWorldCreatures(world);
                             final String[] w = new String[1];
                             w[0] = worldName;
                             return doInfoWorld(sender, w);

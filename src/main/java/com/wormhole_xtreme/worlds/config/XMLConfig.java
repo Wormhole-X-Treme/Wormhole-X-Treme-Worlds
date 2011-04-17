@@ -280,6 +280,7 @@ public class XMLConfig {
         XMLEvent event;
         String worldName = null, worldOwner = null, worldCustomSpawn = null;
         boolean allowHostiles = true, allowNeutrals = true, netherWorld = false, autoconnectWorld = true;
+        long worldSeed = 0;
         while (eventReader.hasNext()) {
             String optionName = null;
             String optionType = null;
@@ -335,6 +336,9 @@ public class XMLConfig {
                 else if (optionName.equals("autoconnectWorld")) {
                     autoconnectWorld = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
                 }
+                else if (optionName.equals("worldSeed")) {
+                    worldSeed = Long.valueOf(optionValue.toString().trim());
+                }
             }
         }
         if ((worldName != null) && (worldOwner != null) && (worldCustomSpawn != null)) {
@@ -356,6 +360,9 @@ public class XMLConfig {
             }
             if (!autoconnectWorld) {
                 world.setAutoconnectWorld(autoconnectWorld);
+            }
+            if (worldSeed != 0) {
+                world.setWorldSeed(worldSeed);
             }
             WorldManager.addWorld(world);
         }
@@ -507,6 +514,7 @@ public class XMLConfig {
             createConfigNode(eventWriter, "allowNeutrals", "boolean", Boolean.valueOf(world.isAllowNeutrals()).toString(), "Are neutrals allowed on this world?");
             createConfigNode(eventWriter, "netherWorld", "boolean", Boolean.valueOf(world.isNetherWorld()).toString(), "Is this a nether world? BE SURE TO HAVE THIS RIGHT!");
             createConfigNode(eventWriter, "autoconnectWorld", "boolean", Boolean.valueOf(world.isAutoconnectWorld()).toString(), "Does this world automatically get loaded at server start? Non connected worlds can be loaded in game as needed.");
+            createConfigNode(eventWriter, "worldSeed", "long", Long.valueOf(world.getWorldSeed()).toString(), "The seed used when this world was generated. Can be used to generate a new world with the exact same terrain.");
         }
         eventWriter.add(eventFactory.createEndElement("", "", "WormholeXTremeWorlds"));
         eventWriter.add(end);

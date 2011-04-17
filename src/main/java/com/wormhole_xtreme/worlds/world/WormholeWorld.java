@@ -21,9 +21,10 @@ package com.wormhole_xtreme.worlds.world;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class World.
+ * The WormholeWorld instance. Everything that we know about a world can be found here.
+ * What we know about the world is distrusted though, as we cannot be sure data fed to us
+ * by users is reliable.
  * 
  * @author alron
  */
@@ -55,6 +56,9 @@ public class WormholeWorld {
 
     /** The autoconnect world. */
     private boolean autoconnectWorld = true;
+
+    /** The world seed. */
+    private long worldSeed = 0;
 
     /**
      * Instantiates a new world.
@@ -135,6 +139,14 @@ public class WormholeWorld {
         return worldSpawn;
     }
 
+    /**
+     * Gets the world spawn to int[].
+     * 
+     * @return the world spawn to int[]
+     */
+    public int[] getWorldSpawnToInt() {
+        return new int[]{(int) worldSpawn.getX(),(int) worldSpawn.getY(),(int) worldSpawn.getZ()};
+    }
 
     /**
      * Sets the world custom spawn.
@@ -243,6 +255,25 @@ public class WormholeWorld {
      */
     public int[] getWorldCustomSpawn() {
         return worldCustomSpawn.clone();
+    }
+
+    /**
+     * Sets the world seed.
+     * 
+     * @param worldSeed
+     *            the new world seed
+     */
+    public void setWorldSeed(final long worldSeed) {
+        this.worldSeed = worldSeed;
+    }
+
+    /**
+     * Gets the world seed.
+     * 
+     * @return the world seed
+     */
+    public long getWorldSeed() {
+        return worldSeed;
     }
 
 }

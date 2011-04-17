@@ -1,2 +1,19 @@
-v0.1 - 2011.04.16 06:48 PST : 
+v0.1.1 -
+
+- We now store the world seed in our world config files. The seed value is based on what the world actually uses.
+  This allows users to add worlds and have a valid seed stored in their config for later use. When the seed is a
+  valid seed number (non 0) we call the world load with the specific seed. This way if someone wants to reset a
+  world, all they have to do is delete the world folder on disk before starting the server.
+  
+- We now pay attention to external spawn change events and update our internal spawn location references as 
+  appropriate.
+  
+- We now properly honor the creature spawn restriction options. We clear banned types of creatures at world load
+  as well as any time a world is connected. We also cancel creature spawn events as needed.
+  
+- Minor performance change to our internal prettyLog method. Check to make sure system log even is appropriate
+  for the log type we are generating.
+
+v0.1 - 2011.04.16 06:48 PST :
+
 - Initial plugin release.

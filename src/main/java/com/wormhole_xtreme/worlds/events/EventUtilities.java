@@ -25,7 +25,6 @@ import org.bukkit.plugin.PluginManager;
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class EventUtilities.
  * 
@@ -42,12 +41,20 @@ public class EventUtilities {
     /** The Constant plugin. */
     private static final PluginEnable pluginEnable = new PluginEnable();
 
+    /** The Constant pluginDisable. */
     private static final PluginDisable pluginDisable = new PluginDisable();
 
     /** The Constant world. */
     private static final WorldLoad worldLoad = new WorldLoad();
 
+    /** The Constant worldSave. */
     private static final WorldSave worldSave = new WorldSave();
+
+    /** The Constant spawnChange. */
+    private static final SpawnChange spawnChange = new SpawnChange();
+
+    /** The Constant creatureSpawn. */
+    private static final CreatureSpawn creatureSpawn = new CreatureSpawn();
 
     /**
      * Register events.
@@ -57,5 +64,7 @@ public class EventUtilities {
         pluginManager.registerEvent(Event.Type.PLUGIN_DISABLE, pluginDisable, Priority.Monitor, thisPlugin);
         pluginManager.registerEvent(Event.Type.WORLD_LOAD, worldLoad, Priority.Monitor, thisPlugin);
         pluginManager.registerEvent(Event.Type.WORLD_SAVE, worldSave, Priority.Monitor, thisPlugin);
+        pluginManager.registerEvent(Event.Type.SPAWN_CHANGE, spawnChange, Priority.Monitor, thisPlugin);
+        pluginManager.registerEvent(Event.Type.CREATURE_SPAWN, creatureSpawn, Priority.Lowest, thisPlugin);
     }
 }

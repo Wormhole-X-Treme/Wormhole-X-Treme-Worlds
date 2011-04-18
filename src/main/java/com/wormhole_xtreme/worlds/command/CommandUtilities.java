@@ -36,99 +36,6 @@ public class CommandUtilities {
     final static WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
 
     /**
-     * Register commands.
-     */
-    public static void registerCommands() {
-        thisPlugin.getCommand("wxw").setExecutor(new Wxw());
-    }
-
-    /**
-     * Player check.
-     * 
-     * @param sender
-     *            the sender
-     * @return true, if successful
-     */
-    static boolean playerCheck(final CommandSender sender) {
-        if (sender instanceof Player) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    /**
-     * Command remover.
-     * Removes the first argument from the array.
-     * 
-     * @param args
-     *            the args
-     * @return the string[]
-     */
-    static String[] commandRemover(final String[] args) {
-        String[] tempString = new String[0];
-        final ArrayList<String> argsMinusCommand = new ArrayList<String>();
-        if (args.length > 1) {
-            for (int i = 1; i < args.length; i++) {
-                argsMinusCommand.add(args[i]);
-            }
-            tempString = argsMinusCommand.toArray(new String[argsMinusCommand.size()]);
-        }
-        return tempString;
-    }
-
-    /**
-     * Command escaper.
-     * Checks for " and escapes it.
-     * 
-     * @param args
-     *            The String[] argument list to escape quotes on.
-     * @return String[] with properly escaped quotes.
-     */
-    static String[] commandEscaper(final String[] args) {
-        StringBuilder tempString = new StringBuilder();
-        boolean startQuoteFound = false;
-        boolean endQuoteFound = false;
-
-        final ArrayList<String> argsPartsList = new ArrayList<String>();
-
-        for (final String part : args) {
-            // First check to see if we have a starting or stopping quote
-            if (part.contains("\"") && !startQuoteFound) {
-                // Two quotes in same string = no spaces in quoted text;
-                if (!part.replaceFirst("\"", "").contains("\"")) {
-                    startQuoteFound = true;
-                }
-            }
-            else if (part.contains("\"") && startQuoteFound) {
-                endQuoteFound = true;
-            }
-
-            // If no quotes yet, we just append to list
-            if (!startQuoteFound) {
-                argsPartsList.add(part);
-            }
-
-            // If we have quotes we should make sure to append the values
-            // if we found the last quote we should stop adding.
-            if (startQuoteFound) {
-                tempString.append(part.replace("\"", ""));
-                if (endQuoteFound) {
-                    argsPartsList.add(tempString.toString());
-                    startQuoteFound = false;
-                    endQuoteFound = false;
-                    tempString = new StringBuilder();
-                }
-                else {
-                    tempString.append(" ");
-                }
-            }
-        }
-        return argsPartsList.toArray(new String[argsPartsList.size()]);
-    }
-
-    /**
      * Parses the command options and returns a cleaned up array of commands.<br>
      * Quoted commands are joined in the same element.<br>
      * Commands starting with '-' are added the same element as their arguments, with a '|' spacer.<br>
@@ -147,7 +54,7 @@ public class CommandUtilities {
         final ArrayList<String> argsPartsList = new ArrayList<String>();
         for (final String argPart : escapedArgs) {
             // No commands or args found yet, must primary, append
-            if (!commandFound && !commandHasArgs && !argPart.startsWith("-")) {
+            if ( !commandFound && !commandHasArgs && !argPart.startsWith("-")) {
                 argsPartsList.add(argPart);
             }
             // Found command, if command found previously make note of it.
@@ -189,5 +96,98 @@ public class CommandUtilities {
             argsPartsList.add(tempString.toString());
         }
         return argsPartsList.toArray(new String[argsPartsList.size()]);
+    }
+
+    /**
+     * Command escaper.
+     * Checks for " and escapes it.
+     * 
+     * @param args
+     *            The String[] argument list to escape quotes on.
+     * @return String[] with properly escaped quotes.
+     */
+    static String[] commandEscaper(final String[] args) {
+        StringBuilder tempString = new StringBuilder();
+        boolean startQuoteFound = false;
+        boolean endQuoteFound = false;
+
+        final ArrayList<String> argsPartsList = new ArrayList<String>();
+
+        for (final String part : args) {
+            // First check to see if we have a starting or stopping quote
+            if (part.contains("\"") && !startQuoteFound) {
+                // Two quotes in same string = no spaces in quoted text;
+                if ( !part.replaceFirst("\"", "").contains("\"")) {
+                    startQuoteFound = true;
+                }
+            }
+            else if (part.contains("\"") && startQuoteFound) {
+                endQuoteFound = true;
+            }
+
+            // If no quotes yet, we just append to list
+            if ( !startQuoteFound) {
+                argsPartsList.add(part);
+            }
+
+            // If we have quotes we should make sure to append the values
+            // if we found the last quote we should stop adding.
+            if (startQuoteFound) {
+                tempString.append(part.replace("\"", ""));
+                if (endQuoteFound) {
+                    argsPartsList.add(tempString.toString());
+                    startQuoteFound = false;
+                    endQuoteFound = false;
+                    tempString = new StringBuilder();
+                }
+                else {
+                    tempString.append(" ");
+                }
+            }
+        }
+        return argsPartsList.toArray(new String[argsPartsList.size()]);
+    }
+
+    /**
+     * Command remover.
+     * Removes the first argument from the array.
+     * 
+     * @param args
+     *            the args
+     * @return the string[]
+     */
+    static String[] commandRemover(final String[] args) {
+        String[] tempString = new String[0];
+        final ArrayList<String> argsMinusCommand = new ArrayList<String>();
+        if (args.length > 1) {
+            for (int i = 1; i < args.length; i++) {
+                argsMinusCommand.add(args[i]);
+            }
+            tempString = argsMinusCommand.toArray(new String[argsMinusCommand.size()]);
+        }
+        return tempString;
+    }
+
+    /**
+     * Player check.
+     * 
+     * @param sender
+     *            the sender
+     * @return true, if successful
+     */
+    static boolean playerCheck(final CommandSender sender) {
+        if (sender instanceof Player) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+     * Register commands.
+     */
+    public static void registerCommands() {
+        thisPlugin.getCommand("wxw").setExecutor(new Wxw());
     }
 }

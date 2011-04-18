@@ -68,6 +68,24 @@ public class WormholeWorld {
     }
 
     /**
+     * Gets the this world.
+     * 
+     * @return the thisWorld
+     */
+    public World getThisWorld() {
+        return thisWorld;
+    }
+
+    /**
+     * Gets the world custom spawn.
+     * 
+     * @return the world custom spawn
+     */
+    public int[] getWorldCustomSpawn() {
+        return worldCustomSpawn.clone();
+    }
+
+    /**
      * Gets the world name.
      * 
      * @return the worldName
@@ -75,18 +93,6 @@ public class WormholeWorld {
     public String getWorldName() {
         return worldName;
     }
-
-
-    /**
-     * Sets the world name.
-     * 
-     * @param worldName
-     *            the worldName to set
-     */
-    public void setWorldName(final String worldName) {
-        this.worldName = worldName;
-    }
-
 
     /**
      * Gets the world owner.
@@ -97,38 +103,14 @@ public class WormholeWorld {
         return worldOwner;
     }
 
-
     /**
-     * Sets the world owner.
+     * Gets the world seed.
      * 
-     * @param worldOwner
-     *            the worldOwner to set
+     * @return the world seed
      */
-    public void setWorldOwner(final String worldOwner) {
-        this.worldOwner = worldOwner;
+    public long getWorldSeed() {
+        return worldSeed;
     }
-
-
-    /**
-     * Gets the this world.
-     * 
-     * @return the thisWorld
-     */
-    public World getThisWorld() {
-        return thisWorld;
-    }
-
-
-    /**
-     * Sets the this world.
-     * 
-     * @param thisWorld
-     *            the thisWorld to set
-     */
-    public void setThisWorld(final World thisWorld) {
-        this.thisWorld = thisWorld;
-    }
-
 
     /**
      * Gets the world custom spawn.
@@ -145,19 +127,10 @@ public class WormholeWorld {
      * @return the world spawn to int[]
      */
     public int[] getWorldSpawnToInt() {
-        return new int[]{(int) worldSpawn.getX(),(int) worldSpawn.getY(),(int) worldSpawn.getZ()};
+        return new int[]{
+            (int) worldSpawn.getX(), (int) worldSpawn.getY(), (int) worldSpawn.getZ()
+        };
     }
-
-    /**
-     * Sets the world custom spawn.
-     * 
-     * @param worldSpawn
-     *            the new world custom spawn
-     */
-    public void setWorldSpawn(final Location worldSpawn) {
-        this.worldSpawn = worldSpawn;
-    }
-
 
     /**
      * Checks if is allow hostiles.
@@ -168,6 +141,32 @@ public class WormholeWorld {
         return allowHostiles;
     }
 
+    /**
+     * Checks if is the allow neutrals.
+     * 
+     * @return the allowNeutrals
+     */
+    public boolean isAllowNeutrals() {
+        return allowNeutrals;
+    }
+
+    /**
+     * Checks if is autoconnect world.
+     * 
+     * @return true, if is autoconnect world
+     */
+    public boolean isAutoconnectWorld() {
+        return autoconnectWorld;
+    }
+
+    /**
+     * Checks if is nether world.
+     * 
+     * @return true, if is nether world
+     */
+    public boolean isNetherWorld() {
+        return netherWorld;
+    }
 
     /**
      * Sets the allow hostiles.
@@ -179,17 +178,6 @@ public class WormholeWorld {
         this.allowHostiles = allowHostiles;
     }
 
-
-    /**
-     * Checks if is the allow neutrals.
-     * 
-     * @return the allowNeutrals
-     */
-    public boolean isAllowNeutrals() {
-        return allowNeutrals;
-    }
-
-
     /**
      * Sets the allow neutrals.
      * 
@@ -198,25 +186,6 @@ public class WormholeWorld {
      */
     public void setAllowNeutrals(final boolean allowNeutrals) {
         this.allowNeutrals = allowNeutrals;
-    }
-
-    /**
-     * Sets the nether world.
-     * 
-     * @param netherWorld
-     *            the new nether world
-     */
-    public void setNetherWorld(final boolean netherWorld) {
-        this.netherWorld = netherWorld;
-    }
-
-    /**
-     * Checks if is nether world.
-     * 
-     * @return true, if is nether world
-     */
-    public boolean isNetherWorld() {
-        return netherWorld;
     }
 
     /**
@@ -230,12 +199,23 @@ public class WormholeWorld {
     }
 
     /**
-     * Checks if is autoconnect world.
+     * Sets the nether world.
      * 
-     * @return true, if is autoconnect world
+     * @param netherWorld
+     *            the new nether world
      */
-    public boolean isAutoconnectWorld() {
-        return autoconnectWorld;
+    public void setNetherWorld(final boolean netherWorld) {
+        this.netherWorld = netherWorld;
+    }
+
+    /**
+     * Sets the this world.
+     * 
+     * @param thisWorld
+     *            the thisWorld to set
+     */
+    public void setThisWorld(final World thisWorld) {
+        this.thisWorld = thisWorld;
     }
 
     /**
@@ -249,12 +229,23 @@ public class WormholeWorld {
     }
 
     /**
-     * Gets the world custom spawn.
+     * Sets the world name.
      * 
-     * @return the world custom spawn
+     * @param worldName
+     *            the worldName to set
      */
-    public int[] getWorldCustomSpawn() {
-        return worldCustomSpawn.clone();
+    public void setWorldName(final String worldName) {
+        this.worldName = worldName;
+    }
+
+    /**
+     * Sets the world owner.
+     * 
+     * @param worldOwner
+     *            the worldOwner to set
+     */
+    public void setWorldOwner(final String worldOwner) {
+        this.worldOwner = worldOwner;
     }
 
     /**
@@ -268,12 +259,13 @@ public class WormholeWorld {
     }
 
     /**
-     * Gets the world seed.
+     * Sets the world custom spawn.
      * 
-     * @return the world seed
+     * @param worldSpawn
+     *            the new world custom spawn
      */
-    public long getWorldSeed() {
-        return worldSeed;
+    public void setWorldSpawn(final Location worldSpawn) {
+        this.worldSpawn = worldSpawn;
     }
 
 }

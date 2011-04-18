@@ -31,9 +31,9 @@ public class DefaultOptions {
         new ServerOption(ServerOptionKeys.serverOptionPermissions, "Option: Enable or disable Permissions plugin support. Default: true", "boolean", true, "WormholeXTremeWorlds"),
         new ServerOption(ServerOptionKeys.serverOptionOpsBypassPermissions, "Option: Ops bypass Permissions plugin access checks. Default: true", "boolean", true, "WormholeXTremeWorlds"),
         new ServerOption(ServerOptionKeys.serverOptionHelp, "Option: Enable or disable Help plugin support. Default: true", "boolean", true, "WormholeXTremeWorlds"),
-        //new ServerOption(ServerOptionKeys.serverOptionIconomy, "Option: Enable or disable iConomy plugin support. Default: true", "boolean", true, "WormholeXTremeWorlds"),
-        //new ServerOption(ServerOptionKeys.serverOptionOpsBypassIconomy, "Option: Ops bypass iConomy plugin charges. Default: true", "boolean", true, "WormholeXTremeWorlds"),
-        //new ServerOption(ServerOptionKeys.serverOptionIconomyCostForNormalWorldGeneration, "Option: iConomy cost to generate a normal world. Default: 1000.0", "double", 1000.0, "WormholeXTremeWorlds"),
-        //new ServerOption(ServerOptionKeys.serverOptionIconomyCostForNetherWorldGeneration, "Option: iConomy cost to generate a nether world. Default: 2000.0", "double", 2000.0, "WormholeXTremeWorlds"),
-        };
+    //new ServerOption(ServerOptionKeys.serverOptionIconomy, "Option: Enable or disable iConomy plugin support. Default: true", "boolean", true, "WormholeXTremeWorlds"),
+    //new ServerOption(ServerOptionKeys.serverOptionOpsBypassIconomy, "Option: Ops bypass iConomy plugin charges. Default: true", "boolean", true, "WormholeXTremeWorlds"),
+    //new ServerOption(ServerOptionKeys.serverOptionIconomyCostForNormalWorldGeneration, "Option: iConomy cost to generate a normal world. Default: 1000.0", "double", 1000.0, "WormholeXTremeWorlds"),
+    //new ServerOption(ServerOptionKeys.serverOptionIconomyCostForNetherWorldGeneration, "Option: iConomy cost to generate a nether world. Default: 2000.0", "double", 2000.0, "WormholeXTremeWorlds"),
+    };
 }

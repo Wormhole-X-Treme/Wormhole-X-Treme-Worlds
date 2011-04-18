@@ -20,7 +20,6 @@ package com.wormhole_xtreme.worlds.config;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-
 /**
  * The Class ConfigManager.
  * 
@@ -28,23 +27,57 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ConfigManager {
 
-    /** The Constant options. */
-    public static final ConcurrentHashMap<ServerOptionKeys, ServerOption> serverOptions = new ConcurrentHashMap<ServerOptionKeys, ServerOption>();
+    /**
+     * The Enum OptionKeys.
+     */
+    public enum ServerOptionKeys {
+
+        /** The server option permissions. */
+        serverOptionPermissions,
+
+        /** The server option ops bypass permissions. */
+        serverOptionOpsBypassPermissions,
+
+        /** The server option help. */
+        serverOptionHelp
+
+        /** The server option iconomy. */
+        //serverOptionIconomy,
+
+        /** The server option ops bypass iconomy. */
+        //serverOptionOpsBypassIconomy,
+
+        /** The server option iconomy cost for normal world generation. */
+        //serverOptionIconomyCostForNormalWorldGeneration,
+
+        /** The server option iconomy cost for nether world generation. */
+        //serverOptionIconomyCostForNetherWorldGeneration,
+
+    }
 
     /**
-     * Sets the option value.
-     * 
-     * @param optionKey
-     *            the option key
-     * @param optionValue
-     *            the option value
+     * The Enum WorldOptionKeys.
      */
-    private static void setOptionValue(final ServerOptionKeys optionKey, final Object optionValue) {
-        final ServerOption o = serverOptions.get(optionKey);
-        if (optionValue != null) {
-            o.setOptionValue(optionValue);
-        }
+    public enum WorldOptionKeys {
+
+        /** The world option nether. */
+        worldOptionNether,
+
+        /** The world option no hostiles. */
+        worldOptionNoHostiles,
+
+        /** The world option no neutrals. */
+        worldOptionNoNeutrals,
+
+        /** The world option seed. */
+        worldOptionSeed,
+
+        /** The world option no connect. */
+        worldOptionNoConnect
     }
+
+    /** The Constant options. */
+    public static final ConcurrentHashMap<ServerOptionKeys, ServerOption> serverOptions = new ConcurrentHashMap<ServerOptionKeys, ServerOption>();
 
     /**
      * Gets the server option.
@@ -58,22 +91,12 @@ public class ConfigManager {
     }
 
     /**
-     * Sets the server option permissions.
+     * Gets the server option help.
      * 
-     * @param b
-     *            the new server option permissions
+     * @return the server option help
      */
-    public static void setServerOptionPermissions(final boolean b) {
-        ConfigManager.setOptionValue(ServerOptionKeys.serverOptionPermissions, b);
-    }
-
-    /**
-     * Gets the server option permissions.
-     * 
-     * @return the server option permissions
-     */
-    public static boolean getServerOptionPermissions() {
-        final ServerOption o = getServerOption(ServerOptionKeys.serverOptionPermissions);
+    public static boolean getServerOptionHelp() {
+        final ServerOption o = getServerOption(ServerOptionKeys.serverOptionHelp);
         if (o != null) {
             return Boolean.valueOf(o.getOptionValue().toString());
         }
@@ -83,22 +106,27 @@ public class ConfigManager {
     }
 
     /**
-     * Sets the server option ops bypass permissions.
-     * 
-     * @param b
-     *            the new server option ops bypass permissions
-     */
-    public static void setServerOptionOpsBypassPermissions(final boolean b) {
-        ConfigManager.setOptionValue(ServerOptionKeys.serverOptionOpsBypassPermissions, b);
-    }
-
-    /**
      * Gets the server option ops bypass permissions.
      * 
      * @return the server option ops bypass permissions
      */
     public static boolean getServerOptionOpsBypassPermissions() {
         final ServerOption o = getServerOption(ServerOptionKeys.serverOptionOpsBypassPermissions);
+        if (o != null) {
+            return Boolean.valueOf(o.getOptionValue().toString());
+        }
+        else {
+            return true;
+        }
+    }
+
+    /**
+     * Gets the server option permissions.
+     * 
+     * @return the server option permissions
+     */
+    public static boolean getServerOptionPermissions() {
+        final ServerOption o = getServerOption(ServerOptionKeys.serverOptionPermissions);
         if (o != null) {
             return Boolean.valueOf(o.getOptionValue().toString());
         }
@@ -178,6 +206,21 @@ public class ConfigManager {
 //    }
 
     /**
+     * Sets the option value.
+     * 
+     * @param optionKey
+     *            the option key
+     * @param optionValue
+     *            the option value
+     */
+    private static void setOptionValue(final ServerOptionKeys optionKey, final Object optionValue) {
+        final ServerOption o = serverOptions.get(optionKey);
+        if (optionValue != null) {
+            o.setOptionValue(optionValue);
+        }
+    }
+
+    /**
      * Sets the server option help.
      * 
      * @param b
@@ -188,67 +231,22 @@ public class ConfigManager {
     }
 
     /**
-     * Gets the server option help.
+     * Sets the server option ops bypass permissions.
      * 
-     * @return the server option help
+     * @param b
+     *            the new server option ops bypass permissions
      */
-    public static boolean getServerOptionHelp() {
-        final ServerOption o = getServerOption(ServerOptionKeys.serverOptionHelp);
-        if (o != null) {
-            return Boolean.valueOf(o.getOptionValue().toString());
-        }
-        else {
-            return true;
-        }
+    public static void setServerOptionOpsBypassPermissions(final boolean b) {
+        ConfigManager.setOptionValue(ServerOptionKeys.serverOptionOpsBypassPermissions, b);
     }
 
     /**
-     * The Enum OptionKeys.
+     * Sets the server option permissions.
+     * 
+     * @param b
+     *            the new server option permissions
      */
-    public enum ServerOptionKeys {
-
-        /** The server option permissions. */
-        serverOptionPermissions,
-
-        /** The server option ops bypass permissions. */
-        serverOptionOpsBypassPermissions,
-        
-        /** The server option help. */
-        serverOptionHelp
-        
-        /** The server option iconomy. */
-        //serverOptionIconomy,
-
-        /** The server option ops bypass iconomy. */
-        //serverOptionOpsBypassIconomy,
-
-        /** The server option iconomy cost for normal world generation. */
-        //serverOptionIconomyCostForNormalWorldGeneration,
-
-        /** The server option iconomy cost for nether world generation. */
-        //serverOptionIconomyCostForNetherWorldGeneration,
-
-
-    }
-
-    /**
-     * The Enum WorldOptionKeys.
-     */
-    public enum WorldOptionKeys {
-
-        /** The world option nether. */
-        worldOptionNether,
-
-        /** The world option no hostiles. */
-        worldOptionNoHostiles,
-
-        /** The world option no neutrals. */
-        worldOptionNoNeutrals,
-
-        /** The world option seed. */
-        worldOptionSeed,
-
-        /** The world option no connect. */
-        worldOptionNoConnect
+    public static void setServerOptionPermissions(final boolean b) {
+        ConfigManager.setOptionValue(ServerOptionKeys.serverOptionPermissions, b);
     }
 }

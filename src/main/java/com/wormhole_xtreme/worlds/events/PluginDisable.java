@@ -25,7 +25,6 @@ import com.wormhole_xtreme.worlds.config.ConfigManager;
 import com.wormhole_xtreme.worlds.plugin.HelpSupport;
 import com.wormhole_xtreme.worlds.plugin.PermissionsSupport;
 
-
 /**
  * The Class PluginDisable.
  * 

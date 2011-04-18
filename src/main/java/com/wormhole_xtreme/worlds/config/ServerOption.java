@@ -20,7 +20,6 @@ package com.wormhole_xtreme.worlds.config;
 
 import com.wormhole_xtreme.worlds.config.ConfigManager.ServerOptionKeys;
 
-
 /**
  * The Class Option.
  * 
@@ -69,13 +68,12 @@ public class ServerOption {
     }
 
     /**
-     * Sets the option key.
+     * Gets the option description.
      * 
-     * @param optionKey
-     *            the new option key
+     * @return the option description
      */
-    private void setOptionKey(final ServerOptionKeys optionKey) {
-        this.optionKey = optionKey;
+    public String getOptionDescription() {
+        return optionDescription;
     }
 
     /**
@@ -85,6 +83,33 @@ public class ServerOption {
      */
     public ServerOptionKeys getOptionKey() {
         return optionKey;
+    }
+
+    /**
+     * Gets the option plugin.
+     * 
+     * @return the option plugin
+     */
+    public String getOptionPlugin() {
+        return optionPlugin;
+    }
+
+    /**
+     * Gets the option type.
+     * 
+     * @return the option type
+     */
+    public String getOptionType() {
+        return optionType;
+    }
+
+    /**
+     * Gets the option value.
+     * 
+     * @return the option value
+     */
+    public Object getOptionValue() {
+        return optionValue;
     }
 
     /**
@@ -98,31 +123,13 @@ public class ServerOption {
     }
 
     /**
-     * Gets the option description.
+     * Sets the option key.
      * 
-     * @return the option description
+     * @param optionKey
+     *            the new option key
      */
-    public String getOptionDescription() {
-        return optionDescription;
-    }
-
-    /**
-     * Sets the option value.
-     * 
-     * @param optionValue
-     *            the new option value
-     */
-    public void setOptionValue(final Object optionValue) {
-        this.optionValue = optionValue;
-    }
-
-    /**
-     * Gets the option value.
-     * 
-     * @return the option value
-     */
-    public Object getOptionValue() {
-        return optionValue;
+    private void setOptionKey(final ServerOptionKeys optionKey) {
+        this.optionKey = optionKey;
     }
 
     /**
@@ -136,15 +143,6 @@ public class ServerOption {
     }
 
     /**
-     * Gets the option plugin.
-     * 
-     * @return the option plugin
-     */
-    public String getOptionPlugin() {
-        return optionPlugin;
-    }
-
-    /**
      * Sets the option type.
      * 
      * @param optionType
@@ -155,11 +153,12 @@ public class ServerOption {
     }
 
     /**
-     * Gets the option type.
+     * Sets the option value.
      * 
-     * @return the option type
+     * @param optionValue
+     *            the new option value
      */
-    public String getOptionType() {
-        return optionType;
+    public void setOptionValue(final Object optionValue) {
+        this.optionValue = optionValue;
     }
 }

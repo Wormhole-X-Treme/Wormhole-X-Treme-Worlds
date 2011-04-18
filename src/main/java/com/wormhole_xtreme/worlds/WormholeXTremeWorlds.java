@@ -33,7 +33,6 @@ import com.wormhole_xtreme.worlds.plugin.HelpSupport;
 import com.wormhole_xtreme.worlds.plugin.PermissionsSupport;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 
-
 /**
  * The Class WormholeXTremeWorlds.
  * 
@@ -53,17 +52,80 @@ public class WormholeXTremeWorlds extends JavaPlugin {
     /** The permission handler. */
     private static PermissionHandler permissionHandler = null;
 
-    /* (non-Javadoc)
-     * @see org.bukkit.plugin.java.JavaPlugin#onLoad()
+    /**
+     * Gets the help.
+     * 
+     * @return the help
      */
-    @Override
-    public void onLoad() {
-        setThisPlugin(this);
-        setThisLogger(getThisPlugin().getServer().getLogger());
-        prettyLog(Level.INFO, true, getThisPlugin().getDescription().getAuthors().toString() + "Load Beginning.");
-        XMLConfig.loadXmlConfig(getThisPlugin().getDescription());
-        WorldManager.loadAutoconnectWorlds();
-        prettyLog(Level.INFO, true, "Load Completed.");
+    public static Help getHelp() {
+        return help;
+    }
+
+    /**
+     * Gets the permission handler.
+     * 
+     * @return the permission handler
+     */
+    public static PermissionHandler getPermissionHandler() {
+        return permissionHandler;
+    }
+
+    /**
+     * Gets this logger.
+     * 
+     * @return This logger
+     */
+    public static Logger getThisLogger() {
+        return thisLogger;
+    }
+
+    /**
+     * Gets this plugin.
+     * 
+     * @return This plugin
+     */
+    public static WormholeXTremeWorlds getThisPlugin() {
+        return thisPlugin;
+    }
+
+    /**
+     * Sets the help.
+     * 
+     * @param help
+     *            the new help
+     */
+    public static void setHelp(final Help help) {
+        WormholeXTremeWorlds.help = help;
+    }
+
+    /**
+     * Sets the permission handler.
+     * 
+     * @param permissionHandler
+     *            the new permission handler
+     */
+    public static void setPermissionHandler(final PermissionHandler permissionHandler) {
+        WormholeXTremeWorlds.permissionHandler = permissionHandler;
+    }
+
+    /**
+     * Sets this logger.
+     * 
+     * @param thisLogger
+     *            The new logger
+     */
+    private static void setThisLogger(final Logger thisLogger) {
+        WormholeXTremeWorlds.thisLogger = thisLogger;
+    }
+
+    /**
+     * Sets this plugin.
+     * 
+     * @param thisPlugin
+     *            The new plugin
+     */
+    private static void setThisPlugin(final WormholeXTremeWorlds thisPlugin) {
+        WormholeXTremeWorlds.thisPlugin = thisPlugin;
     }
 
     /* (non-Javadoc)
@@ -89,44 +151,18 @@ public class WormholeXTremeWorlds extends JavaPlugin {
         prettyLog(Level.INFO, true, "Enable Completed.");
     }
 
-    /**
-     * Sets this plugin.
-     * 
-     * @param thisPlugin
-     *            The new plugin
+    /* (non-Javadoc)
+     * @see org.bukkit.plugin.java.JavaPlugin#onLoad()
      */
-    private static void setThisPlugin(final WormholeXTremeWorlds thisPlugin) {
-        WormholeXTremeWorlds.thisPlugin = thisPlugin;
+    @Override
+    public void onLoad() {
+        setThisPlugin(this);
+        setThisLogger(getThisPlugin().getServer().getLogger());
+        prettyLog(Level.INFO, true, getThisPlugin().getDescription().getAuthors().toString() + "Load Beginning.");
+        XMLConfig.loadXmlConfig(getThisPlugin().getDescription());
+        WorldManager.loadAutoconnectWorlds();
+        prettyLog(Level.INFO, true, "Load Completed.");
     }
-
-    /**
-     * Gets this plugin.
-     * 
-     * @return This plugin
-     */
-    public static WormholeXTremeWorlds getThisPlugin() {
-        return thisPlugin;
-    }
-
-    /**
-     * Sets this logger.
-     * 
-     * @param thisLogger
-     *            The new logger
-     */
-    private static void setThisLogger(final Logger thisLogger) {
-        WormholeXTremeWorlds.thisLogger = thisLogger;
-    }
-
-    /**
-     * Gets this logger.
-     * 
-     * @return This logger
-     */
-    public static Logger getThisLogger() {
-        return thisLogger;
-    }
-
 
     /**
      * 
@@ -151,43 +187,5 @@ public class WormholeXTremeWorlds extends JavaPlugin {
         else {
             getThisLogger().log(severity, prettyLogLine + message);
         }
-    }
-
-    /**
-     * Sets the help.
-     * 
-     * @param help
-     *            the new help
-     */
-    public static void setHelp(final Help help) {
-        WormholeXTremeWorlds.help = help;
-    }
-
-    /**
-     * Gets the help.
-     * 
-     * @return the help
-     */
-    public static Help getHelp() {
-        return help;
-    }
-
-    /**
-     * Sets the permission handler.
-     * 
-     * @param permissionHandler
-     *            the new permission handler
-     */
-    public static void setPermissionHandler(final PermissionHandler permissionHandler) {
-        WormholeXTremeWorlds.permissionHandler = permissionHandler;
-    }
-
-    /**
-     * Gets the permission handler.
-     * 
-     * @return the permission handler
-     */
-    public static PermissionHandler getPermissionHandler() {
-        return permissionHandler;
     }
 }

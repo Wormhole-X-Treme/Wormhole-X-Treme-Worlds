@@ -43,6 +43,18 @@ public class HelpSupport {
     private static final PluginManager pluginManager = WormholeXTremeWorlds.getThisPlugin().getServer().getPluginManager();
 
     /**
+     * Disable help.
+     */
+    public static void disableHelp() {
+        if (ConfigManager.getServerOptionHelp()) {
+            if (WormholeXTremeWorlds.getHelp() != null) {
+                WormholeXTremeWorlds.setHelp(null);
+                thisPlugin.prettyLog(Level.INFO, false, "Detached from Help plugin.");
+            }
+        }
+    }
+
+    /**
      * Enable help.
      */
     public static void enableHelp() {
@@ -51,7 +63,7 @@ public class HelpSupport {
                 final Plugin helpTest = pluginManager.getPlugin("Help");
                 if (helpTest != null) {
                     final String version = helpTest.getDescription().getVersion();
-                    if (!version.startsWith("0.2")) {
+                    if ( !version.startsWith("0.2")) {
                         thisPlugin.prettyLog(Level.WARNING, false, "Not a support version of Help: " + version + " Recommended is: 0.2.x");
                     }
                     try {
@@ -73,24 +85,12 @@ public class HelpSupport {
     }
 
     /**
-     * Disable help.
-     */
-    public static void disableHelp() {
-        if (ConfigManager.getServerOptionHelp()) {
-            if (WormholeXTremeWorlds.getHelp() != null) {
-                WormholeXTremeWorlds.setHelp(null);
-                thisPlugin.prettyLog(Level.INFO, false, "Detached from Help plugin.");
-            }
-        }
-    }
-
-    /**
      * Register help commands.
      */
     public static void registerHelpCommands() {
-        if (WormholeXTremeWorlds.getHelp() != null && ConfigManager.getServerOptionHelp()) {
+        if ((WormholeXTremeWorlds.getHelp() != null) && ConfigManager.getServerOptionHelp()) {
             WormholeXTremeWorlds.getHelp().registerCommand("wxw", "Wormhole X-Treme Worlds administration, configuration and utilities command", thisPlugin, true);
-            if (WormholeXTremeWorlds.getPermissionHandler() != null && ConfigManager.getServerOptionPermissions()) {
+            if ((WormholeXTremeWorlds.getPermissionHandler() != null) && ConfigManager.getServerOptionPermissions()) {
 
                 WormholeXTremeWorlds.getHelp().registerCommand("wxw go [world]", "Go to spawn of specified world.", thisPlugin, PermissionType.GO.getPermission());
                 WormholeXTremeWorlds.getHelp().registerCommand("wxw list", "List all loaded and configured worlds.", thisPlugin, PermissionType.LIST.getPermission());
@@ -104,7 +104,7 @@ public class HelpSupport {
             }
             else {
                 WormholeXTremeWorlds.getHelp().registerCommand("wxw go [world]", "Go to spawn of specified world.", thisPlugin, "OP");
-                WormholeXTremeWorlds.getHelp().registerCommand("wxw list", "List all loaded and configured worlds.", thisPlugin,"OP");
+                WormholeXTremeWorlds.getHelp().registerCommand("wxw list", "List all loaded and configured worlds.", thisPlugin, "OP");
                 WormholeXTremeWorlds.getHelp().registerCommand("wxw remove [world]", "Remove world from configuration.", thisPlugin, "OP");
                 WormholeXTremeWorlds.getHelp().registerCommand("wxw connect [world]", "Load unloaded world.", thisPlugin, "OP");
                 WormholeXTremeWorlds.getHelp().registerCommand("wxw modify [args]", "Modify settings of specified world.", thisPlugin, "OP");

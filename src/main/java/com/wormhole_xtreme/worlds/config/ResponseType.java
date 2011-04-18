@@ -55,10 +55,10 @@ public enum ResponseType {
 
     /** The MODIFY COMMAND OPTIONAL ARGS message. */
     NORMAL_MODIFY_COMMAND_OPTIONAL_ARGS(NORMAL_HEADER.toString() + "Optional: -owner <player>, -(no)autoload, -(no)hostiles, -(no)neutrals"),
-    
+
     /** The CREATE COMMAND OPTIONAL ARGS message. */
     NORMAL_CREATE_COMMAND_OPTIONAL_ARGS(NORMAL_HEADER.toString() + "Optional: -owner <player>, -seed <num>, -nether, -noautoload, -nohostiles, -noneutrals"),
-    
+
     /** The COMMAND REQUIRES A WORLD NAME ERROR message. */
     ERROR_COMMAND_REQUIRES_WORLDNAME(ERROR_HEADER.toString() + "Command requires world name: "),
 
@@ -70,7 +70,7 @@ public enum ResponseType {
 
     /** The COMMAND REQUIRES AN OWNER ERROR message. */
     ERROR_COMMAND_REQUIRES_OWNER(ERROR_HEADER.toString() + "Command requires owner to be specified: "),
-    
+
     /** The COMMAND ONLY AVAILABLE ON MANAGED WORLDS message. */
     ERROR_COMMAND_ONLY_MANAGED_WORLD(ERROR_HEADER.toString() + "Command only available on managed worlds: ");
 

@@ -27,7 +27,6 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ConfigManager;
 
-
 /**
  * The Class PermissionsSupport.
  * 
@@ -42,6 +41,18 @@ public class PermissionsSupport {
     private static final PluginManager pluginManager = WormholeXTremeWorlds.getThisPlugin().getServer().getPluginManager();
 
     /**
+     * Disable permissions.
+     */
+    public static void disablePermissions() {
+        if (ConfigManager.getServerOptionPermissions()) {
+            if (WormholeXTremeWorlds.getPermissionHandler() != null) {
+                WormholeXTremeWorlds.setPermissionHandler(null);
+                thisPlugin.prettyLog(Level.INFO, false, "Detached from Permissions plugin.");
+            }
+        }
+    }
+
+    /**
      * Enable permissions.
      */
     public static void enablePermissions() {
@@ -50,7 +61,7 @@ public class PermissionsSupport {
                 final Plugin test = pluginManager.getPlugin("Permissions");
                 if (test != null) {
                     final String version = test.getDescription().getVersion();
-                    if (!version.startsWith("2.5") && !version.startsWith("2.6") && !version.startsWith("2.7")) {
+                    if ( !version.startsWith("2.5") && !version.startsWith("2.6") && !version.startsWith("2.7")) {
                         thisPlugin.prettyLog(Level.WARNING, false, "Not a supported version of Permissions. Recommended is 2.7.x");
                     }
                     try {
@@ -68,18 +79,6 @@ public class PermissionsSupport {
         }
         else {
             thisPlugin.prettyLog(Level.INFO, false, "Permission Plugin support disabled via config.xml");
-        }
-    }
-
-    /**
-     * Disable permissions.
-     */
-    public static void disablePermissions() {
-        if (ConfigManager.getServerOptionPermissions()) {
-            if (WormholeXTremeWorlds.getPermissionHandler() != null) {
-                WormholeXTremeWorlds.setPermissionHandler(null);
-                thisPlugin.prettyLog(Level.INFO, false, "Detached from Permissions plugin.");
-            }
         }
     }
 }

@@ -24,7 +24,6 @@ import org.bukkit.plugin.PluginManager;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 
-
 /**
  * The Class EventUtilities.
  * 

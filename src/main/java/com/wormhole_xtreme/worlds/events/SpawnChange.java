@@ -35,7 +35,7 @@ import com.wormhole_xtreme.worlds.world.WormholeWorld;
 public class SpawnChange extends WorldListener {
 
     private static WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
-    
+
     /* (non-Javadoc)
      * @see org.bukkit.event.world.WorldListener#onSpawnChange(org.bukkit.event.world.SpawnChangeEvent)
      */
@@ -47,7 +47,7 @@ public class SpawnChange extends WorldListener {
             wormholeWorld.setWorldSpawn(event.getWorld().getSpawnLocation());
             wormholeWorld.setWorldCustomSpawn(wormholeWorld.getWorldSpawnToInt());
             WorldManager.addWorld(wormholeWorld);
-            thisPlugin.prettyLog(Level.FINE, false, "Set worldSpawn to new location:" + Arrays.toString(wormholeWorld.getWorldCustomSpawn())+ " for world: " + event.getWorld().getName());
+            thisPlugin.prettyLog(Level.FINE, false, "Set worldSpawn to new location:" + Arrays.toString(wormholeWorld.getWorldCustomSpawn()) + " for world: " + event.getWorld().getName());
         }
     }
 }

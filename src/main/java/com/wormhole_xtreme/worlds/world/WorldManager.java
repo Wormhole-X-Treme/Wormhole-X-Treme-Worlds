@@ -33,8 +33,6 @@ import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ConfigManager.WorldOptionKeys;
 import com.wormhole_xtreme.worlds.config.XMLConfig;
 
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class WorldManager.
  * 
@@ -49,35 +47,6 @@ public class WorldManager {
     private final static WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
 
     /**
-     * Gets the all worlds.
-     * 
-     * @return the all worlds
-     */
-    public static WormholeWorld[] getAllWorlds() {
-        return worldList.values().toArray(new WormholeWorld[worldList.size()]);
-    }
-
-    /**
-     * Gets the all world names.
-     * 
-     * @return the all world names
-     */
-    public static String[] getAllWorldNames() {
-        return worldList.keySet().toArray(new String[worldList.size()]);
-    }
-
-    /**
-     * Gets the world.
-     * 
-     * @param worldName
-     *            the world name
-     * @return the world
-     */
-    public static WormholeWorld getWorld(final String worldName) {
-        return worldList.get(worldName);
-    }
-
-    /**
      * Adds the world.
      * 
      * @param world
@@ -90,42 +59,17 @@ public class WorldManager {
     }
 
     /**
-     * Removes the world.
-     * 
-     * @param world
-     *            the world
-     */
-    public static void removeWorld(final WormholeWorld world) {
-        if (world != null) {
-            XMLConfig.deleteXmlWorldConfig(world.getWorldName());
-            worldList.remove(world.getWorldName());
-        }
-    }
-
-    /**
-     * Load autoconnect worlds.
-     */
-    public static void loadAutoconnectWorlds() {
-        for (final WormholeWorld wormholeWorld : getAllWorlds()) {
-            if (wormholeWorld.isAutoconnectWorld()) {
-                connectWorld(wormholeWorld);
-
-            }
-        }
-    }
-
-    /**
      * Clear world creatures.
      * 
      * @param wormholeWorld
      *            the wormhole world
      */
     public static void clearWorldCreatures(final WormholeWorld wormholeWorld) {
-        if (!wormholeWorld.isAllowHostiles() || !wormholeWorld.isAllowNeutrals()) {
+        if ( !wormholeWorld.isAllowHostiles() || !wormholeWorld.isAllowNeutrals()) {
             final List<LivingEntity> entityList = wormholeWorld.getThisWorld().getLivingEntities();
 
             for (final LivingEntity entity : entityList) {
-                if ((!wormholeWorld.isAllowHostiles() && ((entity instanceof Monster) || (entity instanceof Flying))) || (!wormholeWorld.isAllowNeutrals() && ((entity instanceof Animals) || (entity instanceof WaterMob)))) {
+                if (( !wormholeWorld.isAllowHostiles() && ((entity instanceof Monster) || (entity instanceof Flying))) || ( !wormholeWorld.isAllowNeutrals() && ((entity instanceof Animals) || (entity instanceof WaterMob)))) {
                     thisPlugin.prettyLog(Level.FINE, false, "Removed entity: " + entity);
                     entity.remove();
                 }
@@ -195,7 +139,6 @@ public class WorldManager {
                 }
             }
 
-
             if (wormholeWorld.isNetherWorld()) {
                 worldEnvironment = Environment.NETHER;
             }
@@ -217,10 +160,11 @@ public class WorldManager {
             wormholeWorld.setWorldSpawn(wormholeWorld.getThisWorld().getSpawnLocation());
 
             final int[] tempSpawn = {
-                (int) wormholeWorld.getWorldSpawn().getX(),(int) wormholeWorld.getWorldSpawn().getY(),
-                (int) wormholeWorld.getWorldSpawn().getZ()};
+                (int) wormholeWorld.getWorldSpawn().getX(), (int) wormholeWorld.getWorldSpawn().getY(),
+                (int) wormholeWorld.getWorldSpawn().getZ()
+            };
             wormholeWorld.setWorldCustomSpawn(tempSpawn);
-            if (!connect) {
+            if ( !connect) {
                 wormholeWorld.setAutoconnectWorld(false);
             }
             addWorld(wormholeWorld);
@@ -228,5 +172,59 @@ public class WorldManager {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Gets the all world names.
+     * 
+     * @return the all world names
+     */
+    public static String[] getAllWorldNames() {
+        return worldList.keySet().toArray(new String[worldList.size()]);
+    }
+
+    /**
+     * Gets the all worlds.
+     * 
+     * @return the all worlds
+     */
+    public static WormholeWorld[] getAllWorlds() {
+        return worldList.values().toArray(new WormholeWorld[worldList.size()]);
+    }
+
+    /**
+     * Gets the world.
+     * 
+     * @param worldName
+     *            the world name
+     * @return the world
+     */
+    public static WormholeWorld getWorld(final String worldName) {
+        return worldList.get(worldName);
+    }
+
+    /**
+     * Load autoconnect worlds.
+     */
+    public static void loadAutoconnectWorlds() {
+        for (final WormholeWorld wormholeWorld : getAllWorlds()) {
+            if (wormholeWorld.isAutoconnectWorld()) {
+                connectWorld(wormholeWorld);
+
+            }
+        }
+    }
+
+    /**
+     * Removes the world.
+     * 
+     * @param world
+     *            the world
+     */
+    public static void removeWorld(final WormholeWorld world) {
+        if (world != null) {
+            XMLConfig.deleteXmlWorldConfig(world.getWorldName());
+            worldList.remove(world.getWorldName());
+        }
     }
 }

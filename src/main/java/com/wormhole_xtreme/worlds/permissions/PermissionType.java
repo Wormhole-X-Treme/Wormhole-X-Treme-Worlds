@@ -77,25 +77,6 @@ public enum PermissionType {
     }
 
     /**
-     * Instantiates a new permission type.
-     * 
-     * @param name
-     *            the name
-     */
-    private PermissionType(final String name) {
-        permissionNode = name;
-    }
-
-    /**
-     * Gets the permission.
-     * 
-     * @return the permission
-     */
-    public String getPermission() {
-        return permissionNode;
-    }
-
-    /**
      * From permission node.
      * 
      * @param permissionNode
@@ -104,6 +85,16 @@ public enum PermissionType {
      */
     public static PermissionType fromPermissionNode(final String permissionNode) {
         return permissionMap.get(permissionNode);
+    }
+
+    /**
+     * Instantiates a new permission type.
+     * 
+     * @param name
+     *            the name
+     */
+    private PermissionType(final String name) {
+        permissionNode = name;
     }
 
     /**
@@ -133,5 +124,14 @@ public enum PermissionType {
         }
         thisPlugin.prettyLog(Level.FINE, false, "Player: \"" + player.getName() + "\" denied \"" + toString() + "\" permissions.");
         return false;
+    }
+
+    /**
+     * Gets the permission.
+     * 
+     * @return the permission
+     */
+    public String getPermission() {
+        return permissionNode;
     }
 }

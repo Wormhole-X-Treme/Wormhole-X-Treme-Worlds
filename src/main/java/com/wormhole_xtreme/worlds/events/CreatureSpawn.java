@@ -47,12 +47,12 @@ public class CreatureSpawn extends EntityListener {
      */
     @Override
     public void onCreatureSpawn(final CreatureSpawnEvent event) {
-        if (!event.isCancelled()) {
+        if ( !event.isCancelled()) {
             thisPlugin.prettyLog(Level.FINEST, false, "Caught creature spawn on world: " + event.getLocation().getWorld().getName() + " creature type: " + event.getCreatureType().toString());
             final WormholeWorld wormholeWorld = WorldManager.getWorld(event.getLocation().getWorld().getName());
             final Entity eventEntity = event.getEntity();
             if ((eventEntity != null) && (wormholeWorld != null)) {
-                if ((!wormholeWorld.isAllowHostiles() && ((eventEntity instanceof Monster) || (eventEntity instanceof Flying))) || (!wormholeWorld.isAllowNeutrals() && ((eventEntity instanceof Animals) || (eventEntity instanceof WaterMob)))) {
+                if (( !wormholeWorld.isAllowHostiles() && ((eventEntity instanceof Monster) || (eventEntity instanceof Flying))) || ( !wormholeWorld.isAllowNeutrals() && ((eventEntity instanceof Animals) || (eventEntity instanceof WaterMob)))) {
                     event.setCancelled(true);
                     thisPlugin.prettyLog(Level.FINEST, false, "Denied hostile creature spawn on world: " + event.getLocation().getWorld().getName() + " creature type: " + event.getCreatureType().toString());
                 }

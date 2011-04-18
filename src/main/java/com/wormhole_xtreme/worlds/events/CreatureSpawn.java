@@ -22,6 +22,7 @@ import java.util.logging.Level;
 
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Flying;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.WaterMob;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -51,7 +52,7 @@ public class CreatureSpawn extends EntityListener {
             final WormholeWorld wormholeWorld = WorldManager.getWorld(event.getLocation().getWorld().getName());
             final Entity eventEntity = event.getEntity();
             if ((eventEntity != null) && (wormholeWorld != null)) {
-                if ((!wormholeWorld.isAllowHostiles() && (eventEntity instanceof Monster)) || (!wormholeWorld.isAllowNeutrals() && ((eventEntity instanceof Animals) || (eventEntity instanceof WaterMob)))) {
+                if ((!wormholeWorld.isAllowHostiles() && ((eventEntity instanceof Monster) || (eventEntity instanceof Flying))) || (!wormholeWorld.isAllowNeutrals() && ((eventEntity instanceof Animals) || (eventEntity instanceof WaterMob)))) {
                     event.setCancelled(true);
                     thisPlugin.prettyLog(Level.FINEST, false, "Denied hostile creature spawn on world: " + event.getLocation().getWorld().getName() + " creature type: " + event.getCreatureType().toString());
                 }

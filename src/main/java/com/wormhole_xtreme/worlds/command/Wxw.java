@@ -115,7 +115,7 @@ class Wxw implements CommandExecutor {
         if (PermissionType.SPAWN.checkPermission(player)) {
             final WormholeWorld wormholeWorld = WorldManager.getWorld(player.getWorld().getName());
             if (wormholeWorld != null) {
-                player.teleport(wormholeWorld.getWorldSpawn());
+                player.teleport(wormholeWorld.isNetherWorld() ? wormholeWorld.getWorldSpawn() : new Location(wormholeWorld.getThisWorld(), wormholeWorld.getWorldSpawn().getBlockX(), wormholeWorld.getThisWorld().getHighestBlockYAt(wormholeWorld.getWorldSpawn()), wormholeWorld.getWorldSpawn().getBlockZ()));
             }
             else {
                 player.sendMessage(ResponseType.ERROR_COMMAND_ONLY_MANAGED_WORLD.toString() + "spawn");
@@ -397,7 +397,7 @@ class Wxw implements CommandExecutor {
             if ((args != null) && (args.length == 1)) {
                 final WormholeWorld wormholeWorld = WorldManager.getWorld(args[0]);
                 if ((wormholeWorld != null) && (thisPlugin.getServer().getWorld(args[0]) != null)) {
-                    player.teleport(wormholeWorld.getWorldSpawn());
+                    player.teleport(wormholeWorld.isNetherWorld() ? wormholeWorld.getWorldSpawn() : new Location(wormholeWorld.getThisWorld(), wormholeWorld.getWorldSpawn().getBlockX(), wormholeWorld.getThisWorld().getHighestBlockYAt(wormholeWorld.getWorldSpawn()), wormholeWorld.getWorldSpawn().getBlockZ()));
                 }
                 else {
                     player.sendMessage(ResponseType.ERROR_WORLD_NOT_EXIST.toString() + args[0]);
@@ -520,8 +520,13 @@ class Wxw implements CommandExecutor {
                                 worldOptionKeyList.add(WorldOptionKeys.worldOptionSeed);
                             }
                             catch (final NumberFormatException e) {
-                                sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_NUMBER.toString() + "-seed");
-                                return true;
+                                final char[] seedCharArray = arg.split("\\|")[1].trim().toCharArray();
+                                final StringBuilder seedString = new StringBuilder();
+                                for (final char seedChar : seedCharArray) {
+                                    seedString.append((int) seedChar);
+                                }
+                                worldSeed = Long.valueOf(seedString.toString());
+                                worldOptionKeyList.add(WorldOptionKeys.worldOptionSeed);
                             }
                         }
                         else {

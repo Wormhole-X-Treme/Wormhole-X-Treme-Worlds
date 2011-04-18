@@ -337,7 +337,17 @@ public class XMLConfig {
                     autoconnectWorld = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
                 }
                 else if (optionName.equals("worldSeed")) {
-                    worldSeed = Long.valueOf(optionValue.toString().trim());
+                    try {
+                        worldSeed = Long.valueOf(optionValue.toString().trim());
+                    }
+                    catch (NumberFormatException e) {
+                        final char[] seedCharArray = optionValue.toString().trim().toCharArray();
+                        final StringBuilder seedString = new StringBuilder();
+                        for (final char seedChar : seedCharArray) {
+                            seedString.append((int) seedChar);
+                        }
+                        worldSeed = Long.valueOf(seedString.toString());
+                    }
                 }
             }
         }

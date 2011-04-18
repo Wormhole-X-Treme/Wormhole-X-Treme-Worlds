@@ -24,6 +24,7 @@ import java.util.logging.Level;
 
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.Flying;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.WaterMob;
@@ -124,7 +125,7 @@ public class WorldManager {
             final List<LivingEntity> entityList = wormholeWorld.getThisWorld().getLivingEntities();
 
             for (final LivingEntity entity : entityList) {
-                if ((!wormholeWorld.isAllowHostiles() && (entity instanceof Monster)) || (!wormholeWorld.isAllowNeutrals() && ((entity instanceof Animals) || (entity instanceof WaterMob)))) {
+                if ((!wormholeWorld.isAllowHostiles() && ((entity instanceof Monster) || (entity instanceof Flying))) || (!wormholeWorld.isAllowNeutrals() && ((entity instanceof Animals) || (entity instanceof WaterMob)))) {
                     thisPlugin.prettyLog(Level.FINE, false, "Removed entity: " + entity);
                     entity.remove();
                 }

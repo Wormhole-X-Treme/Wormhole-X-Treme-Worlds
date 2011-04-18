@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 import org.bukkit.World.Environment;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Flying;
 import org.bukkit.entity.LivingEntity;
@@ -51,11 +52,19 @@ public class WorldManager {
      * 
      * @param world
      *            the world
+     * @return true, if successful
      */
-    public static void addWorld(final WormholeWorld world) {
+    public static boolean addWorld(final WormholeWorld world) {
         if (world != null) {
-            worldList.put(world.getWorldName(), world);
+            try {
+                worldList.put(world.getWorldName(), world);
+                return true;
+            }
+            catch (final NullPointerException e) {
+                return false;
+            }
         }
+        return false;
     }
 
     /**
@@ -63,8 +72,10 @@ public class WorldManager {
      * 
      * @param wormholeWorld
      *            the wormhole world
+     * @return the int number of creatures cleared
      */
-    public static void clearWorldCreatures(final WormholeWorld wormholeWorld) {
+    public static int clearWorldCreatures(final WormholeWorld wormholeWorld) {
+        int cleared = 0;
         if ( !wormholeWorld.isAllowHostiles() || !wormholeWorld.isAllowNeutrals()) {
             final List<LivingEntity> entityList = wormholeWorld.getThisWorld().getLivingEntities();
 
@@ -72,27 +83,54 @@ public class WorldManager {
                 if (( !wormholeWorld.isAllowHostiles() && ((entity instanceof Monster) || (entity instanceof Flying))) || ( !wormholeWorld.isAllowNeutrals() && ((entity instanceof Animals) || (entity instanceof WaterMob)))) {
                     thisPlugin.prettyLog(Level.FINE, false, "Removed entity: " + entity);
                     entity.remove();
+                    cleared++;
                 }
             }
+
         }
+        return cleared;
     }
 
-    /**
-     * Connect world.
-     * 
-     * @param wormholeWorld
-     *            the wormhole world
-     */
-    public static void connectWorld(final WormholeWorld wormholeWorld) {
-        wormholeWorld.setThisWorld(wormholeWorld.getWorldSeed() == 0 ? thisPlugin.getServer().createWorld(wormholeWorld.getWorldName(), wormholeWorld.isNetherWorld() ? Environment.NETHER : Environment.NORMAL) : thisPlugin.getServer().createWorld(wormholeWorld.getWorldName(), wormholeWorld.isNetherWorld() ? Environment.NETHER : Environment.NORMAL, wormholeWorld.getWorldSeed()));
-        wormholeWorld.getThisWorld().setSpawnLocation(wormholeWorld.getWorldCustomSpawn()[0], wormholeWorld.getWorldCustomSpawn()[1], wormholeWorld.getWorldCustomSpawn()[2]);
-        wormholeWorld.setWorldSpawn(wormholeWorld.getThisWorld().getSpawnLocation());
-        if (wormholeWorld.getWorldSeed() == 0) {
-            wormholeWorld.setWorldSeed(wormholeWorld.getThisWorld().getId());
-        }
-        addWorld(wormholeWorld);
-        clearWorldCreatures(wormholeWorld);
-    }
+//    /**
+//     * Creates the safe spawn.
+//     * 
+//     * @param wormholeWorld
+//     *            the wormhole world
+//     */
+//    public static void createSafeSpawn(final WormholeWorld wormholeWorld) {
+//        if (wormholeWorld != null) {
+//            if (wormholeWorld.isNetherWorld()) {
+//                //BlockState[] spawnChunkBlockStates = wormholeWorld.getWorldSpawn().getBlock().getChunk().getTileEntities();
+//                // <Y-AXIS 0-6,<[X-AXIS 0-6][Z-AXIS 0-6]Block>>
+//                final ConcurrentHashMap<Integer, Block[][]> blockYaxisPlane = new ConcurrentHashMap<Integer, Block[][]>();
+//                final int worldSpawnY = wormholeWorld.getWorldSpawn().getBlockY();
+//                final int worldSpawnX = wormholeWorld.getWorldSpawn().getBlockX();
+//                final int worldSpawnZ = wormholeWorld.getWorldSpawn().getBlockZ();
+//                if ((worldSpawnY <= 124) && (worldSpawnY >= 3)) {
+//                    final int iYY = 0;
+//                    for (int iY = worldSpawnY - 3; iY < worldSpawnY + 3; iY++) {
+//                        final Block[][] xzAxis = new Block[7][7];
+//                        int iXX = 0;
+//                        for (int iX = worldSpawnX - 3; iX < worldSpawnX + 3; iX++) {
+//                            int iZZ = 0;
+//                            for (int iZ = worldSpawnZ - 3; iZ < worldSpawnZ + 3; iZ++) {
+//                                xzAxis[iXX][iZZ] = wormholeWorld.getThisWorld().getBlockAt(iX, iY, iZ);
+//                                iZZ++;
+//                            }
+//                            iXX++;
+//                        }
+//                        blockYaxisPlane.put(iYY, xzAxis);
+//                    }
+//                }
+//                for (int i = 0; i < 6; i++) {
+//                    Block tmp = blockYaxisPlane.get(i)[3][3];
+//                    if (tmp.getTypeId() == 0) {
+//                        
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     /**
      * Creates the world.
@@ -205,14 +243,45 @@ public class WorldManager {
 
     /**
      * Load autoconnect worlds.
+     * 
+     * @return the int number of worlds loaded.
      */
-    public static void loadAutoconnectWorlds() {
+    public static int loadAutoconnectWorlds() {
+        int loaded = 0;
         for (final WormholeWorld wormholeWorld : getAllWorlds()) {
             if (wormholeWorld.isAutoconnectWorld()) {
-                connectWorld(wormholeWorld);
-
+                if (loadWorld(wormholeWorld)) {
+                    loaded++;
+                }
             }
         }
+        return loaded;
+    }
+
+    /**
+     * Connect world.
+     * 
+     * @param wormholeWorld
+     *            the wormhole world
+     * @return true, if successful
+     */
+    public static boolean loadWorld(final WormholeWorld wormholeWorld) {
+        if (wormholeWorld != null) {
+            wormholeWorld.setThisWorld(wormholeWorld.getWorldSeed() == 0 ? thisPlugin.getServer().createWorld(wormholeWorld.getWorldName(), wormholeWorld.isNetherWorld() ? Environment.NETHER : Environment.NORMAL) : thisPlugin.getServer().createWorld(wormholeWorld.getWorldName(), wormholeWorld.isNetherWorld() ? Environment.NETHER : Environment.NORMAL, wormholeWorld.getWorldSeed()));
+            wormholeWorld.getThisWorld().setSpawnLocation(wormholeWorld.getWorldCustomSpawn()[0], wormholeWorld.getWorldCustomSpawn()[1], wormholeWorld.getWorldCustomSpawn()[2]);
+            wormholeWorld.setWorldSpawn(wormholeWorld.getThisWorld().getSpawnLocation());
+            if (wormholeWorld.getWorldSeed() == 0) {
+                wormholeWorld.setWorldSeed(wormholeWorld.getThisWorld().getId());
+            }
+            if (addWorld(wormholeWorld)) {
+                final int c = clearWorldCreatures(wormholeWorld);
+                if (c > 0) {
+                    thisPlugin.prettyLog(Level.INFO, false, "Cleared \"" + c + "\" creature entities on world \"" + wormholeWorld.getWorldName() + "\"");
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

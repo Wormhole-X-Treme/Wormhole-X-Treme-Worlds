@@ -160,7 +160,10 @@ public class WormholeXTremeWorlds extends JavaPlugin {
         setThisLogger(getThisPlugin().getServer().getLogger());
         prettyLog(Level.INFO, true, getThisPlugin().getDescription().getAuthors().toString() + "Load Beginning.");
         XMLConfig.loadXmlConfig(getThisPlugin().getDescription());
-        WorldManager.loadAutoconnectWorlds();
+        final int loaded = WorldManager.loadAutoconnectWorlds();
+        if (loaded > 0) {
+            prettyLog(Level.INFO, false, "Auto-loaded " + loaded + " worlds.");
+        }
         prettyLog(Level.INFO, true, "Load Completed.");
     }
 

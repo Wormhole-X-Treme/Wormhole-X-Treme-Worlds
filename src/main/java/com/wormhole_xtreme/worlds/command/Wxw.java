@@ -307,7 +307,7 @@ class Wxw implements CommandExecutor {
             if ((args != null) && (args.length == 1)) {
                 final WormholeWorld wormholeWorld = WorldManager.getWorld(args[0]);
                 if (wormholeWorld != null) {
-                    WorldManager.connectWorld(wormholeWorld);
+                    WorldManager.loadWorld(wormholeWorld);
                     sender.sendMessage(ResponseType.NORMAL_HEADER + "Connected world: " + args[0]);
                 }
                 else {
@@ -423,7 +423,7 @@ class Wxw implements CommandExecutor {
                             }
                             if (doAutoload && (autoloadCount == 1)) {
                                 world.setAutoconnectWorld(autoload);
-                                WorldManager.connectWorld(world);
+                                WorldManager.loadWorld(world);
                             }
                             else if (doAutoload) {
                                 sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting or multiple autoload commands specified.");

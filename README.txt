@@ -1,4 +1,4 @@
-Wormhole X-Treme Worlds v0.1.2: A multiple worlds management plugin for Bukkit.
+Wormhole X-Treme Worlds v0.2: A multiple worlds management plugin for Bukkit.
 
 To Install:
 1. Extract WormholeXTremeWorlds.jar into your plugins/ folder.

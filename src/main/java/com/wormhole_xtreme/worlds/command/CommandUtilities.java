@@ -20,10 +20,16 @@ package com.wormhole_xtreme.worlds.command;
 
 import java.util.ArrayList;
 
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
+import com.wormhole_xtreme.worlds.config.ConfigManager;
+import com.wormhole_xtreme.worlds.config.ResponseType;
+import com.wormhole_xtreme.worlds.permissions.PermissionType;
+import com.wormhole_xtreme.worlds.world.WorldManager;
+import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
 /**
  * The Class CommandUtilities.
@@ -169,6 +175,29 @@ public class CommandUtilities {
     }
 
     /**
+     * Do spawn world.
+     * 
+     * @param player
+     *            the player
+     * @return true, if successful
+     */
+    static boolean doSpawnWorld(final Player player) {
+        if (PermissionType.SPAWN.checkPermission(player)) {
+            final WormholeWorld wormholeWorld = WorldManager.getWorld(player.getWorld().getName());
+            if (wormholeWorld != null) {
+                CommandUtilities.safeSpawnTeleport(wormholeWorld, player);
+            }
+            else {
+                player.sendMessage(ResponseType.ERROR_COMMAND_ONLY_MANAGED_WORLD.toString() + "spawn");
+            }
+        }
+        else {
+            player.sendMessage(ResponseType.ERROR_PERMISSION_NO.toString());
+        }
+        return true;
+    }
+
+    /**
      * Player check.
      * 
      * @param sender
@@ -189,5 +218,20 @@ public class CommandUtilities {
      */
     public static void registerCommands() {
         thisPlugin.getCommand("wxw").setExecutor(new Wxw());
+        if (ConfigManager.getServerOptionSpawnCommand()) {
+            thisPlugin.getCommand("spawn").setExecutor(new Spawn());
+        }
+    }
+
+    /**
+     * Safe spawn teleport.
+     * 
+     * @param wormholeWorld
+     *            the wormhole world
+     * @param player
+     *            the player
+     */
+    static void safeSpawnTeleport(final WormholeWorld wormholeWorld, final Player player) {
+        player.teleport(wormholeWorld.isNetherWorld() ? new Location(wormholeWorld.getThisWorld(), wormholeWorld.getWorldSpawn().getBlockX() + 0.5, wormholeWorld.getWorldSpawn().getBlockY(), wormholeWorld.getWorldSpawn().getBlockZ() + 0.5) : new Location(wormholeWorld.getThisWorld(), wormholeWorld.getWorldSpawn().getBlockX() + 0.5, wormholeWorld.getThisWorld().getHighestBlockYAt(wormholeWorld.getWorldSpawn()), wormholeWorld.getWorldSpawn().getBlockZ() + 0.5));
     }
 }

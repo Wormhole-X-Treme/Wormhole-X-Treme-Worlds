@@ -39,7 +39,10 @@ public class ConfigManager {
         serverOptionOpsBypassPermissions,
 
         /** The server option help. */
-        serverOptionHelp
+        serverOptionHelp,
+
+        /** The server option spawn command. */
+        serverOptionSpawnCommand
 
         /** The server option iconomy. */
         //serverOptionIconomy,
@@ -136,10 +139,27 @@ public class ConfigManager {
     }
 
     /**
+     * Gets the server option spawn command.
+     * 
+     * @return the server option spawn command
+     */
+    public static boolean getServerOptionSpawnCommand() {
+        final ServerOption o = getServerOption(ServerOptionKeys.serverOptionSpawnCommand);
+        if (o != null) {
+            return Boolean.valueOf(o.getOptionValue().toString());
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
      * Sets the server option iconomy.
      * 
-     * @param b
-     *            the new server option iconomy
+     * @param optionKey
+     *            the option key
+     * @param optionValue
+     *            the option value
      */
 //    public static void setServerOptionIconomy(final boolean b) {
 //        ConfigManager.setOptionValue(ServerOptionKeys.serverOptionIconomy, b);
@@ -248,5 +268,15 @@ public class ConfigManager {
      */
     public static void setServerOptionPermissions(final boolean b) {
         ConfigManager.setOptionValue(ServerOptionKeys.serverOptionPermissions, b);
+    }
+
+    /**
+     * Sets the server option spawn command.
+     * 
+     * @param b
+     *            the new server option spawn command
+     */
+    public static void setServerOptionSpawnCommand(final boolean b) {
+        ConfigManager.setOptionValue(ServerOptionKeys.serverOptionSpawnCommand, b);
     }
 }

@@ -1,6 +1,6 @@
 name: WormholeXTremeWorlds
 main: com.wormhole_xtreme.worlds.WormholeXTremeWorlds
-version: 0.1.2
+version: 0.2
 author: By alron
 description: >
              Wormhole X-Treme Worlds! World management for Wormhole X-Treme!
@@ -16,3 +16,7 @@ commands:
             Admin Commands:
             /<command> [create | remove | modify | setspawn | load] <args>
             All commands requiring arguments can be called without args for command specific help.
+  spawn:
+    description: Teleport to Wormhole World spawn.
+    usage: |
+           /<command>

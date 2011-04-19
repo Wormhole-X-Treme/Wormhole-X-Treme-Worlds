@@ -151,7 +151,7 @@ class Wxw implements CommandExecutor {
                     sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "World: " + worldName + " created with owner: " + playerName);
                 }
                 else {
-                    sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "World Creation Failed?!");
+                    sender.sendMessage(ResponseType.ERROR_WORLD_ALLREADY_EXISTS.toString() + worldName);
                 }
             }
             else {
@@ -180,7 +180,7 @@ class Wxw implements CommandExecutor {
             if ((args != null) && (args.length == 1)) {
                 final WormholeWorld wormholeWorld = WorldManager.getWorld(args[0]);
                 if ((wormholeWorld != null) && (thisPlugin.getServer().getWorld(args[0]) != null)) {
-                    player.teleport(wormholeWorld.isNetherWorld() ? wormholeWorld.getWorldSpawn() : new Location(wormholeWorld.getThisWorld(), wormholeWorld.getWorldSpawn().getBlockX(), wormholeWorld.getThisWorld().getHighestBlockYAt(wormholeWorld.getWorldSpawn()), wormholeWorld.getWorldSpawn().getBlockZ()));
+                    CommandUtilities.safeSpawnTeleport(wormholeWorld, player);
                 }
                 else {
                     player.sendMessage(ResponseType.ERROR_WORLD_NOT_EXIST.toString() + args[0]);
@@ -293,6 +293,8 @@ class Wxw implements CommandExecutor {
      *            the sender
      * @param args
      *            the args
+     * @param commandName
+     *            the command name
      * @return true, if successful
      */
     private static boolean doLoadWorld(final CommandSender sender, final String[] args, final String commandName) {
@@ -541,28 +543,7 @@ class Wxw implements CommandExecutor {
         return true;
     }
 
-    /**
-     * Do spawn world.
-     * 
-     * @param player
-     *            the player
-     * @return true, if successful
-     */
-    private boolean doSpawnWorld(final Player player) {
-        if (PermissionType.SPAWN.checkPermission(player)) {
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(player.getWorld().getName());
-            if (wormholeWorld != null) {
-                player.teleport(wormholeWorld.isNetherWorld() ? wormholeWorld.getWorldSpawn() : new Location(wormholeWorld.getThisWorld(), wormholeWorld.getWorldSpawn().getBlockX(), wormholeWorld.getThisWorld().getHighestBlockYAt(wormholeWorld.getWorldSpawn()), wormholeWorld.getWorldSpawn().getBlockZ()));
-            }
-            else {
-                player.sendMessage(ResponseType.ERROR_COMMAND_ONLY_MANAGED_WORLD.toString() + "spawn");
-            }
-        }
-        else {
-            player.sendMessage(ResponseType.ERROR_PERMISSION_NO.toString());
-        }
-        return true;
-    }
+
 
     /* (non-Javadoc)
      * @see org.bukkit.command.CommandExecutor#onCommand(org.bukkit.command.CommandSender, org.bukkit.command.Command, java.lang.String, java.lang.String[])
@@ -613,7 +594,7 @@ class Wxw implements CommandExecutor {
                 }
                 else if (cleanArgs[0].equalsIgnoreCase("spawn")) {
                     if (CommandUtilities.playerCheck(sender)) {
-                        return doSpawnWorld((Player) sender);
+                        return CommandUtilities.doSpawnWorld((Player) sender);
                     }
                 }
             }

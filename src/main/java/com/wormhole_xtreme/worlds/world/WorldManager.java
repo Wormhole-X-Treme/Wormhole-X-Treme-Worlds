@@ -18,11 +18,13 @@
  */
 package com.wormhole_xtreme.worlds.world;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -80,6 +82,7 @@ public class WorldManager {
         if ((typeId == 0) || (typeId == 10) || (typeId == 11)) {
             return false;
         }
+        thisPlugin.prettyLog(Level.FINE, false, "Did not find blockId to be unsafe material:" + typeId);
         return true;
     }
 
@@ -244,81 +247,115 @@ public class WorldManager {
      */
     public static Location findSafeSpawn(final Location spawnLocation) {
         if (spawnLocation != null) {
-            final ConcurrentHashMap<Integer, Block[][]> blockYaxisPlane = new ConcurrentHashMap<Integer, Block[][]>();
             final int worldSpawnY = spawnLocation.getBlockY();
             final int worldSpawnX = spawnLocation.getBlockX();
             final int worldSpawnZ = spawnLocation.getBlockZ();
-            if ((worldSpawnY <= 122) && (worldSpawnY >= 5)) {
-                int iYY = 0;
-                for (int iY = worldSpawnY - 4; iY < worldSpawnY + 4; iY++) {
-                    final Block[][] xzAxis = new Block[9][9];
-                    int iXX = 0;
-                    for (int iX = worldSpawnX - 4; iX < worldSpawnX + 4; iX++) {
-                        int iZZ = 0;
-                        for (int iZ = worldSpawnZ - 4; iZ < worldSpawnZ + 4; iZ++) {
-                            xzAxis[iXX][iZZ] = spawnLocation.getWorld().getBlockAt(iX, iY, iZ);
-                            thisPlugin.prettyLog(Level.FINEST, false, "Y/YY: " + iY + "/" + iYY + " X/XX: " + iX + "/" + iXX + " Z/ZZ: " + iZ + "/" + iZZ + " Block: " + xzAxis[iXX][iZZ].toString());
-                            iZZ++;
-                        }
-                        iXX++;
-                    }
-                    blockYaxisPlane.put(iYY, xzAxis);
-                    iYY++;
-                }
+            final World world = spawnLocation.getWorld();
+            Location safeSpawn = findSafeSpawnFromYXZ(world, worldSpawnY, worldSpawnX, worldSpawnZ);
+            if (safeSpawn != null) {
+                thisPlugin.prettyLog(Level.FINE, false, "Found safe spawn in pass 0/0.");
+                return safeSpawn;
             }
-            else if (worldSpawnY <= 4) {
-                int iYY = 0;
-                for (int iY = worldSpawnY; iY < worldSpawnY + 8; iY++) {
-                    final Block[][] xzAxis = new Block[9][9];
-                    int iXX = 0;
-                    for (int iX = worldSpawnX - 4; iX < worldSpawnX + 4; iX++) {
-                        int iZZ = 0;
-                        for (int iZ = worldSpawnZ - 4; iZ < worldSpawnZ + 4; iZ++) {
-                            xzAxis[iXX][iZZ] = spawnLocation.getWorld().getBlockAt(iX, iY, iZ);
-                            thisPlugin.prettyLog(Level.FINEST, false, "Y/YY: " + iY + "/" + iYY + " X/XX: " + iX + "/" + iXX + " Z/ZZ: " + iZ + "/" + iZZ + " Block: " + xzAxis[iXX][iZZ].toString());
-                            iZZ++;
-                        }
-                        iXX++;
-                    }
-                    blockYaxisPlane.put(iYY, xzAxis);
-                    iYY++;
+            else {
+                safeSpawn = findSafeSpawnFromYXZ(world, worldSpawnY, worldSpawnX + 13, worldSpawnZ);
+                if (safeSpawn != null) {
+                    thisPlugin.prettyLog(Level.FINE, false, "Found safe spawn in pass +13/0.");
+                    return safeSpawn;
                 }
-            }
-            else if (worldSpawnY >= 123) {
-                int iYY = 0;
-                for (int iY = worldSpawnY - 8; iY < worldSpawnY; iY++) {
-                    final Block[][] xzAxis = new Block[9][9];
-                    int iXX = 0;
-                    for (int iX = worldSpawnX - 4; iX < worldSpawnX + 4; iX++) {
-                        int iZZ = 0;
-                        for (int iZ = worldSpawnZ - 4; iZ < worldSpawnZ + 4; iZ++) {
-                            xzAxis[iXX][iZZ] = spawnLocation.getWorld().getBlockAt(iX, iY, iZ);
-                            thisPlugin.prettyLog(Level.FINEST, false, "Y/YY: " + iY + "/" + iYY + " X/XX: " + iX + "/" + iXX + " Z/ZZ: " + iZ + "/" + iZZ + " Block: " + xzAxis[iXX][iZZ].toString());
-                            iZZ++;
-                        }
-                        iXX++;
+                else {
+                    safeSpawn = findSafeSpawnFromYXZ(world, worldSpawnY, worldSpawnX + 13, worldSpawnZ + 13);
+                    if (safeSpawn != null) {
+                        thisPlugin.prettyLog(Level.FINE, false, "Found safe spawn in pass +13/+13.");
+                        return safeSpawn;
                     }
-                    blockYaxisPlane.put(iYY, xzAxis);
-                    iYY++;
-                }
-            }
-            for (int y = 0; y < 8; y++) {
-                final Block[][] tmpBlockArr = blockYaxisPlane.get(y);
-                for (int x = 0; x < 8; x++) {
-                    for (int z = 0; z < 8; z++) {
-                        final Block tmpBlock = tmpBlockArr[x][z];
-                        if (tmpBlock != null) {
-                            final int typeId = tmpBlock.getTypeId();
-                            if (checkSafeTypeId(typeId) && checkSafeBlockAbove(tmpBlock) && checkSafeBlockBelow(tmpBlock)) {
-                                return tmpBlock.getLocation();
+                    else {
+                        safeSpawn = findSafeSpawnFromYXZ(world, worldSpawnY, worldSpawnX, worldSpawnZ + 13);
+                        if (safeSpawn != null) {
+                            thisPlugin.prettyLog(Level.FINE, false, "Found safe spawn in pass 0/+13.");
+                            return safeSpawn;
+                        }
+                        else {
+                            safeSpawn = findSafeSpawnFromYXZ(world, worldSpawnY, worldSpawnX - 13, worldSpawnZ + 13);
+                            if (safeSpawn != null) {
+                                thisPlugin.prettyLog(Level.FINE, false, "Found safe spawn in pass -13/+13.");
+                                return safeSpawn;
+                            }
+                            else {
+                                safeSpawn = findSafeSpawnFromYXZ(world, worldSpawnY, worldSpawnX - 13, worldSpawnZ);
+                                if (safeSpawn != null) {
+                                    thisPlugin.prettyLog(Level.FINE, false, "Found safe spawn in pass -13/0.");
+                                    return safeSpawn;
+                                }
+                                else {
+                                    safeSpawn = findSafeSpawnFromYXZ(world, worldSpawnY, worldSpawnX - 13, worldSpawnZ - 13);
+                                    if (safeSpawn != null) {
+                                        thisPlugin.prettyLog(Level.FINE, false, "Found safe spawn in pass -13/-13.");
+                                        return safeSpawn;
+                                    }
+                                    else {
+                                        safeSpawn = findSafeSpawnFromYXZ(world, worldSpawnY, worldSpawnX, worldSpawnZ - 13);
+                                        if (safeSpawn != null) {
+                                            thisPlugin.prettyLog(Level.FINE, false, "Found safe spawn in pass 0/-13.");
+                                            return safeSpawn;
+                                        }
+                                        else {
+                                            safeSpawn = findSafeSpawnFromYXZ(world, worldSpawnY, worldSpawnX + 13, worldSpawnZ - 13);
+                                            if (safeSpawn != null) {
+                                                thisPlugin.prettyLog(Level.FINE, false, "Found safe spawn in pass +13/-13.");
+                                                return safeSpawn;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
+            thisPlugin.prettyLog(Level.FINE, false, "19,773 blocks later. No safe spawn in sight.");
             return spawnLocation;
         }
-        thisPlugin.prettyLog(Level.WARNING, false, "Returned null value for safe spawn!");
+        thisPlugin.prettyLog(Level.FINE, false, "Returned null value for safe spawn!");
+        return null;
+    }
+
+    private static Location findSafeSpawnFromYXZ(final World world, final int worldSpawnY, final int worldSpawnX, final int worldSpawnZ) {
+        final HashMap<Integer, Block[][]> blockYaxisPlane = new HashMap<Integer, Block[][]>(18);
+        int iYY = 0;
+        if ((worldSpawnY <= 120) && (worldSpawnY >= 7)) {
+            for (int iY = worldSpawnY - 6; iY < worldSpawnY + 7; iY++) {
+                blockYaxisPlane.put(iYY, populateYaxisPlane(world, worldSpawnX, worldSpawnZ, iY, iYY));
+                iYY++;
+            }
+        }
+        else if (worldSpawnY <= 6) {
+            for (int iY = worldSpawnY; iY < worldSpawnY + 13; iY++) {
+                blockYaxisPlane.put(iYY, populateYaxisPlane(world, worldSpawnX, worldSpawnZ, iY, iYY));
+                iYY++;
+            }
+        }
+        else if (worldSpawnY >= 121) {
+            for (int iY = worldSpawnY - 13; iY < worldSpawnY; iY++) {
+                blockYaxisPlane.put(iYY, populateYaxisPlane(world, worldSpawnX, worldSpawnZ, iY, iYY));
+                iYY++;
+            }
+        }
+        for (int y = 0; y < 13; y++) {
+            final Block[][] tmpBlockArr = blockYaxisPlane.get(y);
+            for (int x = 0; x < 13; x++) {
+                for (int z = 0; z < 13; z++) {
+                    final Block tmpBlock = tmpBlockArr[x][z];
+                    if (tmpBlock != null) {
+                        final int typeId = tmpBlock.getTypeId();
+                        if (checkSafeTypeId(typeId) && checkSafeBlockAbove(tmpBlock) && checkSafeBlockBelow(tmpBlock)) {
+                            blockYaxisPlane.clear();
+                            return tmpBlock.getLocation();
+                        }
+                    }
+                }
+            }
+        }
+        blockYaxisPlane.clear();
         return null;
     }
 
@@ -392,6 +429,36 @@ public class WorldManager {
             }
         }
         return false;
+    }
+
+    /**
+     * Populate yaxis plane.
+     * 
+     * @param spawnLocation
+     *            the spawn location
+     * @param worldSpawnX
+     *            the world spawn x
+     * @param worldSpawnZ
+     *            the world spawn z
+     * @param iY
+     *            the i y
+     * @param iYY
+     *            the i yy
+     * @return the block[][]
+     */
+    private static Block[][] populateYaxisPlane(final World world, final int worldSpawnX, final int worldSpawnZ, final int iY, final int iYY) {
+        final Block[][] xzAxis = new Block[13][13];
+        int iXX = 0;
+        for (int iX = worldSpawnX - 6; iX < worldSpawnX + 7; iX++) {
+            int iZZ = 0;
+            for (int iZ = worldSpawnZ - 6; iZ < worldSpawnZ + 7; iZ++) {
+                xzAxis[iXX][iZZ] = world.getBlockAt(iX, iY, iZ);
+                thisPlugin.prettyLog(Level.FINEST, false, "Y/YY: " + iY + "/" + iYY + " X/XX: " + iX + "/" + iXX + " Z/ZZ: " + iZ + "/" + iZZ + " Block: " + xzAxis[iXX][iZZ].toString());
+                iZZ++;
+            }
+            iXX++;
+        }
+        return xzAxis;
     }
 
     /**

@@ -43,6 +43,9 @@ public enum ResponseType {
 
     /** The WORLD DOES NOT EXIST ERROR message. */
     ERROR_WORLD_NOT_EXIST(ERROR_HEADER.toString() + "World does not exist or is not loaded: "),
+    
+    /** The WORLD ALLREADY EXISTS ERROR message. */
+    ERROR_WORLD_ALLREADY_EXISTS(ERROR_HEADER.toString() + "World allready exists: "),
 
     /** The WORLD MAY BE ON DISK ERROR message. */
     ERROR_WORLD_MAY_BE_ON_DISK(ERROR_HEADER.toString() + "World may exist on disk, but has not been registered with Wormholw X-Treme Worlds."),

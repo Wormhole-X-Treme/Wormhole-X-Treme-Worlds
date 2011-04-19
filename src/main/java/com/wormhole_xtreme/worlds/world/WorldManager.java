@@ -22,8 +22,10 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
+import org.bukkit.Location;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Flying;
 import org.bukkit.entity.LivingEntity;
@@ -68,6 +70,64 @@ public class WorldManager {
     }
 
     /**
+     * Check non safe type id.
+     * 
+     * @param typeId
+     *            the type id
+     * @return true, if successful
+     */
+    private static boolean checkNonSafeTypeId(final int typeId) {
+        if ((typeId == 0) || (typeId == 10) || (typeId == 11)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check safe block above.
+     * 
+     * @param safeBlock
+     *            the safe block
+     * @return true, if successful
+     */
+    private static boolean checkSafeBlockAbove(final Block safeBlock) {
+        if (safeBlock != null) {
+            final int typeId = safeBlock.getFace(BlockFace.UP).getTypeId();
+            return checkSafeTypeId(typeId);
+        }
+        return false;
+    }
+
+    /**
+     * Check safe block below.
+     * 
+     * @param safeBlock
+     *            the safe block
+     * @return true, if successful
+     */
+    private static boolean checkSafeBlockBelow(final Block safeBlock) {
+        if (safeBlock != null) {
+            final int typeId = safeBlock.getFace(BlockFace.DOWN).getTypeId();
+            return checkNonSafeTypeId(typeId);
+        }
+        return false;
+    }
+
+    /**
+     * Check safe type id.
+     * 
+     * @param typeId
+     *            the type id
+     * @return true, if successful
+     */
+    private static boolean checkSafeTypeId(final int typeId) {
+        if ((typeId == 0) || (typeId == 8) || (typeId == 9) || (typeId == 66)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Clear world creatures.
      * 
      * @param wormholeWorld
@@ -90,47 +150,6 @@ public class WorldManager {
         }
         return cleared;
     }
-
-//    /**
-//     * Creates the safe spawn.
-//     * 
-//     * @param wormholeWorld
-//     *            the wormhole world
-//     */
-//    public static void createSafeSpawn(final WormholeWorld wormholeWorld) {
-//        if (wormholeWorld != null) {
-//            if (wormholeWorld.isNetherWorld()) {
-//                //BlockState[] spawnChunkBlockStates = wormholeWorld.getWorldSpawn().getBlock().getChunk().getTileEntities();
-//                // <Y-AXIS 0-6,<[X-AXIS 0-6][Z-AXIS 0-6]Block>>
-//                final ConcurrentHashMap<Integer, Block[][]> blockYaxisPlane = new ConcurrentHashMap<Integer, Block[][]>();
-//                final int worldSpawnY = wormholeWorld.getWorldSpawn().getBlockY();
-//                final int worldSpawnX = wormholeWorld.getWorldSpawn().getBlockX();
-//                final int worldSpawnZ = wormholeWorld.getWorldSpawn().getBlockZ();
-//                if ((worldSpawnY <= 124) && (worldSpawnY >= 3)) {
-//                    final int iYY = 0;
-//                    for (int iY = worldSpawnY - 3; iY < worldSpawnY + 3; iY++) {
-//                        final Block[][] xzAxis = new Block[7][7];
-//                        int iXX = 0;
-//                        for (int iX = worldSpawnX - 3; iX < worldSpawnX + 3; iX++) {
-//                            int iZZ = 0;
-//                            for (int iZ = worldSpawnZ - 3; iZ < worldSpawnZ + 3; iZ++) {
-//                                xzAxis[iXX][iZZ] = wormholeWorld.getThisWorld().getBlockAt(iX, iY, iZ);
-//                                iZZ++;
-//                            }
-//                            iXX++;
-//                        }
-//                        blockYaxisPlane.put(iYY, xzAxis);
-//                    }
-//                }
-//                for (int i = 0; i < 6; i++) {
-//                    Block tmp = blockYaxisPlane.get(i)[3][3];
-//                    if (tmp.getTypeId() == 0) {
-//                        
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     /**
      * Creates the world.
@@ -195,11 +214,15 @@ public class WorldManager {
                 wormholeWorld.setThisWorld(thisPlugin.getServer().getWorld(worldName));
                 wormholeWorld.setWorldSeed(wormholeWorld.getThisWorld().getId());
             }
-            wormholeWorld.setWorldSpawn(wormholeWorld.getThisWorld().getSpawnLocation());
-
+            wormholeWorld.setWorldSpawn(wormholeWorld.isNetherWorld() ? findSafeSpawn(wormholeWorld.getThisWorld().getSpawnLocation()) : wormholeWorld.getThisWorld().getSpawnLocation());
+            final int tsX = wormholeWorld.getWorldSpawn().getBlockX();
+            final int tsY = wormholeWorld.getWorldSpawn().getBlockY();
+            final int tsZ = wormholeWorld.getWorldSpawn().getBlockZ();
+            if ( !wormholeWorld.getWorldSpawn().equals(wormholeWorld.getThisWorld().getSpawnLocation())) {
+                wormholeWorld.getThisWorld().setSpawnLocation(tsX, tsY, tsZ);
+            }
             final int[] tempSpawn = {
-                (int) wormholeWorld.getWorldSpawn().getX(), (int) wormholeWorld.getWorldSpawn().getY(),
-                (int) wormholeWorld.getWorldSpawn().getZ()
+                tsX, tsY, tsZ
             };
             wormholeWorld.setWorldCustomSpawn(tempSpawn);
             if ( !connect) {
@@ -210,6 +233,93 @@ public class WorldManager {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Find safe spawn.
+     * 
+     * @param spawnLocation
+     *            the wormhole world
+     * @return the location
+     */
+    public static Location findSafeSpawn(final Location spawnLocation) {
+        if (spawnLocation != null) {
+            final ConcurrentHashMap<Integer, Block[][]> blockYaxisPlane = new ConcurrentHashMap<Integer, Block[][]>();
+            final int worldSpawnY = spawnLocation.getBlockY();
+            final int worldSpawnX = spawnLocation.getBlockX();
+            final int worldSpawnZ = spawnLocation.getBlockZ();
+            if ((worldSpawnY <= 122) && (worldSpawnY >= 5)) {
+                int iYY = 0;
+                for (int iY = worldSpawnY - 4; iY < worldSpawnY + 4; iY++) {
+                    final Block[][] xzAxis = new Block[9][9];
+                    int iXX = 0;
+                    for (int iX = worldSpawnX - 4; iX < worldSpawnX + 4; iX++) {
+                        int iZZ = 0;
+                        for (int iZ = worldSpawnZ - 4; iZ < worldSpawnZ + 4; iZ++) {
+                            xzAxis[iXX][iZZ] = spawnLocation.getWorld().getBlockAt(iX, iY, iZ);
+                            thisPlugin.prettyLog(Level.FINEST, false, "Y/YY: " + iY + "/" + iYY + " X/XX: " + iX + "/" + iXX + " Z/ZZ: " + iZ + "/" + iZZ + " Block: " + xzAxis[iXX][iZZ].toString());
+                            iZZ++;
+                        }
+                        iXX++;
+                    }
+                    blockYaxisPlane.put(iYY, xzAxis);
+                    iYY++;
+                }
+            }
+            else if (worldSpawnY <= 4) {
+                int iYY = 0;
+                for (int iY = worldSpawnY; iY < worldSpawnY + 8; iY++) {
+                    final Block[][] xzAxis = new Block[9][9];
+                    int iXX = 0;
+                    for (int iX = worldSpawnX - 4; iX < worldSpawnX + 4; iX++) {
+                        int iZZ = 0;
+                        for (int iZ = worldSpawnZ - 4; iZ < worldSpawnZ + 4; iZ++) {
+                            xzAxis[iXX][iZZ] = spawnLocation.getWorld().getBlockAt(iX, iY, iZ);
+                            thisPlugin.prettyLog(Level.FINEST, false, "Y/YY: " + iY + "/" + iYY + " X/XX: " + iX + "/" + iXX + " Z/ZZ: " + iZ + "/" + iZZ + " Block: " + xzAxis[iXX][iZZ].toString());
+                            iZZ++;
+                        }
+                        iXX++;
+                    }
+                    blockYaxisPlane.put(iYY, xzAxis);
+                    iYY++;
+                }
+            }
+            else if (worldSpawnY >= 123) {
+                int iYY = 0;
+                for (int iY = worldSpawnY - 8; iY < worldSpawnY; iY++) {
+                    final Block[][] xzAxis = new Block[9][9];
+                    int iXX = 0;
+                    for (int iX = worldSpawnX - 4; iX < worldSpawnX + 4; iX++) {
+                        int iZZ = 0;
+                        for (int iZ = worldSpawnZ - 4; iZ < worldSpawnZ + 4; iZ++) {
+                            xzAxis[iXX][iZZ] = spawnLocation.getWorld().getBlockAt(iX, iY, iZ);
+                            thisPlugin.prettyLog(Level.FINEST, false, "Y/YY: " + iY + "/" + iYY + " X/XX: " + iX + "/" + iXX + " Z/ZZ: " + iZ + "/" + iZZ + " Block: " + xzAxis[iXX][iZZ].toString());
+                            iZZ++;
+                        }
+                        iXX++;
+                    }
+                    blockYaxisPlane.put(iYY, xzAxis);
+                    iYY++;
+                }
+            }
+            for (int y = 0; y < 8; y++) {
+                final Block[][] tmpBlockArr = blockYaxisPlane.get(y);
+                for (int x = 0; x < 8; x++) {
+                    for (int z = 0; z < 8; z++) {
+                        final Block tmpBlock = tmpBlockArr[x][z];
+                        if (tmpBlock != null) {
+                            final int typeId = tmpBlock.getTypeId();
+                            if (checkSafeTypeId(typeId) && checkSafeBlockAbove(tmpBlock) && checkSafeBlockBelow(tmpBlock)) {
+                                return tmpBlock.getLocation();
+                            }
+                        }
+                    }
+                }
+            }
+            return spawnLocation;
+        }
+        thisPlugin.prettyLog(Level.WARNING, false, "Returned null value for safe spawn!");
+        return null;
     }
 
     /**

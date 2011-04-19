@@ -1,3 +1,19 @@
+v0.2 - 2011.04.19 01:39 PST :
+
+- Nether safe spawn generation has been completed. We scan up to (13^3)9 blocks for a safe place.
+
+- Added '/spawn' command with default hard disable via config file. 
+
+- Normal world safe spawn teleport. We'll drop the player on top of the highest block at the spawn location. 
+  If users build to the skybox at spawn, it is not our problem. Nether still has no such thing. If a player builds
+  over where spawn is on nether worlds, players will /spawn themselves into solid rock.
+
+- Text seeds, you can use them. Not sure if they work the same as with vanilla... but. :)
+
+- Ghasts are now considered to be hostile mobs, and dealt with as they should be.
+
+- Squids are not considered to be neutral mobs, and dealt with as they should be.
+
 v0.1.2 - 2011.04.17 08:41 PST :
 
 - Reverted optimization in prettyLog. Apparently causes problems on some setups.

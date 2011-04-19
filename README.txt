@@ -19,11 +19,13 @@ Command List with Permissions Nodes:
     '/wxw setspawn' - Set spawn of current world to current location. - wxw.admin.setspawn
     '/wxw create [args]' - Create new world with specified args. - wxw.admin.create
     '/wxw spawn' - Go to spawn of current world. - wxw.spawn
+    '/spawn' - Go to spawn of current world. - wxw.spawn
 
 Config.xml options with defaults:
     serverOptionPermissions - Enable or disable Permissions plugin support. Default: true
     serverOptionOpsBypassPermissions - Ops bypass Permissions plugin access checks. Default: true
     serverOptionHelp - Enable or disable Help plugin support. Default: true
+    serverOptionSpawnCommand - Enable or disable '/spwawn' command. Does not disable '/wxw spawn'. Default: false
     
 World configuration files are stored in xml, and are able to be edited by player, though it is not
 recommended. 

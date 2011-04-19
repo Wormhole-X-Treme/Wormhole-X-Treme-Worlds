@@ -12,7 +12,7 @@ v0.2 - 2011.04.19 01:39 PST :
 
 - Ghasts are now considered to be hostile mobs, and dealt with as they should be.
 
-- Squids are not considered to be neutral mobs, and dealt with as they should be.
+- Squids are now considered to be neutral mobs, and dealt with as they should be.
 
 v0.1.2 - 2011.04.17 08:41 PST :
 

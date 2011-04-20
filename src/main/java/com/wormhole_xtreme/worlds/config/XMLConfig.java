@@ -308,7 +308,7 @@ public class XMLConfig {
         final XMLEventReader eventReader = XMLInputFactory.newInstance().createXMLEventReader(fileInputStream);
         XMLEvent event;
         String worldName = null, worldOwner = null, worldCustomSpawn = null;
-        boolean allowHostiles = true, allowNeutrals = true, netherWorld = false, autoconnectWorld = true;
+        boolean allowHostiles = true, allowNeutrals = true, netherWorld = false, autoconnectWorld = true, allowPvP = true;
         long worldSeed = 0;
         while (eventReader.hasNext()) {
             String optionName = null;
@@ -365,6 +365,9 @@ public class XMLConfig {
                 else if (optionName.equals("autoconnectWorld")) {
                     autoconnectWorld = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
                 }
+                else if (optionName.equals("allowPvP")) {
+                    allowPvP = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
                 else if (optionName.equals("worldSeed")) {
                     try {
                         worldSeed = Long.valueOf(optionValue.toString().trim());
@@ -400,6 +403,9 @@ public class XMLConfig {
             }
             if ( !autoconnectWorld) {
                 world.setAutoconnectWorld(autoconnectWorld);
+            }
+            if ( !allowPvP) {
+                world.setAllowPvP(allowPvP);
             }
             if (worldSeed != 0) {
                 world.setWorldSeed(worldSeed);
@@ -494,6 +500,7 @@ public class XMLConfig {
             createConfigNode(eventWriter, "allowNeutrals", "boolean", Boolean.valueOf(world.isAllowNeutrals()).toString(), "Are neutrals allowed on this world?");
             createConfigNode(eventWriter, "netherWorld", "boolean", Boolean.valueOf(world.isNetherWorld()).toString(), "Is this a nether world? BE SURE TO HAVE THIS RIGHT!");
             createConfigNode(eventWriter, "autoconnectWorld", "boolean", Boolean.valueOf(world.isAutoconnectWorld()).toString(), "Does this world automatically get loaded at server start? Non connected worlds can be loaded in game as needed.");
+            createConfigNode(eventWriter, "allowPvP", "boolean", Boolean.valueOf(world.isAllowPvP()).toString(), "Does this world allow PvP?");
             createConfigNode(eventWriter, "worldSeed", "long", Long.valueOf(world.getWorldSeed()).toString(), "The seed used when this world was generated. Can be used to generate a new world with the exact same terrain.");
         }
         eventWriter.add(eventFactory.createEndElement("", "", "WormholeXTremeWorlds"));

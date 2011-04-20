@@ -32,6 +32,7 @@ import org.bukkit.entity.Animals;
 import org.bukkit.entity.Flying;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.WaterMob;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
@@ -171,8 +172,7 @@ public class WorldManager {
         if ((worldName != null) && (getWorld(worldName) == null) && (playerName != null)) {
             final WormholeWorld wormholeWorld = new WormholeWorld();
             Environment worldEnvironment = Environment.NORMAL;
-            boolean connect = true;
-            boolean seed = false;
+            boolean connect = true, seed = false;
             wormholeWorld.setWorldName(worldName);
             wormholeWorld.setWorldOwner(playerName);
             if (worldOptionKeys != null) {
@@ -186,6 +186,9 @@ public class WorldManager {
                             break;
                         case worldOptionNoNeutrals :
                             wormholeWorld.setAllowNeutrals(false);
+                            break;
+                        case worldOptionNoPvP :
+                            wormholeWorld.setAllowPvP(false);
                             break;
                         case worldOptionNoConnect :
                             connect = false;
@@ -319,6 +322,19 @@ public class WorldManager {
         return null;
     }
 
+    /**
+     * Find safe spawn from yxz.
+     * 
+     * @param world
+     *            the world
+     * @param worldSpawnY
+     *            the world spawn y
+     * @param worldSpawnX
+     *            the world spawn x
+     * @param worldSpawnZ
+     *            the world spawn z
+     * @return the location
+     */
     private static Location findSafeSpawnFromYXZ(final World world, final int worldSpawnY, final int worldSpawnX, final int worldSpawnZ) {
         final HashMap<Integer, Block[][]> blockYaxisPlane = new HashMap<Integer, Block[][]>(18);
         int iYY = 0;
@@ -389,6 +405,22 @@ public class WorldManager {
     }
 
     /**
+     * Gets the world from player.
+     * 
+     * @param player
+     *            the player
+     * @return the world from player
+     */
+    public static WormholeWorld getWorldFromPlayer(final Player player) {
+        if (player != null) {
+            return getWorld(player.getWorld().getName());
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
      * Load autoconnect worlds.
      * 
      * @return the int number of worlds loaded.
@@ -434,8 +466,8 @@ public class WorldManager {
     /**
      * Populate yaxis plane.
      * 
-     * @param spawnLocation
-     *            the spawn location
+     * @param world
+     *            the world
      * @param worldSpawnX
      *            the world spawn x
      * @param worldSpawnZ

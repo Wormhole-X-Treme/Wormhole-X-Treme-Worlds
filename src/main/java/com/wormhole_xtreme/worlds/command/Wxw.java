@@ -108,6 +108,9 @@ class Wxw implements CommandExecutor {
                     else if (atlc.startsWith("-noneutrals")) {
                         worldOptionKeyList.add(WorldOptionKeys.worldOptionNoNeutrals);
                     }
+                    else if (atlc.startsWith("-nopvp")) {
+                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoPvP);
+                    }
                     else if (atlc.startsWith("-seed")) {
                         if (atlc.contains("|")) {
                             try {
@@ -219,7 +222,7 @@ class Wxw implements CommandExecutor {
                 final WormholeWorld world = WorldManager.getWorld(args[0]);
                 if (world != null) {
                     sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "World: \"" + args[0] + "\" Owner: \"" + world.getWorldOwner() + "\" Nether: \"" + world.isNetherWorld() + "\"");
-                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Hostiles: \"" + world.isAllowHostiles() + "\" Neutrals: \"" + world.isAllowNeutrals() + "\"");
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Hostiles: \"" + world.isAllowHostiles() + "\" Neutrals: \"" + world.isAllowNeutrals() + "\" PvP: \"" + world.isAllowPvP() + "\"");
                     sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Autoload at start: \"" + world.isAutoconnectWorld() + "\" Seed: \"" + world.getWorldSeed() + "\"");
                 }
                 else {
@@ -346,8 +349,8 @@ class Wxw implements CommandExecutor {
         if (allowed) {
             if ((args != null) && (args.length >= 1)) {
                 String worldName = null, playerName = null;
-                boolean doHostiles = false, hostiles = false, doNeutrals = false, neutrals = false, doAutoload = false, autoload = false;
-                int hostileCount = 0, neutralCount = 0, autoloadCount = 0, nameCount = 0, playerCount = 0;
+                boolean doHostiles = false, hostiles = false, doNeutrals = false, neutrals = false, doAutoload = false, autoload = false, doPvP=false, pvp = false;
+                int hostileCount = 0, neutralCount = 0, autoloadCount = 0, nameCount = 0, playerCount = 0, pvpCount = 0;
                 for (final String arg : args) {
                     final String atlc = arg.toLowerCase();
                     if (atlc.startsWith("-name")) {
@@ -406,11 +409,21 @@ class Wxw implements CommandExecutor {
                         neutrals = false;
                         neutralCount++;
                     }
+                    else if (atlc.startsWith("-pvp")) {
+                        doPvP = true;
+                        pvp = true;
+                        pvpCount++;
+                    }
+                    else if (atlc.startsWith("-nopvp")) {
+                        doPvP = true;
+                        pvp = false;
+                        pvpCount++;
+                    }
                 }
                 if ((worldName != null) && (nameCount == 1)) {
                     final WormholeWorld world = WorldManager.getWorld(worldName);
                     if (world != null) {
-                        if (doHostiles || doNeutrals || doAutoload || (playerName != null)) {
+                        if (doHostiles || doNeutrals || doAutoload || doPvP || (playerName != null)) {
                             if (doHostiles && (hostileCount == 1)) {
                                 world.setAllowHostiles(hostiles);
                             }
@@ -423,9 +436,14 @@ class Wxw implements CommandExecutor {
                             else if (doNeutrals) {
                                 sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting or multiple neutral commands specified.");
                             }
+                            if (doPvP && (pvpCount == 1)) {
+                                world.setAllowPvP(pvp);
+                            }
+                            else if (doPvP) {
+                                sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting or multiple PvP commands specified.");
+                            }
                             if (doAutoload && (autoloadCount == 1)) {
                                 world.setAutoconnectWorld(autoload);
-                                WorldManager.loadWorld(world);
                             }
                             else if (doAutoload) {
                                 sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting or multiple autoload commands specified.");
@@ -437,6 +455,9 @@ class Wxw implements CommandExecutor {
                                 sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting or multiple owner commands specified.");
                             }
                             WorldManager.addWorld(world);
+                            if (doAutoload && (autoloadCount == 1)) {
+                                WorldManager.loadWorld(world);
+                            }
                             if (thisPlugin.getServer().getWorld(worldName) != null) {
                                 WorldManager.clearWorldCreatures(world);
                             }

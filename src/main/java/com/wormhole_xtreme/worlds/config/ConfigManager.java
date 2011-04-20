@@ -76,7 +76,10 @@ public class ConfigManager {
         worldOptionSeed,
 
         /** The world option no connect. */
-        worldOptionNoConnect
+        worldOptionNoConnect,
+        
+        /** The world option for no PvP. */
+        worldOptionNoPvP
     }
 
     /** The Constant options. */

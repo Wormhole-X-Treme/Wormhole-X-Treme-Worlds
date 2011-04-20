@@ -55,6 +55,9 @@ public class EventUtilities {
     /** The Constant creatureSpawn. */
     private static final CreatureSpawn creatureSpawn = new CreatureSpawn();
 
+    /** The Constant entityDamage. */
+    private static final EntityDamage entityDamage = new EntityDamage();
+
     /**
      * Register events.
      */
@@ -65,5 +68,6 @@ public class EventUtilities {
         pluginManager.registerEvent(Event.Type.WORLD_SAVE, worldSave, Priority.Monitor, thisPlugin);
         pluginManager.registerEvent(Event.Type.SPAWN_CHANGE, spawnChange, Priority.Monitor, thisPlugin);
         pluginManager.registerEvent(Event.Type.CREATURE_SPAWN, creatureSpawn, Priority.Lowest, thisPlugin);
+        pluginManager.registerEvent(Event.Type.ENTITY_DAMAGE, entityDamage, Priority.Lowest, thisPlugin);
     }
 }

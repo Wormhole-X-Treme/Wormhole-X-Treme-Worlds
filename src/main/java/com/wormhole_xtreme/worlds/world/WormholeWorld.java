@@ -57,6 +57,9 @@ public class WormholeWorld {
     /** The autoconnect world. */
     private boolean autoconnectWorld = true;
 
+    /** The allow pv p. */
+    private boolean allowPvP = true;
+
     /** The world seed. */
     private long worldSeed = 0;
 
@@ -151,6 +154,15 @@ public class WormholeWorld {
     }
 
     /**
+     * Checks if PvP is allowed on this world.
+     * 
+     * @return true, if PvP is allowed.
+     */
+    public boolean isAllowPvP() {
+        return allowPvP;
+    }
+
+    /**
      * Checks if is autoconnect world.
      * 
      * @return true, if is autoconnect world
@@ -186,6 +198,16 @@ public class WormholeWorld {
      */
     public void setAllowNeutrals(final boolean allowNeutrals) {
         this.allowNeutrals = allowNeutrals;
+    }
+
+    /**
+     * Sets the allow pv p.
+     * 
+     * @param allowPvP
+     *            the new allow pv p
+     */
+    public void setAllowPvP(final boolean allowPvP) {
+        this.allowPvP = allowPvP;
     }
 
     /**

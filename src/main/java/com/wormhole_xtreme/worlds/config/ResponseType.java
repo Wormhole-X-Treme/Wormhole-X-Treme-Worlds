@@ -57,10 +57,10 @@ public enum ResponseType {
     NORMAL_COMMAND_REQUIRED_ARGS(NORMAL_HEADER.toString() + "Required: -name <world>"),
 
     /** The MODIFY COMMAND OPTIONAL ARGS message. */
-    NORMAL_MODIFY_COMMAND_OPTIONAL_ARGS(NORMAL_HEADER.toString() + "Optional: -owner <player>, -(no)autoload, -(no)hostiles, -(no)neutrals"),
+    NORMAL_MODIFY_COMMAND_OPTIONAL_ARGS(NORMAL_HEADER.toString() + "Optional: -owner <player>, -(no)autoload, -(no)hostiles, -(no)neutrals, -(no)pvp"),
 
     /** The CREATE COMMAND OPTIONAL ARGS message. */
-    NORMAL_CREATE_COMMAND_OPTIONAL_ARGS(NORMAL_HEADER.toString() + "Optional: -owner <player>, -seed <num>, -nether, -noautoload, -nohostiles, -noneutrals"),
+    NORMAL_CREATE_COMMAND_OPTIONAL_ARGS(NORMAL_HEADER.toString() + "Optional: -owner <player>, -seed <num>, -nether, -noautoload, -nohostiles, -noneutrals, -nopvp"),
 
     /** The COMMAND REQUIRES A WORLD NAME ERROR message. */
     ERROR_COMMAND_REQUIRES_WORLDNAME(ERROR_HEADER.toString() + "Command requires world name: "),

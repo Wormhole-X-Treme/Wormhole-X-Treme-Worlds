@@ -60,8 +60,8 @@ public class EntityDamage extends EntityListener {
                 }
                 if ((entityDamager != null) && (entityDamager instanceof Player)) {
                     event.setCancelled(true);
-                    ((Player) entityDamager).sendMessage(ResponseType.ERROR_HEADER.toString() + "PvP NOT allowed on this world.");
-                    thisPlugin.prettyLog(Level.FINE, false, "Player PvP attempt denied. " + ((Player) entityDamager).getName() + " vs " + playerDamaged.getName());
+                    ((Player) entityDamager).sendMessage(ResponseType.ERROR_PVP_NOT_ALLOWED.toString() + wormholeWorld.getWorldName());
+                    thisPlugin.prettyLog(Level.FINE, false, "PvP attempt denied. Attacker " + ((Player) entityDamager).getName() + " vs. Defender " + playerDamaged.getName() + " on " + wormholeWorld.getWorldName());
                 }
             }
         }

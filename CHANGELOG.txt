@@ -1,6 +1,13 @@
-v0.2.1 :
+v0.2.1 2011.04.20 04:38 PST:
 
 - World specific PvP controls. True or false. 
+
+- Updated safe spawn code for normal worlds to only use highest y if spawn is covered. This allows indoor spawn locations. 
+  Also now retain player pitch and yaw on spawn or go.
+  
+- Updated the find safe spawn location code to be modular. Can be used for more than just finding initial spawn locations now, with small enough xyz numbers ;)
+
+- Used new modular safespawn in a 3^3*9 setup for finding a safe location to drop player if nether spawn location is built over. Overkill, but ... 
 
 v0.2 - 2011.04.19 01:39 PST :
 

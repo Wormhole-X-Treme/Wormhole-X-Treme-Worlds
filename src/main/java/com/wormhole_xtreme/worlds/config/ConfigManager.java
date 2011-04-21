@@ -42,7 +42,10 @@ public class ConfigManager {
         serverOptionHelp,
 
         /** The server option spawn command. */
-        serverOptionSpawnCommand
+        serverOptionSpawnCommand,
+
+        /** The server option timelock. */
+        serverOptionTimelock
 
         /** The server option iconomy. */
         //serverOptionIconomy,
@@ -77,9 +80,15 @@ public class ConfigManager {
 
         /** The world option no connect. */
         worldOptionNoConnect,
-        
+
         /** The world option for no PvP. */
-        worldOptionNoPvP
+        worldOptionNoPvP,
+
+        /** The world option to lock time at noon. */
+        worldOptionTimeLockDay,
+
+        /** The world option to lock time at midnight. */
+        worldOptionTimeLockNight
     }
 
     /** The Constant options. */
@@ -148,6 +157,21 @@ public class ConfigManager {
      */
     public static boolean getServerOptionSpawnCommand() {
         final ServerOption o = getServerOption(ServerOptionKeys.serverOptionSpawnCommand);
+        if (o != null) {
+            return Boolean.valueOf(o.getOptionValue().toString());
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+     * Gets the server option timelock.
+     * 
+     * @return the server option timelock
+     */
+    public static boolean getServerOptionTimelock() {
+        final ServerOption o = getServerOption(ServerOptionKeys.serverOptionTimelock);
         if (o != null) {
             return Boolean.valueOf(o.getOptionValue().toString());
         }
@@ -281,5 +305,15 @@ public class ConfigManager {
      */
     public static void setServerOptionSpawnCommand(final boolean b) {
         ConfigManager.setOptionValue(ServerOptionKeys.serverOptionSpawnCommand, b);
+    }
+
+    /**
+     * Sets the server option timelock.
+     * 
+     * @param b
+     *            the new server option timelock
+     */
+    public static void setServerOptionTimelock(final boolean b) {
+        ConfigManager.setOptionValue(ServerOptionKeys.serverOptionTimelock, b);
     }
 }

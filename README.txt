@@ -1,4 +1,4 @@
-Wormhole X-Treme Worlds v0.2.1: A multiple worlds management plugin for Bukkit.
+Wormhole X-Treme Worlds v0.3: A multiple worlds management plugin for Bukkit.
 
 To Install:
 1. Extract WormholeXTremeWorlds.jar into your plugins/ folder.
@@ -7,7 +7,9 @@ To Install:
 
 To Upgrade: 
 1. Extract updated WormholwXtremeWorlds.jar into your plugins/ folder.
-2. Start Server.
+2. Start Server, all new config options will be added and run with their default value.
+   If you wish to change any of them, just stop the server and edit the config file.
+
 
 Command List with Permissions Nodes:
     '/wxw go [world]' - Go to spawn of specified world. - wxw.admin.go
@@ -22,10 +24,11 @@ Command List with Permissions Nodes:
     '/spawn' - Go to spawn of current world. - wxw.spawn
 
 Config.xml options with defaults:
-    serverOptionPermissions - Enable or disable Permissions plugin support. Default: true
-    serverOptionOpsBypassPermissions - Ops bypass Permissions plugin access checks. Default: true
-    serverOptionHelp - Enable or disable Help plugin support. Default: true
-    serverOptionSpawnCommand - Enable or disable '/spwawn' command. Does not disable '/wxw spawn'. Default: false
+    serverOptionPermissions - Enable or disable Permissions plugin support. Default: true (enabled)
+    serverOptionOpsBypassPermissions - Ops bypass Permissions plugin access checks. Default: true (disabled)
+    serverOptionHelp - Enable or disable Help plugin support. Default: true (enabled)
+    serverOptionSpawnCommand - Enable or disable '/spwawn' command. Does not disable '/wxw spawn'. Default: false (disabled)
+    serverOptionTimelock - Option: Enable or disable timelock functionality. Default: true (enabled)
     
 World configuration files are stored in xml, and are able to be edited by player, though it is not
 recommended. 

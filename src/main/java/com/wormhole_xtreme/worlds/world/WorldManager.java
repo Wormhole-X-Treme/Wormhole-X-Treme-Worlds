@@ -36,6 +36,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.WaterMob;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
+import com.wormhole_xtreme.worlds.config.ConfigManager;
 import com.wormhole_xtreme.worlds.config.ConfigManager.WorldOptionKeys;
 import com.wormhole_xtreme.worlds.config.XMLConfig;
 
@@ -190,7 +191,7 @@ public class WorldManager {
     /**
      * Creates the world.
      * 
-     * @param playerName
+     * @param ownerName
      *            the player name
      * @param worldName
      *            the world name
@@ -200,13 +201,11 @@ public class WorldManager {
      *            the world seed
      * @return true, if successful
      */
-    public static boolean createWorld(final String playerName, final String worldName, final WorldOptionKeys[] worldOptionKeys, final long worldSeed) {
-        if ((worldName != null) && (getWorld(worldName) == null) && (playerName != null)) {
+    public static boolean createWormholeWorld(final String ownerName, final String worldName, final WorldOptionKeys[] worldOptionKeys, final long worldSeed) {
+        if ((worldName != null) && (getWorld(worldName) == null) && (ownerName != null)) {
             final WormholeWorld wormholeWorld = new WormholeWorld();
-            Environment worldEnvironment = Environment.NORMAL;
-            boolean connect = true, seed = false;
             wormholeWorld.setWorldName(worldName);
-            wormholeWorld.setWorldOwner(playerName);
+            wormholeWorld.setWorldOwner(ownerName);
             if (worldOptionKeys != null) {
                 for (final WorldOptionKeys worldOptionKey : worldOptionKeys) {
                     switch (worldOptionKey) {
@@ -223,24 +222,42 @@ public class WorldManager {
                             wormholeWorld.setAllowPvP(false);
                             break;
                         case worldOptionNoConnect :
-                            connect = false;
+                            wormholeWorld.setAutoconnectWorld(false);
                             break;
                         case worldOptionSeed :
-                            seed = true;
+                            wormholeWorld.setWorldSeed(worldSeed);
+                            break;
+                        case worldOptionTimeLockDay :
+                            wormholeWorld.setTimeLockType("day");
+                            break;
+                        case worldOptionTimeLockNight :
+                            wormholeWorld.setTimeLockType("night");
                             break;
                         default :
                             break;
                     }
                 }
             }
+            return createWorld(wormholeWorld);
+        }
+        return false;
+    }
 
-            if (wormholeWorld.isNetherWorld()) {
-                worldEnvironment = Environment.NETHER;
-            }
+    /**
+     * Creates the world.
+     * 
+     * @param wormholeWorld
+     *            the wormhole world
+     * @return true, if successful
+     */
+    public static boolean createWorld(final WormholeWorld wormholeWorld) {
+        if (wormholeWorld != null) {
+            final String worldName = wormholeWorld.getWorldName();
+            final Environment worldEnvironment = wormholeWorld.isNetherWorld() ? Environment.NETHER : Environment.NORMAL;
+
             if (thisPlugin.getServer().getWorld(worldName) == null) {
-                if (seed) {
-                    wormholeWorld.setThisWorld(thisPlugin.getServer().createWorld(wormholeWorld.getWorldName(), worldEnvironment, worldSeed));
-                    wormholeWorld.setWorldSeed(worldSeed);
+                if (wormholeWorld.getWorldSeed() != 0) {
+                    wormholeWorld.setThisWorld(thisPlugin.getServer().createWorld(wormholeWorld.getWorldName(), worldEnvironment, wormholeWorld.getWorldSeed()));
                 }
                 else {
                     wormholeWorld.setThisWorld(thisPlugin.getServer().createWorld(wormholeWorld.getWorldName(), worldEnvironment));
@@ -252,10 +269,13 @@ public class WorldManager {
                 wormholeWorld.setThisWorld(thisPlugin.getServer().getWorld(worldName));
                 wormholeWorld.setWorldSeed(wormholeWorld.getThisWorld().getId());
             }
+
             wormholeWorld.setWorldSpawn(wormholeWorld.isNetherWorld() ? findSafeSpawn(wormholeWorld.getThisWorld().getSpawnLocation(), 13, 13) : wormholeWorld.getThisWorld().getSpawnLocation());
+
             final int tsX = wormholeWorld.getWorldSpawn().getBlockX();
             final int tsY = wormholeWorld.getWorldSpawn().getBlockY();
             final int tsZ = wormholeWorld.getWorldSpawn().getBlockZ();
+
             if ( !wormholeWorld.getWorldSpawn().equals(wormholeWorld.getThisWorld().getSpawnLocation())) {
                 wormholeWorld.getThisWorld().setSpawnLocation(tsX, tsY, tsZ);
             }
@@ -263,12 +283,9 @@ public class WorldManager {
                 tsX, tsY, tsZ
             };
             wormholeWorld.setWorldCustomSpawn(tempSpawn);
-            if ( !connect) {
-                wormholeWorld.setAutoconnectWorld(false);
-            }
-            addWorld(wormholeWorld);
+            wormholeWorld.setWorldLoaded(true);
             clearWorldCreatures(wormholeWorld);
-            return true;
+            return addWorld(wormholeWorld);
         }
         return false;
     }
@@ -496,6 +513,7 @@ public class WorldManager {
             if (wormholeWorld.getWorldSeed() == 0) {
                 wormholeWorld.setWorldSeed(wormholeWorld.getThisWorld().getId());
             }
+            wormholeWorld.setWorldLoaded(true);
             if (addWorld(wormholeWorld)) {
                 final int c = clearWorldCreatures(wormholeWorld);
                 if (c > 0) {
@@ -564,6 +582,30 @@ public class WorldManager {
         if (world != null) {
             XMLConfig.deleteXmlWorldConfig(world.getWorldName());
             worldList.remove(world.getWorldName());
+        }
+    }
+    
+    /**
+     * Check timelock worlds.
+     */
+    public static void checkTimelockWorlds() {
+        if (ConfigManager.getServerOptionTimelock()) {
+            for (String key : worldList.keySet()) {
+                if (key != null) {
+                    WormholeWorld wormholeWorld = worldList.get(key);
+                    if (wormholeWorld != null && wormholeWorld.isWorldLoaded() && wormholeWorld.isTimeLock()) {
+                        long worldRelativeTime = wormholeWorld.getThisWorld().getTime() % 24000;
+                        if (worldRelativeTime > 11800 && wormholeWorld.getTimeLockType().equals("day")) {
+                            thisPlugin.prettyLog(Level.FINE, false, "Set world: " + key + " New time: 0" + " Old Time: " + worldRelativeTime);
+                            wormholeWorld.getThisWorld().setTime(0);
+                        }
+                        else if ((worldRelativeTime < 13500 || worldRelativeTime > 21800 ) && wormholeWorld.getTimeLockType().equals("night")) {
+                            thisPlugin.prettyLog(Level.FINE, false, "Set world: " + key + " New time: 13700" + " Old Time: " + worldRelativeTime);
+                            wormholeWorld.getThisWorld().setTime(13700);
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -34,6 +34,8 @@ import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ConfigManager.WorldOptionKeys;
 import com.wormhole_xtreme.worlds.config.ResponseType;
 import com.wormhole_xtreme.worlds.permissions.PermissionType;
+import com.wormhole_xtreme.worlds.scheduler.ScheduleAction;
+import com.wormhole_xtreme.worlds.scheduler.ScheduleAction.ActionType;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
@@ -111,6 +113,12 @@ class Wxw implements CommandExecutor {
                     else if (atlc.startsWith("-nopvp")) {
                         worldOptionKeyList.add(WorldOptionKeys.worldOptionNoPvP);
                     }
+                    else if (atlc.startsWith("-nightlock")) {
+                        worldOptionKeyList.add(WorldOptionKeys.worldOptionTimeLockNight);
+                    }
+                    else if (atlc.startsWith("-daylock")) {
+                        worldOptionKeyList.add(WorldOptionKeys.worldOptionTimeLockDay);
+                    }
                     else if (atlc.startsWith("-seed")) {
                         if (atlc.contains("|")) {
                             try {
@@ -149,8 +157,12 @@ class Wxw implements CommandExecutor {
                         return true;
                     }
                 }
+                if (worldOptionKeyList.contains(WorldOptionKeys.worldOptionTimeLockNight) && worldOptionKeyList.contains(WorldOptionKeys.worldOptionTimeLockDay)) {
+                    sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting time lock commands specified.");
+                    return true;
+                }
                 final WorldOptionKeys[] worldOptionKeys = worldOptionKeyList.toArray(new WorldOptionKeys[worldOptionKeyList.size()]);
-                if (WorldManager.createWorld(playerName, worldName, worldOptionKeys, worldSeed)) {
+                if (WorldManager.createWormholeWorld(playerName, worldName, worldOptionKeys, worldSeed)) {
                     sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "World: " + worldName + " created with owner: " + playerName);
                 }
                 else {
@@ -221,7 +233,7 @@ class Wxw implements CommandExecutor {
             if ((args != null) && (args.length == 1)) {
                 final WormholeWorld world = WorldManager.getWorld(args[0]);
                 if (world != null) {
-                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "World: \"" + args[0] + "\" Owner: \"" + world.getWorldOwner() + "\" Nether: \"" + world.isNetherWorld() + "\"");
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "World: \"" + args[0] + "\" Owner: \"" + world.getWorldOwner() + "\" Nether: \"" + world.isNetherWorld() + "\" Timelock: \"" + world.getTimeLockType() + "\"");
                     sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Hostiles: \"" + world.isAllowHostiles() + "\" Neutrals: \"" + world.isAllowNeutrals() + "\" PvP: \"" + world.isAllowPvP() + "\"");
                     sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Autoload at start: \"" + world.isAutoconnectWorld() + "\" Seed: \"" + world.getWorldSeed() + "\"");
                 }
@@ -349,8 +361,8 @@ class Wxw implements CommandExecutor {
         if (allowed) {
             if ((args != null) && (args.length >= 1)) {
                 String worldName = null, playerName = null;
-                boolean doHostiles = false, hostiles = false, doNeutrals = false, neutrals = false, doAutoload = false, autoload = false, doPvP=false, pvp = false;
-                int hostileCount = 0, neutralCount = 0, autoloadCount = 0, nameCount = 0, playerCount = 0, pvpCount = 0;
+                boolean doHostiles = false, hostiles = false, doNeutrals = false, neutrals = false, doAutoload = false, autoload = false, doPvP=false, pvp = false, doTimeLock = false, dayLock = false, nightLock=false;
+                int hostileCount = 0, neutralCount = 0, autoloadCount = 0, nameCount = 0, playerCount = 0, pvpCount = 0, timeLockCount = 0;
                 for (final String arg : args) {
                     final String atlc = arg.toLowerCase();
                     if (atlc.startsWith("-name")) {
@@ -419,11 +431,27 @@ class Wxw implements CommandExecutor {
                         pvp = false;
                         pvpCount++;
                     }
+                    else if (atlc.startsWith("-daylock")) {
+                        doTimeLock = true;
+                        dayLock = true;
+                        timeLockCount++;
+                    }
+                    else if (atlc.startsWith("-nightlock")) {
+                        doTimeLock = true;
+                        nightLock = true;
+                        timeLockCount++;
+                    }
+                    else if (atlc.startsWith("-notimelock")) {
+                        doTimeLock = true;
+                        nightLock = false;
+                        dayLock = false;
+                        timeLockCount++;
+                    }
                 }
                 if ((worldName != null) && (nameCount == 1)) {
                     final WormholeWorld world = WorldManager.getWorld(worldName);
                     if (world != null) {
-                        if (doHostiles || doNeutrals || doAutoload || doPvP || (playerName != null)) {
+                        if (doHostiles || doNeutrals || doAutoload || doPvP || doTimeLock || (playerName != null)) {
                             if (doHostiles && (hostileCount == 1)) {
                                 world.setAllowHostiles(hostiles);
                             }
@@ -454,12 +482,25 @@ class Wxw implements CommandExecutor {
                             else if (playerName != null) {
                                 sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting or multiple owner commands specified.");
                             }
+                            if (doTimeLock && timeLockCount == 1) {
+                                if (nightLock) {
+                                    world.setTimeLockType("night");
+                                } else if (dayLock) {
+                                    world.setTimeLockType("day");
+                                }
+                                else {
+                                    world.setTimeLockType("none");
+                                }
+                            }
+                            else if (doTimeLock) {
+                                sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting or multiple time lock commands specified.");
+                            }
                             WorldManager.addWorld(world);
                             if (doAutoload && (autoloadCount == 1)) {
                                 WorldManager.loadWorld(world);
                             }
                             if (thisPlugin.getServer().getWorld(worldName) != null) {
-                                WorldManager.clearWorldCreatures(world);
+                                WormholeXTremeWorlds.getScheduler().scheduleSyncDelayedTask(thisPlugin, new ScheduleAction(world, ActionType.ClearEntities));
                             }
                             final String[] w = new String[1];
                             w[0] = worldName;

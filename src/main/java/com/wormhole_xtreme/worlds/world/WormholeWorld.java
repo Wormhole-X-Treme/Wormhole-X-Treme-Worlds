@@ -62,6 +62,15 @@ public class WormholeWorld {
 
     /** The world seed. */
     private long worldSeed = 0;
+    
+    /** The time lock. */
+    private boolean timeLock = false;
+    
+    /** The time lock type. */
+    private String timeLockType = "none";
+    
+    /** The loaded. */
+    private boolean loaded = false;
 
     /**
      * Instantiates a new world.
@@ -290,4 +299,57 @@ public class WormholeWorld {
         this.worldSpawn = worldSpawn;
     }
 
+    /**
+     * Checks if is time lock.
+     * 
+     * @return true, if is time lock
+     */
+    public boolean isTimeLock() {
+        return timeLock;
+    }
+
+    /**
+     * Sets the time lock type.
+     * 
+     * @param timeLockType
+     *            the new time lock type
+     */
+    public void setTimeLockType(String timeLockType) {
+        if (timeLockType.equals("day") || timeLockType.equals("night")) {
+            this.timeLock = true;
+            this.timeLockType = timeLockType;
+        }
+        else {
+            this.timeLock = false;
+            this.timeLockType = "none";
+        }
+    }
+
+    /**
+     * Gets the time lock type.
+     * 
+     * @return the time lock type
+     */
+    public String getTimeLockType() {
+        return timeLockType;
+    }
+    
+    /**
+     * Checks if is world loaded.
+     * 
+     * @return true, if is world loaded
+     */
+    public boolean isWorldLoaded() {
+        return loaded;
+    }
+    
+    /**
+     * Sets the world loaded.
+     * 
+     * @param loaded
+     *            the new world loaded
+     */
+    void setWorldLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
 }

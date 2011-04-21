@@ -1,3 +1,13 @@
+v0.3 2011.04.21 02:17 PST:
+
+- Added scheduler capabilities.
+
+- Enabled after enable world entity removal via scheduler.
+
+- Added timelock. Uses scheduler. Now users can lock their worlds to day or night. Defaults to no timelock enabled. 
+
+- Added config.xml option to disable timelock and its scheduler. Defaults to scheduler enabled.
+
 v0.2.1 2011.04.20 04:38 PST:
 
 - World specific PvP controls. True or false. 

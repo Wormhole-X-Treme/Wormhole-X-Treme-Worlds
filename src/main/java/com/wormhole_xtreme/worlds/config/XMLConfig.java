@@ -307,7 +307,7 @@ public class XMLConfig {
     private static void readWorldConfigFile(final FileInputStream fileInputStream) throws XMLStreamException, FactoryConfigurationError {
         final XMLEventReader eventReader = XMLInputFactory.newInstance().createXMLEventReader(fileInputStream);
         XMLEvent event;
-        String worldName = null, worldOwner = null, worldCustomSpawn = null;
+        String worldName = null, worldOwner = null, worldCustomSpawn = null, timeLockType = "none";
         boolean allowHostiles = true, allowNeutrals = true, netherWorld = false, autoconnectWorld = true, allowPvP = true;
         long worldSeed = 0;
         while (eventReader.hasNext()) {
@@ -368,6 +368,9 @@ public class XMLConfig {
                 else if (optionName.equals("allowPvP")) {
                     allowPvP = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
                 }
+                else if (optionName.equals("timeLockType")) {
+                    timeLockType = String.valueOf(optionValue).trim();
+                }
                 else if (optionName.equals("worldSeed")) {
                     try {
                         worldSeed = Long.valueOf(optionValue.toString().trim());
@@ -387,6 +390,7 @@ public class XMLConfig {
             final WormholeWorld world = new WormholeWorld();
             world.setWorldName(worldName);
             world.setWorldOwner(worldOwner);
+            world.setTimeLockType(timeLockType);
             final int[] wcs = {
                 Integer.valueOf(worldCustomSpawn.split("\\|")[0]), Integer.valueOf(worldCustomSpawn.split("\\|")[1]),
                 Integer.valueOf(worldCustomSpawn.split("\\|")[2])
@@ -501,6 +505,7 @@ public class XMLConfig {
             createConfigNode(eventWriter, "netherWorld", "boolean", Boolean.valueOf(world.isNetherWorld()).toString(), "Is this a nether world? BE SURE TO HAVE THIS RIGHT!");
             createConfigNode(eventWriter, "autoconnectWorld", "boolean", Boolean.valueOf(world.isAutoconnectWorld()).toString(), "Does this world automatically get loaded at server start? Non connected worlds can be loaded in game as needed.");
             createConfigNode(eventWriter, "allowPvP", "boolean", Boolean.valueOf(world.isAllowPvP()).toString(), "Does this world allow PvP?");
+            createConfigNode(eventWriter, "timeLockType", "String", world.getTimeLockType(), "What time lock type this world has enabled. noon, midnight, or none. Anything else becomes none.");
             createConfigNode(eventWriter, "worldSeed", "long", Long.valueOf(world.getWorldSeed()).toString(), "The seed used when this world was generated. Can be used to generate a new world with the exact same terrain.");
         }
         eventWriter.add(eventFactory.createEndElement("", "", "WormholeXTremeWorlds"));

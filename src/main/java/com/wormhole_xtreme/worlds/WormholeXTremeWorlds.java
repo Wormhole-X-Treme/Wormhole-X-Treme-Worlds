@@ -24,13 +24,17 @@ import java.util.logging.Logger;
 import me.taylorkelly.help.Help;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.wormhole_xtreme.worlds.command.CommandUtilities;
+import com.wormhole_xtreme.worlds.config.ConfigManager;
 import com.wormhole_xtreme.worlds.config.XMLConfig;
 import com.wormhole_xtreme.worlds.events.EventUtilities;
 import com.wormhole_xtreme.worlds.plugin.HelpSupport;
 import com.wormhole_xtreme.worlds.plugin.PermissionsSupport;
+import com.wormhole_xtreme.worlds.scheduler.ScheduleAction;
+import com.wormhole_xtreme.worlds.scheduler.ScheduleAction.ActionType;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 
 /**
@@ -52,6 +56,14 @@ public class WormholeXTremeWorlds extends JavaPlugin {
     /** The permission handler. */
     private static PermissionHandler permissionHandler = null;
 
+    /** The scheduler. */
+    private static BukkitScheduler scheduler = null;
+
+    /** The load time. */
+    private static boolean loadTime = true;
+
+    private static int timeScheduleId = -1;
+
     /**
      * Gets the help.
      * 
@@ -68,6 +80,15 @@ public class WormholeXTremeWorlds extends JavaPlugin {
      */
     public static PermissionHandler getPermissionHandler() {
         return permissionHandler;
+    }
+
+    /**
+     * Gets the scheduler.
+     * 
+     * @return the scheduler
+     */
+    public static BukkitScheduler getScheduler() {
+        return scheduler;
     }
 
     /**
@@ -89,6 +110,24 @@ public class WormholeXTremeWorlds extends JavaPlugin {
     }
 
     /**
+     * Gets the time schedule id.
+     * 
+     * @return the time schedule id
+     */
+    private static int getTimeScheduleId() {
+        return timeScheduleId;
+    }
+
+    /**
+     * Checks if is load time.
+     * 
+     * @return true, if is load time
+     */
+    public static boolean isLoadTime() {
+        return loadTime;
+    }
+
+    /**
      * Sets the help.
      * 
      * @param help
@@ -99,6 +138,16 @@ public class WormholeXTremeWorlds extends JavaPlugin {
     }
 
     /**
+     * Sets the load time.
+     * 
+     * @param loadTime
+     *            the new load time
+     */
+    private static void setLoadTime(final boolean loadTime) {
+        WormholeXTremeWorlds.loadTime = loadTime;
+    }
+
+    /**
      * Sets the permission handler.
      * 
      * @param permissionHandler
@@ -106,6 +155,16 @@ public class WormholeXTremeWorlds extends JavaPlugin {
      */
     public static void setPermissionHandler(final PermissionHandler permissionHandler) {
         WormholeXTremeWorlds.permissionHandler = permissionHandler;
+    }
+
+    /**
+     * Sets the scheduler.
+     * 
+     * @param scheduler
+     *            the new scheduler
+     */
+    private static void setScheduler(final BukkitScheduler scheduler) {
+        WormholeXTremeWorlds.scheduler = scheduler;
     }
 
     /**
@@ -128,11 +187,24 @@ public class WormholeXTremeWorlds extends JavaPlugin {
         WormholeXTremeWorlds.thisPlugin = thisPlugin;
     }
 
+    /**
+     * Sets the time schedule id.
+     * 
+     * @param timeScheduleId
+     *            the new time schedule id
+     */
+    private static void setTimeScheduleId(final int timeScheduleId) {
+        WormholeXTremeWorlds.timeScheduleId = timeScheduleId;
+    }
+
     /* (non-Javadoc)
      * @see org.bukkit.plugin.Plugin#onDisable()
      */
     @Override
     public void onDisable() {
+        if (getTimeScheduleId() > 0) {
+            scheduler.cancelTask(getTimeScheduleId());
+        }
         XMLConfig.saveXmlConfig(getThisPlugin().getDescription());
         prettyLog(Level.INFO, true, "Successfully shutdown.");
     }
@@ -148,6 +220,12 @@ public class WormholeXTremeWorlds extends JavaPlugin {
         HelpSupport.enableHelp();
         CommandUtilities.registerCommands();
         HelpSupport.registerHelpCommands();
+        if (ConfigManager.getServerOptionTimelock()) {
+            setTimeScheduleId(scheduler.scheduleSyncRepeatingTask(thisPlugin, new ScheduleAction(ActionType.TimeLock), 0, 200));
+        }
+        else {
+            prettyLog(Level.INFO, false, "Timelock scheduler disabled, per config.xml directive.");
+        }
         prettyLog(Level.INFO, true, "Enable Completed.");
     }
 
@@ -158,12 +236,14 @@ public class WormholeXTremeWorlds extends JavaPlugin {
     public void onLoad() {
         setThisPlugin(this);
         setThisLogger(getThisPlugin().getServer().getLogger());
+        setScheduler(getThisPlugin().getServer().getScheduler());
         prettyLog(Level.INFO, true, getThisPlugin().getDescription().getAuthors().toString() + "Load Beginning.");
         XMLConfig.loadXmlConfig(getThisPlugin().getDescription());
         final int loaded = WorldManager.loadAutoconnectWorlds();
         if (loaded > 0) {
             prettyLog(Level.INFO, false, "Auto-loaded " + loaded + " worlds.");
         }
+        setLoadTime(false);
         prettyLog(Level.INFO, true, "Load Completed.");
     }
 

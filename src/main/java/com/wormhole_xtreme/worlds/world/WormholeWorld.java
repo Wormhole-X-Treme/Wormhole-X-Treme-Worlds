@@ -18,6 +18,11 @@
  */
 package com.wormhole_xtreme.worlds.world;
 
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -62,15 +67,18 @@ public class WormholeWorld {
 
     /** The world seed. */
     private long worldSeed = 0;
-    
+
     /** The time lock. */
     private boolean timeLock = false;
-    
+
     /** The time lock type. */
     private String timeLockType = "none";
-    
+
     /** The loaded. */
     private boolean loaded = false;
+
+    /** The sticky chunks. */
+    private final ConcurrentHashMap<Chunk, ArrayList<String>> stickyChunks = new ConcurrentHashMap<Chunk, ArrayList<String>>();
 
     /**
      * Instantiates a new world.
@@ -80,12 +88,63 @@ public class WormholeWorld {
     }
 
     /**
+     * Adds the sticky chunk.
+     * 
+     * @param stickyChunk
+     *            the sticky chunk
+     * @param ownerPlugin
+     *            the owner plugin
+     * @return true, if successful
+     */
+    public boolean addStickyChunk(final Chunk stickyChunk, final String ownerPlugin) {
+        if ((ownerPlugin != null) && (stickyChunk != null)) {
+            ArrayList<String> pluginArrayList = new ArrayList<String>();
+            if (stickyChunks.containsKey(stickyChunk)) {
+                pluginArrayList = stickyChunks.get(stickyChunk);
+                if (pluginArrayList != null && !pluginArrayList.contains(ownerPlugin)) {
+                    pluginArrayList.add(ownerPlugin);
+                    stickyChunks.put(stickyChunk, pluginArrayList);
+                }
+                else if (pluginArrayList == null) {
+                    pluginArrayList = new ArrayList<String>();
+                    pluginArrayList.add(ownerPlugin);
+                    stickyChunks.put(stickyChunk, pluginArrayList);
+                }
+            }
+            else {
+                pluginArrayList.add(ownerPlugin);
+                stickyChunks.put(stickyChunk, pluginArrayList);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Gets the all sticky chunks.
+     * 
+     * @return the all sticky chunks
+     */
+    public Set<Chunk> getAllStickyChunks() {
+        return stickyChunks.keySet();
+    }
+
+    /**
      * Gets the this world.
      * 
      * @return the thisWorld
      */
     public World getThisWorld() {
         return thisWorld;
+    }
+
+    /**
+     * Gets the time lock type.
+     * 
+     * @return the time lock type
+     */
+    public String getTimeLockType() {
+        return timeLockType;
     }
 
     /**
@@ -190,6 +249,91 @@ public class WormholeWorld {
     }
 
     /**
+     * Checks if is sticky chunk.
+     * 
+     * @param stickyChunk
+     *            the sticky chunk
+     * @return true, if is sticky chunk
+     */
+    public boolean isStickyChunk(final Chunk stickyChunk) {
+        return stickyChunks.containsKey(stickyChunk);
+    }
+
+    /**
+     * Checks if is time lock.
+     * 
+     * @return true, if is time lock
+     */
+    public boolean isTimeLock() {
+        return timeLock;
+    }
+
+    /**
+     * Checks if is world loaded.
+     * 
+     * @return true, if is world loaded
+     */
+    public boolean isWorldLoaded() {
+        return loaded;
+    }
+
+    /**
+     * Removes the sticky chunk forcefully.
+     * 
+     * @param stickyChunk
+     *            the sticky chunk
+     * @return true, if successful
+     */
+    public boolean removeStickyChunk(final Chunk stickyChunk) {
+        return removeStickyChunk(stickyChunk, null, true);
+    }
+
+    /**
+     * Removes the sticky chunk.
+     * 
+     * @param stickyChunk
+     *            the sticky chunk
+     * @param ownerPlugin
+     *            the owner plugin
+     * @return true, if successful
+     */
+    public boolean removeStickyChunk(final Chunk stickyChunk, final String ownerPlugin) {
+        return removeStickyChunk(stickyChunk, ownerPlugin, false);
+    }
+    
+    /**
+     * Removes the sticky chunk.
+     * 
+     * @param stickyChunk
+     *            the sticky chunk
+     * @param ownerPlugin
+     *            the owner plugin
+     * @param force
+     *            the force
+     * @return true, if successful
+     */
+    public boolean removeStickyChunk(final Chunk stickyChunk, final String ownerPlugin, final boolean force) {
+        if (stickyChunk != null && stickyChunks.containsKey(stickyChunk)) {
+            final ArrayList<String> pluginArrayList = stickyChunks.get(stickyChunk);
+            if (force) {
+                stickyChunks.remove(stickyChunk);
+                return true;
+            }
+            else if ((ownerPlugin != null) && pluginArrayList != null && pluginArrayList.contains(ownerPlugin)) {
+                if (pluginArrayList.size() == 1) {
+                    stickyChunks.remove(stickyChunk);
+                }
+                else {
+                    pluginArrayList.remove(ownerPlugin);
+                    stickyChunks.put(stickyChunk, pluginArrayList);
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Sets the allow hostiles.
      * 
      * @param allowHostiles
@@ -250,6 +394,23 @@ public class WormholeWorld {
     }
 
     /**
+     * Sets the time lock type.
+     * 
+     * @param timeLockType
+     *            the new time lock type
+     */
+    public void setTimeLockType(final String timeLockType) {
+        if (timeLockType.equals("day") || timeLockType.equals("night")) {
+            timeLock = true;
+            this.timeLockType = timeLockType;
+        }
+        else {
+            timeLock = false;
+            this.timeLockType = "none";
+        }
+    }
+
+    /**
      * Sets the world custom spawn.
      * 
      * @param worldCustomSpawn
@@ -257,6 +418,16 @@ public class WormholeWorld {
      */
     public void setWorldCustomSpawn(final int[] worldCustomSpawn) {
         this.worldCustomSpawn = worldCustomSpawn.clone();
+    }
+
+    /**
+     * Sets the world loaded.
+     * 
+     * @param loaded
+     *            the new world loaded
+     */
+    void setWorldLoaded(final boolean loaded) {
+        this.loaded = loaded;
     }
 
     /**
@@ -297,59 +468,5 @@ public class WormholeWorld {
      */
     public void setWorldSpawn(final Location worldSpawn) {
         this.worldSpawn = worldSpawn;
-    }
-
-    /**
-     * Checks if is time lock.
-     * 
-     * @return true, if is time lock
-     */
-    public boolean isTimeLock() {
-        return timeLock;
-    }
-
-    /**
-     * Sets the time lock type.
-     * 
-     * @param timeLockType
-     *            the new time lock type
-     */
-    public void setTimeLockType(String timeLockType) {
-        if (timeLockType.equals("day") || timeLockType.equals("night")) {
-            this.timeLock = true;
-            this.timeLockType = timeLockType;
-        }
-        else {
-            this.timeLock = false;
-            this.timeLockType = "none";
-        }
-    }
-
-    /**
-     * Gets the time lock type.
-     * 
-     * @return the time lock type
-     */
-    public String getTimeLockType() {
-        return timeLockType;
-    }
-    
-    /**
-     * Checks if is world loaded.
-     * 
-     * @return true, if is world loaded
-     */
-    public boolean isWorldLoaded() {
-        return loaded;
-    }
-    
-    /**
-     * Sets the world loaded.
-     * 
-     * @param loaded
-     *            the new world loaded
-     */
-    void setWorldLoaded(boolean loaded) {
-        this.loaded = loaded;
     }
 }

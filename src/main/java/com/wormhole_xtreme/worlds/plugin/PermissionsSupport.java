@@ -45,8 +45,8 @@ public class PermissionsSupport {
      */
     public static void disablePermissions() {
         if (ConfigManager.getServerOptionPermissions()) {
-            if (WormholeXTremeWorlds.getPermissionHandler() != null) {
-                WormholeXTremeWorlds.setPermissionHandler(null);
+            if (PluginSupport.getPermissionHandler() != null) {
+                PluginSupport.setPermissionHandler(null);
                 thisPlugin.prettyLog(Level.INFO, false, "Detached from Permissions plugin.");
             }
         }
@@ -57,7 +57,7 @@ public class PermissionsSupport {
      */
     public static void enablePermissions() {
         if (ConfigManager.getServerOptionPermissions()) {
-            if (WormholeXTremeWorlds.getPermissionHandler() == null) {
+            if (PluginSupport.getPermissionHandler() == null) {
                 final Plugin test = pluginManager.getPlugin("Permissions");
                 if (test != null) {
                     final String version = test.getDescription().getVersion();
@@ -65,7 +65,7 @@ public class PermissionsSupport {
                         thisPlugin.prettyLog(Level.WARNING, false, "Not a supported version of Permissions. Recommended is 2.7.x");
                     }
                     try {
-                        WormholeXTremeWorlds.setPermissionHandler(((Permissions) test).getHandler());
+                        PluginSupport.setPermissionHandler(((Permissions) test).getHandler());
                         thisPlugin.prettyLog(Level.INFO, false, "Attached to Permissions version " + version);
                     }
                     catch (final ClassCastException e) {

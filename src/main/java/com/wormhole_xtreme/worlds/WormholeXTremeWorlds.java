@@ -21,16 +21,14 @@ package com.wormhole_xtreme.worlds;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import me.taylorkelly.help.Help;
-
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import com.nijiko.permissions.PermissionHandler;
 import com.wormhole_xtreme.worlds.command.CommandUtilities;
 import com.wormhole_xtreme.worlds.config.ConfigManager;
 import com.wormhole_xtreme.worlds.config.XMLConfig;
 import com.wormhole_xtreme.worlds.events.EventUtilities;
+import com.wormhole_xtreme.worlds.handler.WorldHandler;
 import com.wormhole_xtreme.worlds.plugin.HelpSupport;
 import com.wormhole_xtreme.worlds.plugin.PermissionsSupport;
 import com.wormhole_xtreme.worlds.scheduler.ScheduleAction;
@@ -50,37 +48,17 @@ public class WormholeXTremeWorlds extends JavaPlugin {
     /** this logger. */
     private static Logger thisLogger = null;
 
-    /** The help. */
-    private static Help help = null;
-
-    /** The permission handler. */
-    private static PermissionHandler permissionHandler = null;
-
     /** The scheduler. */
     private static BukkitScheduler scheduler = null;
 
     /** The load time. */
     private static boolean loadTime = true;
 
+    /** The time schedule id. */
     private static int timeScheduleId = -1;
-
-    /**
-     * Gets the help.
-     * 
-     * @return the help
-     */
-    public static Help getHelp() {
-        return help;
-    }
-
-    /**
-     * Gets the permission handler.
-     * 
-     * @return the permission handler
-     */
-    public static PermissionHandler getPermissionHandler() {
-        return permissionHandler;
-    }
+    
+    /** The world handler. */
+    private static WorldHandler worldHandler = null;
 
     /**
      * Gets the scheduler.
@@ -127,15 +105,7 @@ public class WormholeXTremeWorlds extends JavaPlugin {
         return loadTime;
     }
 
-    /**
-     * Sets the help.
-     * 
-     * @param help
-     *            the new help
-     */
-    public static void setHelp(final Help help) {
-        WormholeXTremeWorlds.help = help;
-    }
+
 
     /**
      * Sets the load time.
@@ -147,15 +117,6 @@ public class WormholeXTremeWorlds extends JavaPlugin {
         WormholeXTremeWorlds.loadTime = loadTime;
     }
 
-    /**
-     * Sets the permission handler.
-     * 
-     * @param permissionHandler
-     *            the new permission handler
-     */
-    public static void setPermissionHandler(final PermissionHandler permissionHandler) {
-        WormholeXTremeWorlds.permissionHandler = permissionHandler;
-    }
 
     /**
      * Sets the scheduler.
@@ -244,6 +205,7 @@ public class WormholeXTremeWorlds extends JavaPlugin {
             prettyLog(Level.INFO, false, "Auto-loaded " + loaded + " worlds.");
         }
         setLoadTime(false);
+        setWorldHandler(new WorldHandler());
         prettyLog(Level.INFO, true, "Load Completed.");
     }
 
@@ -270,5 +232,24 @@ public class WormholeXTremeWorlds extends JavaPlugin {
         else {
             getThisLogger().log(severity, prettyLogLine + message);
         }
+    }
+
+    /**
+     * Sets the world handler.
+     * 
+     * @param worldHandler
+     *            the new world handler
+     */
+    private static void setWorldHandler(WorldHandler worldHandler) {
+        WormholeXTremeWorlds.worldHandler = worldHandler;
+    }
+
+    /**
+     * Gets the world handler.
+     * 
+     * @return the world handler
+     */
+    public static WorldHandler getWorldHandler() {
+        return worldHandler;
     }
 }

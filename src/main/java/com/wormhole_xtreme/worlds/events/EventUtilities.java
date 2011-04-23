@@ -58,6 +58,9 @@ public class EventUtilities {
     /** The Constant entityDamage. */
     private static final EntityDamage entityDamage = new EntityDamage();
 
+    /** The Constant chunkUnload. */
+    private static final ChunkUnload chunkUnload = new ChunkUnload();
+
     /**
      * Register events.
      */
@@ -69,5 +72,6 @@ public class EventUtilities {
         pluginManager.registerEvent(Event.Type.SPAWN_CHANGE, spawnChange, Priority.Monitor, thisPlugin);
         pluginManager.registerEvent(Event.Type.CREATURE_SPAWN, creatureSpawn, Priority.Lowest, thisPlugin);
         pluginManager.registerEvent(Event.Type.ENTITY_DAMAGE, entityDamage, Priority.Lowest, thisPlugin);
+        pluginManager.registerEvent(Event.Type.CHUNK_UNLOAD, chunkUnload, Priority.High, thisPlugin);
     }
 }

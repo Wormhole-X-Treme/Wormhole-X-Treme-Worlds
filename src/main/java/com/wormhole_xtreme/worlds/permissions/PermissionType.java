@@ -27,6 +27,7 @@ import org.bukkit.entity.Player;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ConfigManager;
+import com.wormhole_xtreme.worlds.plugin.PluginSupport;
 
 /**
  * The Enum PermissionType.
@@ -115,7 +116,7 @@ public enum PermissionType {
         if ((player.isOp() && !ConfigManager.getServerOptionPermissions()) || (player.isOp() && ConfigManager.getServerOptionOpsBypassPermissions())) {
             allowed = true;
         }
-        else if ((WormholeXTremeWorlds.getPermissionHandler() != null) && WormholeXTremeWorlds.getPermissionHandler().has(player, permissionNode)) {
+        else if ((PluginSupport.getPermissionHandler() != null) && PluginSupport.getPermissionHandler().has(player, permissionNode)) {
             allowed = true;
         }
         if (allowed) {

@@ -308,7 +308,11 @@ public class XMLConfig {
         final XMLEventReader eventReader = XMLInputFactory.newInstance().createXMLEventReader(fileInputStream);
         XMLEvent event;
         String worldName = null, worldOwner = null, worldCustomSpawn = null, timeLockType = "none";
-        boolean allowHostiles = true, allowNeutrals = true, netherWorld = false, autoconnectWorld = true, allowPvP = true;
+        boolean allowHostiles = true, allowNeutrals = true;
+        boolean netherWorld = false, autoconnectWorld = true;
+        boolean allowPlayerDamage = true, allowPlayerDrown = true, allowPvP = true, allowPlayerLavaDamage = true, allowPlayerFallDamage = true, allowPlayerLightningDamage=true, allowPlayerFireDamage=true;
+        boolean allowFireSpread = true, allowLavaFire = true, allowLavaSpread = true, allowWaterSpread = true, allowLightningFire = true;
+        
         long worldSeed = 0;
         while (eventReader.hasNext()) {
             String optionName = null;
@@ -362,6 +366,36 @@ public class XMLConfig {
                 else if (optionName.equals("netherWorld")) {
                     netherWorld = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
                 }
+                else if (optionName.equals("allowPlayerDamage")) {
+                    allowPlayerDamage = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
+                else if (optionName.equals("allowPlayerDrown")) {
+                    allowPlayerDrown = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
+                else if (optionName.equals("allowFireSpread")) {
+                    allowFireSpread = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
+                else if (optionName.equals("allowPlayerFallDamage")) {
+                    allowPlayerFallDamage = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
+                else if (optionName.equals("allowPlayerFireDamage")) {
+                    allowPlayerFireDamage = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
+                else if (optionName.equals("allowLavaFire")) {
+                    allowLavaFire = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
+                else if (optionName.equals("allowLavaSpread")) {
+                    allowLavaSpread = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
+                else if (optionName.equals("allowWaterSpread")) {
+                    allowWaterSpread = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
+                else if (optionName.equals("allowLightningFire")) {
+                    allowLightningFire = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
+                else if (optionName.equals("allowPlayerLightningDamage")) {
+                    allowPlayerLightningDamage = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
                 else if (optionName.equals("autoconnectWorld")) {
                     autoconnectWorld = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
                 }
@@ -400,7 +434,7 @@ public class XMLConfig {
                 world.setAllowHostiles(allowHostiles);
             }
             if ( !allowNeutrals) {
-                world.setAllowHostiles(allowNeutrals);
+                world.setAllowNeutrals(allowNeutrals);
             }
             if (netherWorld) {
                 world.setNetherWorld(netherWorld);
@@ -410,6 +444,39 @@ public class XMLConfig {
             }
             if ( !allowPvP) {
                 world.setAllowPvP(allowPvP);
+            }
+            if ( !allowPlayerDamage) {
+                world.setAllowPlayerDamage(allowPlayerDamage);
+            }
+            if ( !allowPlayerDrown) {
+                world.setAllowPlayerDrown(allowPlayerDrown);
+            }
+            if ( !allowPlayerLavaDamage) {
+                world.setAllowPlayerLavaDamage(allowPlayerLavaDamage);
+            }
+            if ( !allowPlayerFallDamage) {
+                world.setAllowPlayerFallDamage(allowPlayerFallDamage);
+            }
+            if (!allowPlayerLightningDamage) {
+                world.setAllowPlayerLightningDamage(allowPlayerLightningDamage);
+            }
+            if (!allowPlayerFireDamage) {
+                world.setAllowPlayerFireDamage(allowPlayerFireDamage);
+            }
+            if ( !allowFireSpread) {
+                world.setAllowFireSpread(allowFireSpread);
+            }
+            if ( !allowLavaFire) {
+                world.setAllowLavaFire(allowLavaFire);
+            }
+            if ( !allowLavaSpread) {
+                world.setAllowLavaSpread(allowLavaSpread);
+            }
+            if ( !allowWaterSpread) {
+                world.setAllowWaterSpread(allowWaterSpread);
+            }
+            if (!allowLightningFire) {
+                world.setAllowLightningFire(allowLightningFire);
             }
             if (worldSeed != 0) {
                 world.setWorldSeed(worldSeed);
@@ -499,13 +566,24 @@ public class XMLConfig {
         else if (world != null) {
             createConfigNode(eventWriter, "worldName", "String", world.getWorldName(), "The name of this world. Do not change unless you have renamed the world on disk.");
             createConfigNode(eventWriter, "worldOwner", "String", world.getWorldOwner(), "The owner of this world. Can be any player. Factors into permissions and iConomy support.");
-            createConfigNode(eventWriter, "worldCustomSpawn", "int[]", world.getWorldCustomSpawn()[0] + "|" + world.getWorldCustomSpawn()[1] + "|" + world.getWorldCustomSpawn()[2], "World custom spawn location in X|Y|Z ints.");
-            createConfigNode(eventWriter, "allowHostiles", "boolean", Boolean.valueOf(world.isAllowHostiles()).toString(), "Are hostiles allowed on this world?");
-            createConfigNode(eventWriter, "allowNeutrals", "boolean", Boolean.valueOf(world.isAllowNeutrals()).toString(), "Are neutrals allowed on this world?");
             createConfigNode(eventWriter, "netherWorld", "boolean", Boolean.valueOf(world.isNetherWorld()).toString(), "Is this a nether world? BE SURE TO HAVE THIS RIGHT!");
             createConfigNode(eventWriter, "autoconnectWorld", "boolean", Boolean.valueOf(world.isAutoconnectWorld()).toString(), "Does this world automatically get loaded at server start? Non connected worlds can be loaded in game as needed.");
+            createConfigNode(eventWriter, "allowHostiles", "boolean", Boolean.valueOf(world.isAllowHostiles()).toString(), "Are hostiles allowed on this world?");
+            createConfigNode(eventWriter, "allowNeutrals", "boolean", Boolean.valueOf(world.isAllowNeutrals()).toString(), "Are neutrals allowed on this world?");
+            createConfigNode(eventWriter, "allowPlayerDamage", "boolean", Boolean.valueOf(world.isAllowPlayerDamage()).toString(), "Can players take damage on this world?");
+            createConfigNode(eventWriter, "allowPlayerDrown", "boolean", Boolean.valueOf(world.isAllowPlayerDrown()).toString(), "Can players drown on this world?");
             createConfigNode(eventWriter, "allowPvP", "boolean", Boolean.valueOf(world.isAllowPvP()).toString(), "Does this world allow PvP?");
+            createConfigNode(eventWriter, "allowPlayerLavaDamage", "boolean", Boolean.valueOf(world.isAllowPlayerLavaDamage()).toString(), "Do players take lava damage on this world?");
+            createConfigNode(eventWriter, "allowPlayerFallDamage", "boolean", Boolean.valueOf(world.isAllowPlayerFallDamage()).toString(), "Do players take fall damage on this world?");
+            createConfigNode(eventWriter, "allowPlayerLightningDamage", "boolean", Boolean.valueOf(world.isAllowPlayerLightningDamage()).toString(), "Do players take damage from lightning on this world?");
+            createConfigNode(eventWriter, "allowPlayerFireDamage", "boolean", Boolean.valueOf(world.isAllowPlayerFireDamage()).toString(), "Do players take fire damage on this world?");
+            createConfigNode(eventWriter, "allowFireSpread", "boolean", Boolean.valueOf(world.isAllowFireSpread()).toString(), "Is fire spread allowed on this world?");
+            createConfigNode(eventWriter, "allowLavaFire", "boolean", Boolean.valueOf(world.isAllowLavaFire()).toString(), "Is lava fire allowed on this world?");
+            createConfigNode(eventWriter, "allowLavaSpread", "boolean", Boolean.valueOf(world.isAllowLavaSpread()).toString(), "Is lava spread allowed on this world?");
+            createConfigNode(eventWriter, "allowWaterSpread", "boolean", Boolean.valueOf(world.isAllowWaterSpread()).toString(), "Does water spread happen on this world?");
+            createConfigNode(eventWriter, "allowLightningFire", "boolean", Boolean.valueOf(world.isAllowLightningFire()).toString(), "Is lightning fire allowed on this world?");
             createConfigNode(eventWriter, "timeLockType", "String", world.getTimeLockType(), "What time lock type this world has enabled. noon, midnight, or none. Anything else becomes none.");
+            createConfigNode(eventWriter, "worldCustomSpawn", "int[]", world.getWorldCustomSpawn()[0] + "|" + world.getWorldCustomSpawn()[1] + "|" + world.getWorldCustomSpawn()[2], "World custom spawn location in X|Y|Z ints.");
             createConfigNode(eventWriter, "worldSeed", "long", Long.valueOf(world.getWorldSeed()).toString(), "The seed used when this world was generated. Can be used to generate a new world with the exact same terrain.");
         }
         eventWriter.add(eventFactory.createEndElement("", "", "WormholeXTremeWorlds"));

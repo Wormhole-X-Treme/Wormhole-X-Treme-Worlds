@@ -61,6 +61,14 @@ public class EventUtilities {
     /** The Constant chunkUnload. */
     private static final ChunkUnload chunkUnload = new ChunkUnload();
 
+    /** The Constant blockFromTo. */
+    private static final BlockFromTo blockFromTo = new BlockFromTo();
+
+    /** The Constant blockIgnite. */
+    private static final BlockIgnite blockIgnite = new BlockIgnite();
+    
+    private static final BlockBurn blockBurn = new BlockBurn();
+
     /**
      * Register events.
      */
@@ -73,5 +81,8 @@ public class EventUtilities {
         pluginManager.registerEvent(Event.Type.CREATURE_SPAWN, creatureSpawn, Priority.Lowest, thisPlugin);
         pluginManager.registerEvent(Event.Type.ENTITY_DAMAGE, entityDamage, Priority.Lowest, thisPlugin);
         pluginManager.registerEvent(Event.Type.CHUNK_UNLOAD, chunkUnload, Priority.High, thisPlugin);
+        pluginManager.registerEvent(Event.Type.BLOCK_FROMTO, blockFromTo, Priority.Lowest, thisPlugin);
+        pluginManager.registerEvent(Event.Type.BLOCK_IGNITE, blockIgnite, Priority.Lowest, thisPlugin);
+        pluginManager.registerEvent(Event.Type.BLOCK_BURN, blockBurn, Priority.Lowest, thisPlugin);
     }
 }

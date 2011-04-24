@@ -27,13 +27,13 @@ public enum ResponseType {
     HEADER("\u00A73:: "),
 
     /** FOOTER. */
-    FOOTER("\u00A77 "),
+    FOOTER("\u00A77"),
 
     /** The NORMAL HEADER for normal messages. */
     NORMAL_HEADER(HEADER.toString() + FOOTER.toString()),
 
     /** The ERROR HEADER for error messages. */
-    ERROR_HEADER(HEADER.toString() + " \u00A75error " + NORMAL_HEADER.toString()),
+    ERROR_HEADER(HEADER.toString() + "\u00A75error " + NORMAL_HEADER.toString()),
 
     /** The NO PERMISSION ERROR message. */
     ERROR_PERMISSION_NO(ERROR_HEADER.toString() + "You lack the permissions to do this."),
@@ -52,15 +52,20 @@ public enum ResponseType {
 
     /** The NO ARGS GIVEN ERROR message. */
     ERROR_NO_ARGS_GIVEN(ERROR_HEADER.toString() + "Command specified requires arguments: "),
-
-    /** The COMMAND REQUIRED ARGS message. */
-    NORMAL_COMMAND_REQUIRED_ARGS(NORMAL_HEADER.toString() + "Required: -name <world>"),
-
-    /** The MODIFY COMMAND OPTIONAL ARGS message. */
-    NORMAL_MODIFY_COMMAND_OPTIONAL_ARGS(NORMAL_HEADER.toString() + "Optional: -owner <player>, -(no)autoload, -(no)hostiles, -(no)neutrals, -(no)pvp, -daylock, -nightlock, -notimelock"),
-
-    /** The CREATE COMMAND OPTIONAL ARGS message. */
-    NORMAL_CREATE_COMMAND_OPTIONAL_ARGS(NORMAL_HEADER.toString() + "Optional: -owner <player>, -seed <num>, -nether, -noautoload, -nohostiles, -noneutrals, -nopvp, -daylock, -nightlock"),
+    
+    NORMAL_MODIFY_COMMAND_ARGS1(NORMAL_HEADER.toString() + "\u00A75Req\u00A77: -name <world> \u00A75Opt\u00A77: -owner <player>, -daylock,"),
+    NORMAL_MODIFY_COMMAND_ARGS2(NORMAL_HEADER.toString() + "-nightlock, -\u00A76notimelock\u00A77, -(no)\u00A76autoload\u00A77, -(no)\u00A76lavaspread\u00A77,"),
+    NORMAL_MODIFY_COMMAND_ARGS3(NORMAL_HEADER.toString() + "-(no)\u00A76neutrals\u00A77, -(no)\u00A76firespread\u00A77, -(no)\u00A76lavafire\u00A77, -(no)\u00A76hostiles\u00A77,"),
+    NORMAL_MODIFY_COMMAND_ARGS4(NORMAL_HEADER.toString() + "-(no)\u00A76waterspread\u00A77, -(no)\u00A76lightningfire\u00A77, -(no)\u00A76lightningdamage\u00A77,"),
+    NORMAL_MODIFY_COMMAND_ARGS5(NORMAL_HEADER.toString() + "-(no)\u00A76damage\u00A77, -(no)\u00A76drown\u00A77, -(no)\u00A76pvp\u00A77, -(no)\u00A76lavadamage\u00A77,"),
+    NORMAL_MODIFY_COMMAND_ARGS6(NORMAL_HEADER.toString() + "-(no)\u00A76falldamage\u00A77, -(no)\u00A76firedamage\u00A77"),
+    
+    NORMAL_CREATE_COMMAND_ARGS1(NORMAL_HEADER.toString() + "\u00A75Req\u00A77: -name <world> \u00A75Opt\u00A77: -owner <player>, -seed <num>,"),
+    NORMAL_CREATE_COMMAND_ARGS2(NORMAL_HEADER.toString() + "-nightlock, -daylock, -noautoload, -nolavaspread, -nodrown,"),
+    NORMAL_CREATE_COMMAND_ARGS3(NORMAL_HEADER.toString() + "-noneutrals, -nofirespread, -nolavafire, -nohostiles, -nopvp,"),
+    NORMAL_CREATE_COMMAND_ARGS4(NORMAL_HEADER.toString() + "-nowaterspread, -nolightningfire, -nolightningdamage,"),
+    NORMAL_CREATE_COMMAND_ARGS5(NORMAL_HEADER.toString() + "-nodamage, -nolavadamage, -nofalldamage, -nofiredamage"),
+    
 
     /** The COMMAND REQUIRES A WORLD NAME ERROR message. */
     ERROR_COMMAND_REQUIRES_WORLDNAME(ERROR_HEADER.toString() + "Command requires world name: "),

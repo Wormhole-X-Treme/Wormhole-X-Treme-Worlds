@@ -88,7 +88,40 @@ public class ConfigManager {
         worldOptionTimeLockDay,
 
         /** The world option to lock time at midnight. */
-        worldOptionTimeLockNight
+        worldOptionTimeLockNight,
+
+        /** The world option no lava spread. */
+        worldOptionNoLavaSpread,
+
+        /** The world option no player drown. */
+        worldOptionNoPlayerDrown,
+
+        /** The world option no fire spread. */
+        worldOptionNoFireSpread,
+
+        /** The world option no lava fire. */
+        worldOptionNoLavaFire,
+
+        /** The world option no water spread. */
+        worldOptionNoWaterSpread,
+
+        /** The world option no lightning fire. */
+        worldOptionNoLightningFire,
+
+        /** The world option no player lightning damage. */
+        worldOptionNoPlayerLightningDamage,
+
+        /** The world option no player damage. */
+        worldOptionNoPlayerDamage,
+
+        /** The world option no player lava damage. */
+        worldOptionNoPlayerLavaDamage,
+
+        /** The world option no player fall damage. */
+        worldOptionNoPlayerFallDamage,
+
+        /** The world option no player fire damage. */
+        worldOptionNoPlayerFireDamage
     }
 
     /** The Constant options. */

@@ -52,18 +52,36 @@ public class WormholeWorld {
 
     /** The allow hostiles. */
     private boolean allowHostiles = true;
-
     /** The allow neutrals. */
     private boolean allowNeutrals = true;
-
+    /** The allow player damage. */
+    private boolean allowPlayerDamage = true;
+    /** The allow player drown. */
+    private boolean allowPlayerDrown = true;
+    /** Allow Player versus Player. */
+    private boolean allowPvP = true;
+    /** The allow player lava damage. */
+    private boolean allowPlayerLavaDamage = true;
+    /** The allow player fall damage. */
+    private boolean allowPlayerFallDamage = true;
+    /** Allow player lightning damage. */
+    private boolean allowPlayerLightningDamage = true;
+    /** Allow player fire damage. */
+    private boolean allowPlayerFireDamage = true;
+    /** The allow fire spread. */
+    private boolean allowFireSpread = true;
+    /** The allow lava fire. */
+    private boolean allowLavaFire = true;
+    /** The allow lava spread. */
+    private boolean allowLavaSpread = true;
+    /** The allow water spread. */
+    private boolean allowWaterSpread = true;
+    /** Allow lightning fire. */
+    private boolean allowLightningFire = true;
     /** The nether world. */
     private boolean netherWorld = false;
-
     /** The autoconnect world. */
     private boolean autoconnectWorld = true;
-
-    /** The allow pv p. */
-    private boolean allowPvP = true;
 
     /** The world seed. */
     private long worldSeed = 0;
@@ -101,7 +119,7 @@ public class WormholeWorld {
             ArrayList<String> pluginArrayList = new ArrayList<String>();
             if (stickyChunks.containsKey(stickyChunk)) {
                 pluginArrayList = stickyChunks.get(stickyChunk);
-                if (pluginArrayList != null && !pluginArrayList.contains(ownerPlugin)) {
+                if ((pluginArrayList != null) && !pluginArrayList.contains(ownerPlugin)) {
                     pluginArrayList.add(ownerPlugin);
                     stickyChunks.put(stickyChunk, pluginArrayList);
                 }
@@ -204,12 +222,48 @@ public class WormholeWorld {
     }
 
     /**
+     * Checks if is allow fire spread.
+     * 
+     * @return true, if is allow fire spread
+     */
+    public boolean isAllowFireSpread() {
+        return allowFireSpread;
+    }
+
+    /**
      * Checks if is allow hostiles.
      * 
      * @return the allowHostiles
      */
     public boolean isAllowHostiles() {
         return allowHostiles;
+    }
+
+    /**
+     * Checks if is allow lava fire.
+     * 
+     * @return true, if is allow lava fire
+     */
+    public boolean isAllowLavaFire() {
+        return allowLavaFire;
+    }
+
+    /**
+     * Checks if is allow lava spread.
+     * 
+     * @return true, if is allow lava spread
+     */
+    public boolean isAllowLavaSpread() {
+        return allowLavaSpread;
+    }
+
+    /**
+     * Checks if is allow lightning fire.
+     * 
+     * @return the allow lightning fire
+     */
+    public boolean isAllowLightningFire() {
+        return allowLightningFire;
     }
 
     /**
@@ -222,12 +276,75 @@ public class WormholeWorld {
     }
 
     /**
+     * Checks if is allow player damage.
+     * 
+     * @return true, if is allow player damage
+     */
+    public boolean isAllowPlayerDamage() {
+        return allowPlayerDamage;
+    }
+
+    /**
+     * Checks if is allow player drown.
+     * 
+     * @return true, if is allow player drown
+     */
+    public boolean isAllowPlayerDrown() {
+        return allowPlayerDrown;
+    }
+
+    /**
+     * Checks if is allow player fall damage.
+     * 
+     * @return true, if is allow player fall damage
+     */
+    public boolean isAllowPlayerFallDamage() {
+        return allowPlayerFallDamage;
+    }
+
+    /**
+     * Checks if is allow player fire damage.
+     * 
+     * @return the allow player fire damage
+     */
+    public boolean isAllowPlayerFireDamage() {
+        return allowPlayerFireDamage;
+    }
+
+    /**
+     * Checks if is allow player lava damage.
+     * 
+     * @return true, if is allow player lava damage
+     */
+    public boolean isAllowPlayerLavaDamage() {
+        return allowPlayerLavaDamage;
+    }
+
+    /**
+     * Checks if is allow player lightning damage.
+     * 
+     * @return the allow player lightning damage
+     */
+    public boolean isAllowPlayerLightningDamage() {
+        return allowPlayerLightningDamage;
+    }
+
+    /**
      * Checks if PvP is allowed on this world.
      * 
      * @return true, if PvP is allowed.
      */
     public boolean isAllowPvP() {
         return allowPvP;
+    }
+
+    /**
+     * Checks if is allow water spread.
+     * 
+     * @return true, if is allow water spread
+     */
+    public boolean isAllowWaterSpread() {
+        return allowWaterSpread;
     }
 
     /**
@@ -300,7 +417,7 @@ public class WormholeWorld {
     public boolean removeStickyChunk(final Chunk stickyChunk, final String ownerPlugin) {
         return removeStickyChunk(stickyChunk, ownerPlugin, false);
     }
-    
+
     /**
      * Removes the sticky chunk.
      * 
@@ -313,13 +430,13 @@ public class WormholeWorld {
      * @return true, if successful
      */
     public boolean removeStickyChunk(final Chunk stickyChunk, final String ownerPlugin, final boolean force) {
-        if (stickyChunk != null && stickyChunks.containsKey(stickyChunk)) {
+        if ((stickyChunk != null) && stickyChunks.containsKey(stickyChunk)) {
             final ArrayList<String> pluginArrayList = stickyChunks.get(stickyChunk);
             if (force) {
                 stickyChunks.remove(stickyChunk);
                 return true;
             }
-            else if ((ownerPlugin != null) && pluginArrayList != null && pluginArrayList.contains(ownerPlugin)) {
+            else if ((ownerPlugin != null) && (pluginArrayList != null) && pluginArrayList.contains(ownerPlugin)) {
                 if (pluginArrayList.size() == 1) {
                     stickyChunks.remove(stickyChunk);
                 }
@@ -334,6 +451,16 @@ public class WormholeWorld {
     }
 
     /**
+     * Sets the allow fire spread.
+     * 
+     * @param allowFireSpread
+     *            the new allow fire spread
+     */
+    public void setAllowFireSpread(final boolean allowFireSpread) {
+        this.allowFireSpread = allowFireSpread;
+    }
+
+    /**
      * Sets the allow hostiles.
      * 
      * @param allowHostiles
@@ -341,6 +468,36 @@ public class WormholeWorld {
      */
     public void setAllowHostiles(final boolean allowHostiles) {
         this.allowHostiles = allowHostiles;
+    }
+
+    /**
+     * Sets the allow lava fire.
+     * 
+     * @param allowLavaFire
+     *            the new allow lava fire
+     */
+    public void setAllowLavaFire(final boolean allowLavaFire) {
+        this.allowLavaFire = allowLavaFire;
+    }
+
+    /**
+     * Sets the allow lava spread.
+     * 
+     * @param allowLavaSpread
+     *            the new allow lava spread
+     */
+    public void setAllowLavaSpread(final boolean allowLavaSpread) {
+        this.allowLavaSpread = allowLavaSpread;
+    }
+
+    /**
+     * Sets the allow lightning fire.
+     * 
+     * @param allowLightningFire
+     *            the new allow lightning fire
+     */
+    public void setAllowLightningFire(final boolean allowLightningFire) {
+        this.allowLightningFire = allowLightningFire;
     }
 
     /**
@@ -354,6 +511,66 @@ public class WormholeWorld {
     }
 
     /**
+     * Sets the allow player damage.
+     * 
+     * @param allowPlayerDamage
+     *            the new allow player damage
+     */
+    public void setAllowPlayerDamage(final boolean allowPlayerDamage) {
+        this.allowPlayerDamage = allowPlayerDamage;
+    }
+
+    /**
+     * Sets the allow player drown.
+     * 
+     * @param allowPlayerDrown
+     *            the new allow player drown
+     */
+    public void setAllowPlayerDrown(final boolean allowPlayerDrown) {
+        this.allowPlayerDrown = allowPlayerDrown;
+    }
+
+    /**
+     * Sets the allow player fall damage.
+     * 
+     * @param allowPlayerFallDamage
+     *            the new allow player fall damage
+     */
+    public void setAllowPlayerFallDamage(final boolean allowPlayerFallDamage) {
+        this.allowPlayerFallDamage = allowPlayerFallDamage;
+    }
+
+    /**
+     * Sets the allow player fire damage.
+     * 
+     * @param allowPlayerFireDamage
+     *            the new allow player fire damage
+     */
+    public void setAllowPlayerFireDamage(final boolean allowPlayerFireDamage) {
+        this.allowPlayerFireDamage = allowPlayerFireDamage;
+    }
+
+    /**
+     * Sets the allow player lava damage.
+     * 
+     * @param allowPlayerLavaDamage
+     *            the new allow player lava damage
+     */
+    public void setAllowPlayerLavaDamage(final boolean allowPlayerLavaDamage) {
+        this.allowPlayerLavaDamage = allowPlayerLavaDamage;
+    }
+
+    /**
+     * Sets the allow player lightning damage.
+     * 
+     * @param allowPlayerLightningDamage
+     *            the new allow player lightning damage
+     */
+    public void setAllowPlayerLightningDamage(final boolean allowPlayerLightningDamage) {
+        this.allowPlayerLightningDamage = allowPlayerLightningDamage;
+    }
+
+    /**
      * Sets the allow pv p.
      * 
      * @param allowPvP
@@ -361,6 +578,16 @@ public class WormholeWorld {
      */
     public void setAllowPvP(final boolean allowPvP) {
         this.allowPvP = allowPvP;
+    }
+
+    /**
+     * Sets the allow water spread.
+     * 
+     * @param allowWaterSpread
+     *            the new allow water spread
+     */
+    public void setAllowWaterSpread(final boolean allowWaterSpread) {
+        this.allowWaterSpread = allowWaterSpread;
     }
 
     /**

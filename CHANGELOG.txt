@@ -1,3 +1,20 @@
+v0.4 2011.04.24 09:20 PST:
+
+- Initial sticky chunk support. We allow plugins to register chunks that do not unload. When the chunk is no longer
+  sticky, we schedule it for unloading. We properly catch and cancel the required chunk unload events.
+
+- Added support for player protections on a world by world basis. Drowning, burning, lava swiming, lightning strikes,
+  falling damage, and all player damage. Controlled via the wxw modify and wxw create commands.
+
+- Added support for world protections on a world by world basis. Fire spread, lava spread, water spread, lightning fire, 
+  and lava fire. Controlled via the wxw modify and wxw create commands.
+  
+- Updated wxw info ... to be more useful. Colorized it.
+
+- Updated help output for wxw modify and wxw create to be slightly more useful.
+
+- Fixed typo in config loader for Neutral monster disable. 
+
 v0.3 2011.04.21 02:17 PST:
 
 - Added scheduler capabilities.

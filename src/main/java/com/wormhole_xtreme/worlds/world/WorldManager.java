@@ -307,6 +307,39 @@ public class WorldManager {
                         case worldOptionTimeLockNight :
                             wormholeWorld.setTimeLockType("night");
                             break;
+                        case worldOptionNoLavaSpread :
+                            wormholeWorld.setAllowLavaSpread(false);
+                            break;
+                        case worldOptionNoPlayerDrown :
+                            wormholeWorld.setAllowPlayerDrown(false);
+                            break;
+                        case worldOptionNoFireSpread :
+                            wormholeWorld.setAllowFireSpread(false);
+                            break;
+                        case worldOptionNoLavaFire :
+                            wormholeWorld.setAllowLavaFire(false);
+                            break;
+                        case worldOptionNoWaterSpread :
+                            wormholeWorld.setAllowWaterSpread(false);
+                            break;
+                        case worldOptionNoLightningFire :
+                            wormholeWorld.setAllowLightningFire(false);
+                            break;
+                        case worldOptionNoPlayerLightningDamage :
+                            wormholeWorld.setAllowPlayerLightningDamage(false);
+                            break;
+                        case worldOptionNoPlayerDamage :
+                            wormholeWorld.setAllowPlayerDamage(false);
+                            break;
+                        case worldOptionNoPlayerLavaDamage :
+                            wormholeWorld.setAllowPlayerLavaDamage(false);
+                            break;
+                        case worldOptionNoPlayerFallDamage :
+                            wormholeWorld.setAllowPlayerFallDamage(false);
+                            break;
+                        case worldOptionNoPlayerFireDamage :
+                            wormholeWorld.setAllowPlayerFireDamage(false);
+                            break;
                         default :
                             break;
                     }

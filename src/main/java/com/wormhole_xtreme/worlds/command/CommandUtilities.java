@@ -65,7 +65,14 @@ public class CommandUtilities {
             // Found command, if command found previously make note of it.
             else if (argPart.startsWith("-")) {
                 if (commandFound) {
-                    commandFoundNoArgs = true;
+                    try {
+                        Long.valueOf(argPart);
+                        commandHasArgs = true;
+                        tempString.append("|");
+                    }
+                    catch (NumberFormatException e) {
+                        commandFoundNoArgs = true;
+                    } 
                 }
                 commandFound = true;
             }

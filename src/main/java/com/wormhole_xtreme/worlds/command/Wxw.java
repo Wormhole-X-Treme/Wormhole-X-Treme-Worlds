@@ -247,7 +247,7 @@ class Wxw implements CommandExecutor {
             if ((args != null) && (args.length == 1)) {
                 final WormholeWorld wormholeWorld = WorldManager.getWorld(args[0]);
                 if ((wormholeWorld != null) && (thisPlugin.getServer().getWorld(args[0]) != null)) {
-                    CommandUtilities.safeSpawnTeleport(wormholeWorld, player);
+                    player.teleport(WorldManager.getSafeSpawnLocation(wormholeWorld, player));
                 }
                 else {
                     player.sendMessage(ResponseType.ERROR_WORLD_NOT_EXIST.toString() + args[0]);

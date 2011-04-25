@@ -23,6 +23,7 @@ import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.PluginManager;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
+import com.wormhole_xtreme.worlds.config.ConfigManager;
 
 /**
  * The Class EventUtilities.
@@ -67,7 +68,11 @@ public class EventUtilities {
     /** The Constant blockIgnite. */
     private static final BlockIgnite blockIgnite = new BlockIgnite();
     
+    /** The Constant blockBurn. */
     private static final BlockBurn blockBurn = new BlockBurn();
+    
+    /** The Constant playerRespawn. */
+    private static final PlayerRespawn playerRespawn = new PlayerRespawn();
 
     /**
      * Register events.
@@ -84,5 +89,8 @@ public class EventUtilities {
         pluginManager.registerEvent(Event.Type.BLOCK_FROMTO, blockFromTo, Priority.Lowest, thisPlugin);
         pluginManager.registerEvent(Event.Type.BLOCK_IGNITE, blockIgnite, Priority.Lowest, thisPlugin);
         pluginManager.registerEvent(Event.Type.BLOCK_BURN, blockBurn, Priority.Lowest, thisPlugin);
+        if (ConfigManager.getServerOptionSpawnCommand()) {
+            pluginManager.registerEvent(Event.Type.PLAYER_RESPAWN, playerRespawn, Priority.Normal, thisPlugin);
+        }
     }
 }

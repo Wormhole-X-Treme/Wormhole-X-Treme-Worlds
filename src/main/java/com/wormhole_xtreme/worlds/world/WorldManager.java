@@ -486,7 +486,7 @@ public class WorldManager {
                         final int typeId = tmpBlock.getTypeId();
                         if (checkSafeTypeId(typeId) && checkSafeBlockAbove(tmpBlock) && checkSafeBlockBelow(tmpBlock)) {
                             blockYaxisPlane.clear();
-                            return tmpBlock.getLocation();
+                            return new Location(tmpBlock.getWorld(), tmpBlock.getX() + 0.5, tmpBlock.getY(), tmpBlock.getZ() + 0.5);
                         }
                     }
                 }
@@ -512,6 +512,25 @@ public class WorldManager {
      */
     public static WormholeWorld[] getAllWorlds() {
         return worldList.values().toArray(new WormholeWorld[worldList.size()]);
+    }
+
+    /**
+     * Gets the safe spawn location.
+     * 
+     * @param wormholeWorld
+     *            the wormhole world
+     * @param player
+     *            the player
+     * @return the safe teleport location
+     */
+    public static Location getSafeSpawnLocation(final WormholeWorld wormholeWorld, final Player player) {
+        return wormholeWorld.isNetherWorld()
+            ? WorldManager.checkSafeTeleportDestination(wormholeWorld.getWorldSpawn())
+                ? new Location(wormholeWorld.getThisWorld(), wormholeWorld.getWorldSpawn().getBlockX() + 0.5, wormholeWorld.getWorldSpawn().getBlockY(), wormholeWorld.getWorldSpawn().getBlockZ() + 0.5, player.getLocation().getYaw(), player.getLocation().getPitch())
+                : WorldManager.findSafeSpawn(wormholeWorld.getWorldSpawn(), 3, 3)
+            : WorldManager.checkSafeTeleportDestination(wormholeWorld.getWorldSpawn())
+                ? new Location(wormholeWorld.getThisWorld(), wormholeWorld.getWorldSpawn().getBlockX() + 0.5, wormholeWorld.getWorldSpawn().getBlockY(), wormholeWorld.getWorldSpawn().getBlockZ() + 0.5, player.getLocation().getYaw(), player.getLocation().getPitch())
+                : new Location(wormholeWorld.getThisWorld(), wormholeWorld.getWorldSpawn().getBlockX() + 0.5, wormholeWorld.getThisWorld().getHighestBlockYAt(wormholeWorld.getWorldSpawn()), wormholeWorld.getWorldSpawn().getBlockZ() + 0.5, player.getLocation().getYaw(), player.getLocation().getPitch());
     }
 
     /**

@@ -20,7 +20,6 @@ package com.wormhole_xtreme.worlds.command;
 
 import java.util.ArrayList;
 
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -185,7 +184,7 @@ public class CommandUtilities {
         if (PermissionType.SPAWN.checkPermission(player)) {
             final WormholeWorld wormholeWorld = WorldManager.getWorld(player.getWorld().getName());
             if (wormholeWorld != null) {
-                CommandUtilities.safeSpawnTeleport(wormholeWorld, player);
+                player.teleport(WorldManager.getSafeSpawnLocation(wormholeWorld, player));
             }
             else {
                 player.sendMessage(ResponseType.ERROR_COMMAND_ONLY_MANAGED_WORLD.toString() + "spawn");
@@ -221,23 +220,5 @@ public class CommandUtilities {
         if (ConfigManager.getServerOptionSpawnCommand()) {
             thisPlugin.getCommand("spawn").setExecutor(new Spawn());
         }
-    }
-
-    /**
-     * Safe spawn teleport.
-     * 
-     * @param wormholeWorld
-     *            the wormhole world
-     * @param player
-     *            the player
-     */
-    static void safeSpawnTeleport(final WormholeWorld wormholeWorld, final Player player) {
-        player.teleport(wormholeWorld.isNetherWorld()
-            ? WorldManager.checkSafeTeleportDestination(wormholeWorld.getWorldSpawn())
-                ? new Location(wormholeWorld.getThisWorld(), wormholeWorld.getWorldSpawn().getBlockX() + 0.5, wormholeWorld.getWorldSpawn().getBlockY(), wormholeWorld.getWorldSpawn().getBlockZ() + 0.5, player.getLocation().getYaw(), player.getLocation().getPitch())
-                : WorldManager.findSafeSpawn(wormholeWorld.getWorldSpawn(), 3, 3)
-            : WorldManager.checkSafeTeleportDestination(wormholeWorld.getWorldSpawn())
-                ? new Location(wormholeWorld.getThisWorld(), wormholeWorld.getWorldSpawn().getBlockX() + 0.5, wormholeWorld.getWorldSpawn().getBlockY(), wormholeWorld.getWorldSpawn().getBlockZ() + 0.5, player.getLocation().getYaw(), player.getLocation().getPitch())
-                : new Location(wormholeWorld.getThisWorld(), wormholeWorld.getWorldSpawn().getBlockX() + 0.5, wormholeWorld.getThisWorld().getHighestBlockYAt(wormholeWorld.getWorldSpawn()), wormholeWorld.getWorldSpawn().getBlockZ() + 0.5, player.getLocation().getYaw(), player.getLocation().getPitch()));
     }
 }

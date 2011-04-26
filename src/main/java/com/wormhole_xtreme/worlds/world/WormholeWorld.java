@@ -26,6 +26,9 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.TimeType;
+import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.WeatherType;
+
 /**
  * The WormholeWorld instance. Everything that we know about a world can be found here.
  * What we know about the world is distrusted though, as we cannot be sure data fed to us
@@ -35,39 +38,55 @@ import org.bukkit.World;
  */
 public class WormholeWorld {
 
+    /**
+     * Core world configuration options.
+     */
     /** The world name. */
     private String worldName = "";
-
     /** The world owner. */
     private String worldOwner = null;
-
     /** The this world. */
     private World thisWorld = null;
-
     /** The world spawn. */
     private Location worldSpawn = null;
-
     /** The world custom spawn. */
     private int[] worldCustomSpawn = null;
+    /** The autoconnect world. */
+    private boolean autoconnectWorld = true;
+    /** The world seed. */
+    private long worldSeed = 0;
 
-    /** The allow hostiles. */
-    private boolean allowHostiles = true;
-    /** The allow neutrals. */
-    private boolean allowNeutrals = true;
+    /**
+     * Player related world configuration options.
+     */
     /** The allow player damage. */
     private boolean allowPlayerDamage = true;
-    /** The allow player drown. */
-    private boolean allowPlayerDrown = true;
     /** Allow Player versus Player. */
     private boolean allowPvP = true;
-    /** The allow player lava damage. */
-    private boolean allowPlayerLavaDamage = true;
+    /** The allow player contact damage. */
+    private boolean allowPlayerContactDamage = true;
+    /** The allow player suffocation. */
+    private boolean allowPlayerSuffocation = true;
     /** The allow player fall damage. */
     private boolean allowPlayerFallDamage = true;
-    /** Allow player lightning damage. */
-    private boolean allowPlayerLightningDamage = true;
     /** Allow player fire damage. */
     private boolean allowPlayerFireDamage = true;
+    /** The allow player lava damage. */
+    private boolean allowPlayerLavaDamage = true;
+    /** The allow player drown. */
+    private boolean allowPlayerDrown = true;
+    /** The allow player explosion damage. */
+    private boolean allowPlayerExplosionDamage = true;
+    /** The allow player void damage. */
+    private boolean allowPlayerVoidDamage = true;
+    /** Allow player lightning damage. */
+    private boolean allowPlayerLightningDamage = true;
+    /** Allow players to start fires. */
+    private boolean allowPlayerFireStart = true;
+
+    /*
+     * World related configuration options.
+     */
     /** The allow fire spread. */
     private boolean allowFireSpread = true;
     /** The allow lava fire. */
@@ -80,17 +99,20 @@ public class WormholeWorld {
     private boolean allowLightningFire = true;
     /** The nether world. */
     private boolean netherWorld = false;
-    /** The autoconnect world. */
-    private boolean autoconnectWorld = true;
-
-    /** The world seed. */
-    private long worldSeed = 0;
-
+    /** The allow hostiles. */
+    private boolean allowHostiles = true;
+    /** The allow neutrals. */
+    private boolean allowNeutrals = true;
+    /** The weather lock. */
+    private boolean weatherLock = false;
+    /** The weather lock type. */
+    private WeatherType weatherLockType = WeatherType.NONE;
+    /** The allow thunder. */
+    private boolean allowWeatherThunder = true;
     /** The time lock. */
     private boolean timeLock = false;
-
     /** The time lock type. */
-    private String timeLockType = "none";
+    private TimeType timeLockType = TimeType.NONE;
 
     /** The loaded. */
     private boolean loaded = false;
@@ -161,8 +183,17 @@ public class WormholeWorld {
      * 
      * @return the time lock type
      */
-    public String getTimeLockType() {
+    public TimeType getTimeLockType() {
         return timeLockType;
+    }
+
+    /**
+     * Gets the weather lock type.
+     * 
+     * @return the weather lock type
+     */
+    public WeatherType getWeatherLockType() {
+        return weatherLockType;
     }
 
     /**
@@ -276,6 +307,15 @@ public class WormholeWorld {
     }
 
     /**
+     * Checks if is allow player contact damage.
+     * 
+     * @return true, if is allow player contact damage
+     */
+    public boolean isAllowPlayerContactDamage() {
+        return allowPlayerContactDamage;
+    }
+
+    /**
      * Checks if is allow player damage.
      * 
      * @return true, if is allow player damage
@@ -291,6 +331,15 @@ public class WormholeWorld {
      */
     public boolean isAllowPlayerDrown() {
         return allowPlayerDrown;
+    }
+
+    /**
+     * Checks if is allow player explosion damage.
+     * 
+     * @return true, if is allow player explosion damage
+     */
+    public boolean isAllowPlayerExplosionDamage() {
+        return allowPlayerExplosionDamage;
     }
 
     /**
@@ -312,6 +361,15 @@ public class WormholeWorld {
     }
 
     /**
+     * Checks if is allow players to start fires.
+     * 
+     * @return the allow players to start fires
+     */
+    public boolean isAllowPlayerFireStart() {
+        return allowPlayerFireStart;
+    }
+
+    /**
      * Checks if is allow player lava damage.
      * 
      * @return true, if is allow player lava damage
@@ -330,6 +388,24 @@ public class WormholeWorld {
     }
 
     /**
+     * Checks if is allow player suffocation.
+     * 
+     * @return true, if is allow player suffocation
+     */
+    public boolean isAllowPlayerSuffocation() {
+        return allowPlayerSuffocation;
+    }
+
+    /**
+     * Checks if is allow player void damage.
+     * 
+     * @return true, if is allow player void damage
+     */
+    public boolean isAllowPlayerVoidDamage() {
+        return allowPlayerVoidDamage;
+    }
+
+    /**
      * Checks if PvP is allowed on this world.
      * 
      * @return true, if PvP is allowed.
@@ -345,6 +421,15 @@ public class WormholeWorld {
      */
     public boolean isAllowWaterSpread() {
         return allowWaterSpread;
+    }
+
+    /**
+     * Checks if is allow thunder.
+     * 
+     * @return true, if is allow thunder
+     */
+    public boolean isAllowWeatherThunder() {
+        return allowWeatherThunder;
     }
 
     /**
@@ -383,6 +468,15 @@ public class WormholeWorld {
      */
     public boolean isTimeLock() {
         return timeLock;
+    }
+
+    /**
+     * Checks if is weather lock.
+     * 
+     * @return true, if is weather lock
+     */
+    public boolean isWeatherLock() {
+        return weatherLock;
     }
 
     /**
@@ -511,6 +605,16 @@ public class WormholeWorld {
     }
 
     /**
+     * Sets the allow player contact damage.
+     * 
+     * @param allowPlayerContactDamage
+     *            the new allow player contact damage
+     */
+    public void setAllowPlayerContactDamage(final boolean allowPlayerContactDamage) {
+        this.allowPlayerContactDamage = allowPlayerContactDamage;
+    }
+
+    /**
      * Sets the allow player damage.
      * 
      * @param allowPlayerDamage
@@ -528,6 +632,16 @@ public class WormholeWorld {
      */
     public void setAllowPlayerDrown(final boolean allowPlayerDrown) {
         this.allowPlayerDrown = allowPlayerDrown;
+    }
+
+    /**
+     * Sets the allow player explosion damage.
+     * 
+     * @param allowPlayerExplosionDamage
+     *            the new allow player explosion damage
+     */
+    public void setAllowPlayerExplosionDamage(final boolean allowPlayerExplosionDamage) {
+        this.allowPlayerExplosionDamage = allowPlayerExplosionDamage;
     }
 
     /**
@@ -551,6 +665,16 @@ public class WormholeWorld {
     }
 
     /**
+     * Sets the allow players to start fires.
+     * 
+     * @param allowPlayerFireStart
+     *            the new allow players to start fires
+     */
+    public void setAllowPlayerFireStart(final boolean allowPlayerFireStart) {
+        this.allowPlayerFireStart = allowPlayerFireStart;
+    }
+
+    /**
      * Sets the allow player lava damage.
      * 
      * @param allowPlayerLavaDamage
@@ -571,6 +695,26 @@ public class WormholeWorld {
     }
 
     /**
+     * Sets the allow player suffocation.
+     * 
+     * @param allowPlayerSuffocation
+     *            the new allow player suffocation
+     */
+    public void setAllowPlayerSuffocation(final boolean allowPlayerSuffocation) {
+        this.allowPlayerSuffocation = allowPlayerSuffocation;
+    }
+
+    /**
+     * Sets the allow player void damage.
+     * 
+     * @param allowPlayerVoidDamage
+     *            the new allow player void damage
+     */
+    public void setAllowPlayerVoidDamage(final boolean allowPlayerVoidDamage) {
+        this.allowPlayerVoidDamage = allowPlayerVoidDamage;
+    }
+
+    /**
      * Sets the allow pv p.
      * 
      * @param allowPvP
@@ -588,6 +732,16 @@ public class WormholeWorld {
      */
     public void setAllowWaterSpread(final boolean allowWaterSpread) {
         this.allowWaterSpread = allowWaterSpread;
+    }
+
+    /**
+     * Sets the allow thunder.
+     * 
+     * @param allowThunder
+     *            the new allow thunder
+     */
+    public void setAllowWeatherThunder(final boolean allowWeatherThunder) {
+        this.allowWeatherThunder = allowWeatherThunder;
     }
 
     /**
@@ -626,14 +780,58 @@ public class WormholeWorld {
      * @param timeLockType
      *            the new time lock type
      */
-    public void setTimeLockType(final String timeLockType) {
-        if (timeLockType.equals("day") || timeLockType.equals("night")) {
-            timeLock = true;
-            this.timeLockType = timeLockType;
+    public void setTimeLockType(final TimeType timeLockType) {
+        switch (timeLockType) {
+            case DAY :
+            case NIGHT :
+                timeLock = true;
+                this.timeLockType = timeLockType;
+                break;
+            case NONE :
+                timeLock = false;
+                this.timeLockType = timeLockType;
+                break;
+            default :
+                break;
         }
-        else {
-            timeLock = false;
-            this.timeLockType = "none";
+    }
+
+    /**
+     * Sets the weather lock.
+     * 
+     * @param weatherLock
+     *            the new weather lock
+     */
+    public void setWeatherLock(final boolean weatherLock) {
+        this.weatherLock = weatherLock;
+    }
+
+    /**
+     * Sets the weather lock type.
+     * 
+     * @param weatherLockType
+     *            the new weather lock type
+     */
+    public void setWeatherLockType(final WeatherType weatherLockType) {
+        switch (weatherLockType) {
+            case CLEAR :
+            case RAIN :
+                weatherLock = true;
+                allowWeatherThunder = false;
+                this.weatherLockType = weatherLockType;
+                break;
+            case STORM :
+                weatherLock = true;
+                allowWeatherThunder = true;
+                this.weatherLockType = weatherLockType;
+                break;
+            case NONE :
+                weatherLock = false;
+                allowWeatherThunder = true;
+                this.weatherLockType = weatherLockType;
+                break;
+            default :
+                break;
         }
     }
 

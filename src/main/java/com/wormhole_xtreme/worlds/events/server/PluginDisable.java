@@ -18,9 +18,6 @@
  */
 package com.wormhole_xtreme.worlds.events.server;
 
-import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.event.server.ServerListener;
-
 import com.wormhole_xtreme.worlds.config.ConfigManager;
 import com.wormhole_xtreme.worlds.plugin.HelpSupport;
 import com.wormhole_xtreme.worlds.plugin.PermissionsSupport;
@@ -30,18 +27,19 @@ import com.wormhole_xtreme.worlds.plugin.PermissionsSupport;
  * 
  * @author alron
  */
-public class PluginDisable extends ServerListener {
+class PluginDisable {
 
-    /* (non-Javadoc)
-     * @see org.bukkit.event.server.ServerListener#onPluginDisable(org.bukkit.event.server.PluginDisableEvent)
+    /**
+     * Handle plugin disable.
+     * 
+     * @param plugin
+     *            the plugin
      */
-    @Override
-    public void onPluginDisable(final PluginDisableEvent pluginDisableEvent) {
-        final String disableEventPluginName = pluginDisableEvent.getPlugin().getDescription().getName();
-        if (disableEventPluginName.equals("Permissions") && ConfigManager.getServerOptionPermissions()) {
+    static void handlePluginDisable(final String plugin) {
+        if (plugin.equals("Permissions") && ConfigManager.getServerOptionPermissions()) {
             PermissionsSupport.disablePermissions();
         }
-        else if (disableEventPluginName.equals("Help") && ConfigManager.getServerOptionHelp()) {
+        else if (plugin.equals("Help") && ConfigManager.getServerOptionHelp()) {
             HelpSupport.disableHelp();
         }
     }

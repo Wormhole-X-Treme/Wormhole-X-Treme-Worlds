@@ -18,9 +18,6 @@
  */
 package com.wormhole_xtreme.worlds.events.server;
 
-import org.bukkit.event.server.PluginEnableEvent;
-import org.bukkit.event.server.ServerListener;
-
 import com.wormhole_xtreme.worlds.config.ConfigManager;
 import com.wormhole_xtreme.worlds.plugin.HelpSupport;
 import com.wormhole_xtreme.worlds.plugin.PermissionsSupport;
@@ -30,19 +27,20 @@ import com.wormhole_xtreme.worlds.plugin.PermissionsSupport;
  * 
  * @author alron
  */
-public class PluginEnable extends ServerListener {
+class PluginEnable {
 
-    /* (non-Javadoc)
-     * @see org.bukkit.event.server.ServerListener#onPluginEnable(org.bukkit.event.server.PluginEnableEvent)
+    /**
+     * Handle plugin enable.
+     * 
+     * @param plugin
+     *            the plugin
      */
-    @Override
-    public void onPluginEnable(final PluginEnableEvent pluginEnableEvent) {
-        final String enableEventPluginName = pluginEnableEvent.getPlugin().getDescription().getName();
-        if (enableEventPluginName.equals("Permissions") && ConfigManager.getServerOptionPermissions()) {
+    static void handlePluginEnable(final String plugin) {
+        if (plugin.equals("Permissions") && ConfigManager.getServerOptionPermissions()) {
             PermissionsSupport.enablePermissions();
             HelpSupport.registerHelpCommands();
         }
-        else if (enableEventPluginName.equals("Help") && ConfigManager.getServerOptionHelp()) {
+        else if (plugin.equals("Help") && ConfigManager.getServerOptionHelp()) {
             HelpSupport.enableHelp();
             HelpSupport.registerHelpCommands();
         }

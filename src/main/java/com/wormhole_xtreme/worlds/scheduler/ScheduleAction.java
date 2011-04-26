@@ -43,7 +43,9 @@ public class ScheduleAction implements Runnable {
         CreateWorld,
 
         /** The Clear entities. */
-        ClearEntities
+        ClearEntities,
+        
+        SetWeather
     }
 
     /** The wormhole world. */
@@ -107,6 +109,12 @@ public class ScheduleAction implements Runnable {
                     if (getWormholeWorld() != null) {
                         thisPlugin.prettyLog(Level.FINE, false, "Schedule Action \"" + getActionType().toString() + "\" WormholeWorld \"" + getWormholeWorld().getWorldName() + "\"");
                         WorldManager.clearWorldCreatures(getWormholeWorld());
+                    }
+                    break;
+                case SetWeather :
+                    if (getWormholeWorld() != null) {
+                        thisPlugin.prettyLog(Level.FINE, false, "Schedule Action \"" + getActionType().toString() + "\" WormholeWorld \"" + getWormholeWorld().getWorldName() + "\"");
+                        WorldManager.setWorldWeather(getWormholeWorld());
                     }
                     break;
                 case TimeLock :

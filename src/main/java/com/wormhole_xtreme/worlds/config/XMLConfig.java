@@ -43,6 +43,8 @@ import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ConfigManager.ServerOptionKeys;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
+import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.TimeType;
+import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.WeatherType;
 
 /**
  * The Class WormholeXTtremeWorldsConfig.
@@ -307,7 +309,9 @@ public class XMLConfig {
     private static void readWorldConfigFile(final FileInputStream fileInputStream) throws XMLStreamException, FactoryConfigurationError {
         final XMLEventReader eventReader = XMLInputFactory.newInstance().createXMLEventReader(fileInputStream);
         XMLEvent event;
-        String worldName = null, worldOwner = null, worldCustomSpawn = null, timeLockType = "none";
+        String worldName = null, worldOwner = null, worldCustomSpawn = null;
+        TimeType timeLockType = TimeType.NONE;
+        WeatherType weatherLockType = WeatherType.NONE;
         boolean allowHostiles = true, allowNeutrals = true;
         boolean netherWorld = false, autoconnectWorld = true;
         boolean allowPlayerDamage = true, allowPlayerDrown = true, allowPvP = true, allowPlayerLavaDamage = true, allowPlayerFallDamage = true, allowPlayerLightningDamage=true, allowPlayerFireDamage=true;
@@ -403,7 +407,10 @@ public class XMLConfig {
                     allowPvP = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
                 }
                 else if (optionName.equals("timeLockType")) {
-                    timeLockType = String.valueOf(optionValue).trim();
+                    timeLockType = TimeType.getTimeType(String.valueOf(optionValue).trim().toUpperCase());
+                }
+                else if (optionName.equals("weatherLockType")) {
+                    weatherLockType = WeatherType.getWeatherType(String.valueOf(optionValue).trim().toUpperCase());
                 }
                 else if (optionName.equals("worldSeed")) {
                     try {
@@ -425,6 +432,7 @@ public class XMLConfig {
             world.setWorldName(worldName);
             world.setWorldOwner(worldOwner);
             world.setTimeLockType(timeLockType);
+            world.setWeatherLockType(weatherLockType);
             final int[] wcs = {
                 Integer.valueOf(worldCustomSpawn.split("\\|")[0]), Integer.valueOf(worldCustomSpawn.split("\\|")[1]),
                 Integer.valueOf(worldCustomSpawn.split("\\|")[2])
@@ -582,7 +590,8 @@ public class XMLConfig {
             createConfigNode(eventWriter, "allowLavaSpread", "boolean", Boolean.valueOf(world.isAllowLavaSpread()).toString(), "Is lava spread allowed on this world?");
             createConfigNode(eventWriter, "allowWaterSpread", "boolean", Boolean.valueOf(world.isAllowWaterSpread()).toString(), "Does water spread happen on this world?");
             createConfigNode(eventWriter, "allowLightningFire", "boolean", Boolean.valueOf(world.isAllowLightningFire()).toString(), "Is lightning fire allowed on this world?");
-            createConfigNode(eventWriter, "timeLockType", "String", world.getTimeLockType(), "What time lock type this world has enabled. noon, midnight, or none. Anything else becomes none.");
+            createConfigNode(eventWriter, "timeLockType", "TimeType", world.getTimeLockType().toString(), "What time lock type this world has enabled. DAY, NIGHT, NONE. Anything else becomes NONE.");
+            createConfigNode(eventWriter, "weatherLockType", "WeatherType", world.getTimeLockType().toString(), "What weather lock type this world has enabled. CLEAR, RAIN, STORM, NONE. Anything else becomes NONE.");
             createConfigNode(eventWriter, "worldCustomSpawn", "int[]", world.getWorldCustomSpawn()[0] + "|" + world.getWorldCustomSpawn()[1] + "|" + world.getWorldCustomSpawn()[2], "World custom spawn location in X|Y|Z ints.");
             createConfigNode(eventWriter, "worldSeed", "long", Long.valueOf(world.getWorldSeed()).toString(), "The seed used when this world was generated. Can be used to generate a new world with the exact same terrain.");
         }

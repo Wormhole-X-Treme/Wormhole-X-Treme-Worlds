@@ -18,38 +18,33 @@
  */
 package com.wormhole_xtreme.worlds.events.block;
 
-import java.util.logging.Level;
+import org.bukkit.block.Block;
 
-import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockListener;
-
-import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
 /**
- * @author alron
+ * The Class BlockBurn.
  * 
+ * @author alron
  */
-public class BlockBurn extends BlockListener {
+class BlockBurn {
 
-    /** The Constant thisPlugin. */
-    private static final WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
-
-    /* (non-Javadoc)
-     * @see org.bukkit.event.block.BlockListener#onBlockBurn(org.bukkit.event.block.BlockBurnEvent)
+    /**
+     * Handle block burn.
+     * 
+     * @param block
+     *            the block
+     * @return true, if successful
      */
-    @Override
-    public void onBlockBurn(final BlockBurnEvent event) {
-        if ( !event.isCancelled() && (event.getBlock() != null)) {
-            final String worldName = event.getBlock().getWorld().getName();
-            if (WorldManager.isWormholeWorld(worldName)) {
-                final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
-                if ( !wormholeWorld.isAllowFireSpread()) {
-                    event.setCancelled(true);
-                    thisPlugin.prettyLog(Level.FINE, false, "Cancelled Fire Burn Event on " + wormholeWorld.getWorldName());
-                }
+    static boolean handleBlockBurn(final Block block) {
+        final String worldName = block.getWorld().getName();
+        if (WorldManager.isWormholeWorld(worldName)) {
+            final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
+            if ( !wormholeWorld.isAllowFireSpread()) {
+                return true;
             }
         }
+        return false;
     }
 }

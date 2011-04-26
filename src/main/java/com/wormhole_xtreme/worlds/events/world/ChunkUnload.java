@@ -18,13 +18,8 @@
  */
 package com.wormhole_xtreme.worlds.events.world;
 
-import java.util.logging.Level;
-
 import org.bukkit.Chunk;
-import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.event.world.WorldListener;
 
-import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
@@ -33,25 +28,20 @@ import com.wormhole_xtreme.worlds.world.WormholeWorld;
  * 
  * @author alron
  */
-public class ChunkUnload extends WorldListener {
+class ChunkUnload {
 
-    /** The Constant thisPlugin. */
-    private static final WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
-
-    /* (non-Javadoc)
-     * @see org.bukkit.event.world.WorldListener#onChunkUnload(org.bukkit.event.world.ChunkUnloadEvent)
+    /**
+     * Handle chunk unload.
+     * 
+     * @param chunk
+     *            the chunk
+     * @return true, if successful
      */
-    @Override
-    public void onChunkUnload(final ChunkUnloadEvent event) {
-        if ( !event.isCancelled()) {
-            final String worldName = event.getWorld().getName();
-            final Chunk stickyChunk = event.getChunk();
-            thisPlugin.prettyLog(Level.FINEST, false, "Chunk Unload Caught: " + stickyChunk.toString() + " World: " + worldName);
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
-            if ((wormholeWorld != null) && wormholeWorld.isStickyChunk(stickyChunk)) {
-                event.setCancelled(true);
-                thisPlugin.prettyLog(Level.FINE, false, "Chunk Unload Cancelled: " + stickyChunk.toString() + " World: " + worldName);
-            }
+    static boolean handleChunkUnload(final Chunk chunk) {
+        if (WorldManager.isWormholeWorld(chunk.getWorld().getName())) {
+            final WormholeWorld wormholeWorld = WorldManager.getWorld(chunk.getWorld().getName());
+            return wormholeWorld.isStickyChunk(chunk);
         }
+        return false;
     }
 }

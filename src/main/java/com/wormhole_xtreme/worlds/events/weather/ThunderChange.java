@@ -16,29 +16,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.wormhole_xtreme.worlds.events.world;
+package com.wormhole_xtreme.worlds.events.weather;
 
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
 /**
- * The Class World.
+ * The Class ThunderChange.
  * 
  * @author alron
  */
-class WorldLoad {
+class ThunderChange {
 
     /**
-     * Handle world load.
+     * Handle thunder change.
      * 
      * @param worldName
      *            the world name
      * @return true, if successful
      */
-    static boolean handleWorldLoad(final String worldName) {
+    static boolean handleThunderChange(final String worldName, final boolean thunder) {
         if (WorldManager.isWormholeWorld(worldName)) {
             final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
-            return wormholeWorld.isWorldLoaded() ? false : WorldManager.loadWorld(wormholeWorld);
+            if (wormholeWorld.isWeatherLock()) {
+                switch (wormholeWorld.getWeatherLockType()) {
+                    case CLEAR :
+                    case RAIN :
+                        return thunder ? true : false;
+                    case STORM :
+                        return thunder ? false : true;
+                    case NONE :
+                    default :
+                        return false;
+                }
+            }
         }
         return false;
     }

@@ -18,17 +18,10 @@
  */
 package com.wormhole_xtreme.worlds.events.entity;
 
-import java.util.logging.Level;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageByProjectileEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityListener;
 
-import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ResponseType;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
@@ -38,10 +31,58 @@ import com.wormhole_xtreme.worlds.world.WormholeWorld;
  * 
  * @author alron
  */
-public class EntityDamage extends EntityListener {
+class EntityDamage {
 
-    /** The Constant thisPlugin. */
-    private static final WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
+    /**
+     * Handle entity damage.
+     * 
+     * @param player
+     *            the player
+     * @param cause
+     *            the cause
+     * @param damager
+     *            the damager
+     * @return true, if successful
+     */
+    static boolean handleEntityDamage(final Player player, final DamageCause cause, final Entity damager) {
+        final WormholeWorld wormholeWorld = WorldManager.getWorldFromPlayer(player);
+        if ((wormholeWorld != null)) {
+            if ( !wormholeWorld.isAllowPlayerDamage()) {
+                playerStopFire(player);
+                playerStopDrown(player);
+                return true;
+            }
+            else if (cause != null) {
+                switch (cause) {
+                    case CONTACT :
+                        return wormholeWorld.isAllowPlayerContactDamage() ? false : true;
+                    case ENTITY_ATTACK :
+                        return wormholeWorld.isAllowPvP() ? false : playerStopPvP(damager);
+                    case SUFFOCATION :
+                        return wormholeWorld.isAllowPlayerSuffocation() ? false : true;
+                    case FALL :
+                        return wormholeWorld.isAllowPlayerFallDamage() ? false : true;
+                    case FIRE :
+                    case FIRE_TICK :
+                        return wormholeWorld.isAllowPlayerFireDamage() ? false : playerStopFire(player);
+                    case LAVA :
+                        return wormholeWorld.isAllowPlayerLavaDamage() ? false : playerStopFire(player);
+                    case DROWNING :
+                        return wormholeWorld.isAllowPlayerDrown() ? false : playerStopDrown(player);
+                    case BLOCK_EXPLOSION :
+                    case ENTITY_EXPLOSION :
+                        return wormholeWorld.isAllowPlayerExplosionDamage() ? false : true;
+                    case VOID :
+                        return wormholeWorld.isAllowPlayerVoidDamage() ? false : true;
+                    case LIGHTNING :
+                        return wormholeWorld.isAllowPlayerLightningDamage() ? false : playerStopFire(player);
+                    default :
+                        break;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * Player drown stop.
@@ -49,10 +90,11 @@ public class EntityDamage extends EntityListener {
      * @param player
      *            the player
      */
-    private static void playerStopDrown(final Player player) {
+    private static boolean playerStopDrown(final Player player) {
         if (player.getRemainingAir() == 0) {
             player.setRemainingAir(100);
         }
+        return true;
     }
 
     /**
@@ -61,83 +103,25 @@ public class EntityDamage extends EntityListener {
      * @param player
      *            the player
      */
-    private static void playerStopFire(final Player player) {
+    private static boolean playerStopFire(final Player player) {
         if (player.getFireTicks() > 0) {
             player.setFireTicks(0);
         }
+        return true;
     }
 
-    /* (non-Javadoc)
-     * @see org.bukkit.event.entity.EntityListener#onEntityDamage(org.bukkit.event.entity.EntityDamageEvent)
+    /**
+     * Player stop pv p.
+     * 
+     * @param damager
+     *            the damager
+     * @return true, if successful
      */
-    @Override
-    public void onEntityDamage(final EntityDamageEvent event) {
-        if ( !event.isCancelled() && (event.getEntity() instanceof Player)) {
-            final Player player = (Player) event.getEntity();
-            final WormholeWorld wormholeWorld = WorldManager.getWorldFromPlayer(player);
-            if ((wormholeWorld != null)) {
-
-                // Cancel player damage if world does not allow it.
-                if ( !wormholeWorld.isAllowPlayerDamage()) {
-                    event.setCancelled(true);
-                    playerStopFire(player);
-                    playerStopDrown(player);
-                    thisPlugin.prettyLog(Level.FINE, false, "Player damage event cancelled on " + player.getName() + " on world " + wormholeWorld.getWorldName());
-                    return;
-                }
-
-                if ( !wormholeWorld.isAllowPlayerDrown() && (event.getCause() == DamageCause.DROWNING)) {
-                    event.setCancelled(true);
-                    playerStopDrown(player);
-                    thisPlugin.prettyLog(Level.FINE, false, "Player drown damage event cancelled on " + player.getName() + " on world " + wormholeWorld.getWorldName());
-                    return;
-                }
-
-                // Cancel PvP damage if world does not allow it.
-                if ( !wormholeWorld.isAllowPvP()) {
-                    Entity entityDamager = null;
-                    if (event instanceof EntityDamageByEntityEvent) {
-                        entityDamager = ((EntityDamageByEntityEvent) event).getDamager();
-                    }
-                    else if (event instanceof EntityDamageByProjectileEvent) {
-                        entityDamager = ((EntityDamageByProjectileEvent) event).getDamager();
-                    }
-                    if ((entityDamager != null) && (entityDamager instanceof Player)) {
-                        event.setCancelled(true);
-                        ((Player) entityDamager).sendMessage(ResponseType.ERROR_PVP_NOT_ALLOWED.toString() + wormholeWorld.getWorldName());
-                        thisPlugin.prettyLog(Level.FINE, false, "PvP attempt denied. Attacker " + ((Player) entityDamager).getName() + " vs. Defender " + player.getName() + " on world " + wormholeWorld.getWorldName());
-                        return;
-                    }
-                }
-
-                if ( !wormholeWorld.isAllowPlayerLavaDamage() && (event.getCause() == DamageCause.LAVA)) {
-                    event.setCancelled(true);
-                    playerStopFire(player);
-                    thisPlugin.prettyLog(Level.FINE, false, "Player lava damage event cancelled on " + player.getName() + " on world " + wormholeWorld.getWorldName());
-                    return;
-                }
-
-                if ( !wormholeWorld.isAllowPlayerFallDamage() && (event.getCause() == DamageCause.FALL)) {
-                    event.setCancelled(true);
-                    thisPlugin.prettyLog(Level.FINE, false, "Player fall damage event cancelled on " + player.getName() + " on world " + wormholeWorld.getWorldName());
-                    return;
-                }
-
-                if ( !wormholeWorld.isAllowPlayerLightningDamage() && (event.getCause() == DamageCause.LIGHTNING)) {
-                    event.setCancelled(true);
-                    playerStopFire(player);
-                    thisPlugin.prettyLog(Level.FINE, false, "Player lightning damage event cancelled on " + player.getName() + " on world " + wormholeWorld.getWorldName());
-                    return;
-                }
-
-                if ( !wormholeWorld.isAllowPlayerFireDamage() && ((event.getCause() == DamageCause.FIRE) || (event.getCause() == DamageCause.FIRE_TICK))) {
-                    event.setCancelled(true);
-                    playerStopFire(player);
-                    thisPlugin.prettyLog(Level.FINE, false, "Player fire damage event cancelled on " + player.getName() + " on world " + wormholeWorld.getWorldName());
-                    return;
-                }
-            }
+    private static boolean playerStopPvP(final Entity damager) {
+        if ((damager != null) && (damager instanceof Player)) {
+            ((Player) damager).sendMessage(ResponseType.ERROR_PVP_NOT_ALLOWED.toString());
+            return true;
         }
+        return false;
     }
-
 }

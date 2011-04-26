@@ -39,6 +39,8 @@ import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ConfigManager;
 import com.wormhole_xtreme.worlds.config.ConfigManager.WorldOptionKeys;
 import com.wormhole_xtreme.worlds.config.XMLConfig;
+import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.TimeType;
+import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.WeatherType;
 
 /**
  * The Class WorldManager.
@@ -174,11 +176,11 @@ public class WorldManager {
                     final WormholeWorld wormholeWorld = worldList.get(key);
                     if ((wormholeWorld != null) && wormholeWorld.isWorldLoaded() && wormholeWorld.isTimeLock()) {
                         final long worldRelativeTime = wormholeWorld.getThisWorld().getTime() % 24000;
-                        if ((worldRelativeTime > 11800) && wormholeWorld.getTimeLockType().equals("day")) {
+                        if ((worldRelativeTime > 11800) && (wormholeWorld.getTimeLockType() == TimeType.DAY)) {
                             thisPlugin.prettyLog(Level.FINE, false, "Set world: " + key + " New time: 0" + " Old Time: " + worldRelativeTime);
                             wormholeWorld.getThisWorld().setTime(0);
                         }
-                        else if (((worldRelativeTime < 13500) || (worldRelativeTime > 21800)) && wormholeWorld.getTimeLockType().equals("night")) {
+                        else if (((worldRelativeTime < 13500) || (worldRelativeTime > 21800)) && (wormholeWorld.getTimeLockType() == TimeType.NIGHT)) {
                             thisPlugin.prettyLog(Level.FINE, false, "Set world: " + key + " New time: 13700" + " Old Time: " + worldRelativeTime);
                             wormholeWorld.getThisWorld().setTime(13700);
                         }
@@ -221,6 +223,7 @@ public class WorldManager {
      */
     public static boolean createWorld(final WormholeWorld wormholeWorld) {
         if (wormholeWorld != null) {
+            wormholeWorld.setWorldLoaded(true);
             final String worldName = wormholeWorld.getWorldName();
             final Environment worldEnvironment = wormholeWorld.isNetherWorld() ? Environment.NETHER
                 : Environment.NORMAL;
@@ -255,8 +258,8 @@ public class WorldManager {
                 tsX, tsY, tsZ
             };
             wormholeWorld.setWorldCustomSpawn(tempSpawn);
-            wormholeWorld.setWorldLoaded(true);
             clearWorldCreatures(wormholeWorld);
+            setWorldWeather(wormholeWorld);
             return addWorld(wormholeWorld);
         }
         return false;
@@ -302,10 +305,19 @@ public class WorldManager {
                             wormholeWorld.setWorldSeed(worldSeed);
                             break;
                         case worldOptionTimeLockDay :
-                            wormholeWorld.setTimeLockType("day");
+                            wormholeWorld.setTimeLockType(TimeType.DAY);
                             break;
                         case worldOptionTimeLockNight :
-                            wormholeWorld.setTimeLockType("night");
+                            wormholeWorld.setTimeLockType(TimeType.NIGHT);
+                            break;
+                        case worldOptionWeatherClear :
+                            wormholeWorld.setWeatherLockType(WeatherType.CLEAR);
+                            break;
+                        case worldOptionWeatherRain :
+                            wormholeWorld.setWeatherLockType(WeatherType.RAIN);
+                            break;
+                        case worldOptionWeatherStorm :
+                            wormholeWorld.setWeatherLockType(WeatherType.STORM);
                             break;
                         case worldOptionNoLavaSpread :
                             wormholeWorld.setAllowLavaSpread(false);
@@ -600,6 +612,7 @@ public class WorldManager {
      */
     public static boolean loadWorld(final WormholeWorld wormholeWorld) {
         if (wormholeWorld != null) {
+            wormholeWorld.setWorldLoaded(true);
             wormholeWorld.setThisWorld(wormholeWorld.getWorldSeed() == 0
                 ? thisPlugin.getServer().createWorld(wormholeWorld.getWorldName(), wormholeWorld.isNetherWorld()
                     ? Environment.NETHER : Environment.NORMAL)
@@ -610,12 +623,12 @@ public class WorldManager {
             if (wormholeWorld.getWorldSeed() == 0) {
                 wormholeWorld.setWorldSeed(wormholeWorld.getThisWorld().getSeed());
             }
-            wormholeWorld.setWorldLoaded(true);
             if (addWorld(wormholeWorld)) {
                 final int c = clearWorldCreatures(wormholeWorld);
                 if (c > 0) {
                     thisPlugin.prettyLog(Level.INFO, false, "Cleared \"" + c + "\" creature entities on world \"" + wormholeWorld.getWorldName() + "\"");
                 }
+                setWorldWeather(wormholeWorld);
                 return true;
             }
         }
@@ -679,6 +692,34 @@ public class WorldManager {
         if (world != null) {
             XMLConfig.deleteXmlWorldConfig(world.getWorldName());
             worldList.remove(world.getWorldName());
+        }
+    }
+
+    /**
+     * Sets the world weather.
+     * 
+     * @param wormholeWorld
+     *            the new world weather
+     */
+    public static void setWorldWeather(final WormholeWorld wormholeWorld) {
+        if (wormholeWorld.isWeatherLock()) {
+            final World world = wormholeWorld.getThisWorld();
+            switch (wormholeWorld.getWeatherLockType()) {
+                case CLEAR :
+                    world.setStorm(false);
+                    world.setThundering(false);
+                    break;
+                case RAIN :
+                    world.setStorm(true);
+                    world.setThundering(false);
+                    break;
+                case STORM :
+                    world.setStorm(true);
+                    world.setThundering(true);
+                    break;
+                default :
+                    break;
+            }
         }
     }
 }

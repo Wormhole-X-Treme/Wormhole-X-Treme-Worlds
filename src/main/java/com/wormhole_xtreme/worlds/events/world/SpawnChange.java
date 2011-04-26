@@ -18,36 +18,35 @@
  */
 package com.wormhole_xtreme.worlds.events.world;
 
-import java.util.Arrays;
-import java.util.logging.Level;
+import org.bukkit.World;
 
-import org.bukkit.event.world.SpawnChangeEvent;
-import org.bukkit.event.world.WorldListener;
-
-import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
 /**
- * @author alron
+ * The Class SpawnChange.
  * 
+ * @author alron
  */
-public class SpawnChange extends WorldListener {
+class SpawnChange {
 
-    private static WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
-
-    /* (non-Javadoc)
-     * @see org.bukkit.event.world.WorldListener#onSpawnChange(org.bukkit.event.world.SpawnChangeEvent)
+    /**
+     * Handle spawn change.
+     * 
+     * @param world
+     *            the world
+     * @return true, if successful
      */
-    @Override
-    public void onSpawnChange(final SpawnChangeEvent event) {
-        thisPlugin.prettyLog(Level.FINE, false, "Caught Spawn Change Event for world: " + event.getWorld().getName());
-        final WormholeWorld wormholeWorld = WorldManager.getWorld(event.getWorld().getName());
-        if ((wormholeWorld != null) && (wormholeWorld.getWorldSpawn() != null) && !wormholeWorld.getWorldSpawn().equals(event.getWorld().getSpawnLocation())) {
-            wormholeWorld.setWorldSpawn(event.getWorld().getSpawnLocation());
-            wormholeWorld.setWorldCustomSpawn(wormholeWorld.getWorldSpawnToInt());
-            WorldManager.addWorld(wormholeWorld);
-            thisPlugin.prettyLog(Level.FINE, false, "Set worldSpawn to new location:" + Arrays.toString(wormholeWorld.getWorldCustomSpawn()) + " for world: " + event.getWorld().getName());
+    static boolean handleSpawnChange(final World world) {
+        final WormholeWorld wormholeWorld = WorldManager.getWorld(world.getName());
+        if (wormholeWorld != null) {
+            if ((wormholeWorld.getWorldSpawn() != null) && !wormholeWorld.getWorldSpawn().equals(world.getSpawnLocation())) {
+                wormholeWorld.setWorldSpawn(world.getSpawnLocation());
+                wormholeWorld.setWorldCustomSpawn(wormholeWorld.getWorldSpawnToInt());
+                WorldManager.addWorld(wormholeWorld);
+                return true;
+            }
         }
+        return false;
     }
 }

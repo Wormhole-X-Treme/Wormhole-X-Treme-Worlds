@@ -18,12 +18,9 @@
  */
 package com.wormhole_xtreme.worlds.events.block;
 
-import java.util.logging.Level;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockListener;
-
-import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
@@ -32,30 +29,33 @@ import com.wormhole_xtreme.worlds.world.WormholeWorld;
  * 
  * @author alron
  */
-public class BlockFromTo extends BlockListener {
+class BlockFromTo {
 
-    /** The Constant thisPlugin. */
-    private static final WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
-
-    /* (non-Javadoc)
-     * @see org.bukkit.event.block.BlockListener#onBlockFromTo(org.bukkit.event.block.BlockFromToEvent)
+    /**
+     * Handle block from to.
+     * 
+     * @param block
+     *            the block
+     * @return true, if successful
      */
-    @Override
-    public void onBlockFromTo(final BlockFromToEvent event) {
-        if ( !event.isCancelled() && (event.getBlock() != null)) {
-            final String worldName = event.getBlock().getWorld().getName();
-            if (WorldManager.isWormholeWorld(worldName)) {
-                final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
-                final int blockTypeId = event.getBlock().getTypeId();
-                if ( !wormholeWorld.isAllowWaterSpread() && ((blockTypeId == 8) || (blockTypeId == 9))) {
-                    event.setCancelled(true);
-                    thisPlugin.prettyLog(Level.FINE, false, "Cancelled Water Spread Event on " + wormholeWorld.getWorldName());
-                }
-                else if ( !wormholeWorld.isAllowLavaSpread() && ((blockTypeId == 10) || (blockTypeId == 11))) {
-                    event.setCancelled(true);
-                    thisPlugin.prettyLog(Level.FINE, false, "Cancelled Lava Spread Event on " + wormholeWorld.getWorldName());
+    static boolean handleBlockFromTo(final Block block) {
+        final String worldName = block.getWorld().getName();
+        if (WorldManager.isWormholeWorld(worldName)) {
+            final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
+            final Material blockType = block.getType();
+            if (blockType != null) {
+                switch (blockType) {
+                    case WATER :
+                    case STATIONARY_WATER :
+                        return wormholeWorld.isAllowWaterSpread() ? false : true;
+                    case LAVA :
+                    case STATIONARY_LAVA :
+                        return wormholeWorld.isAllowLavaSpread() ? false : true;
+                    default :
+                        break;
                 }
             }
         }
+        return false;
     }
 }

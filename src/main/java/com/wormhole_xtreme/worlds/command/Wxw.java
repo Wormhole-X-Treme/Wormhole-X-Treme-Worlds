@@ -38,6 +38,8 @@ import com.wormhole_xtreme.worlds.scheduler.ScheduleAction;
 import com.wormhole_xtreme.worlds.scheduler.ScheduleAction.ActionType;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
+import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.TimeType;
+import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.WeatherType;
 
 /**
  * The wxw command class.
@@ -129,11 +131,20 @@ class Wxw implements CommandExecutor {
                     else if (atlc.startsWith("-nopvp")) {
                         worldOptionKeyList.add(WorldOptionKeys.worldOptionNoPvP);
                     }
-                    else if (atlc.startsWith("-nightlock")) {
+                    else if (atlc.equals("-night")) {
                         worldOptionKeyList.add(WorldOptionKeys.worldOptionTimeLockNight);
                     }
-                    else if (atlc.startsWith("-daylock")) {
+                    else if (atlc.equals("-day")) {
                         worldOptionKeyList.add(WorldOptionKeys.worldOptionTimeLockDay);
+                    }
+                    else if (atlc.equals("-clear")) {
+                        worldOptionKeyList.add(WorldOptionKeys.worldOptionWeatherClear);
+                    }
+                    else if (atlc.equals("-rain")) {
+                        worldOptionKeyList.add(WorldOptionKeys.worldOptionWeatherRain);
+                    }
+                    else if (atlc.equals("-storm")) {
+                        worldOptionKeyList.add(WorldOptionKeys.worldOptionWeatherStorm);
                     }
                     else if (atlc.startsWith("-nolavaspread")) {
                         worldOptionKeyList.add(WorldOptionKeys.worldOptionNoLavaSpread);
@@ -225,6 +236,7 @@ class Wxw implements CommandExecutor {
                 sender.sendMessage(ResponseType.NORMAL_CREATE_COMMAND_ARGS3.toString());
                 sender.sendMessage(ResponseType.NORMAL_CREATE_COMMAND_ARGS4.toString());
                 sender.sendMessage(ResponseType.NORMAL_CREATE_COMMAND_ARGS5.toString());
+                sender.sendMessage(ResponseType.NORMAL_CREATE_COMMAND_ARGS6.toString());
             }
         }
         else {
@@ -287,8 +299,8 @@ class Wxw implements CommandExecutor {
                     : WorldManager.getWorld(args[0]);
                 if (world != null) {
                     sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A76=======================\u00A7fINFO\u00A76=======================");
-                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fWorld:\u00A7b" + world.getWorldName() + " \u00A7fOwner:\u00A7b" + world.getWorldOwner() + " \u00A7fNether:" + colorizeBoolean(world.isNetherWorld()) + " \u00A7fTimelock:\u00A7b" + world.getTimeLockType());
-                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fAutoload:" + colorizeBoolean(world.isAutoconnectWorld()) + " \u00A7fSeed:\u00A7b" + world.getWorldSeed());
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fWorld:\u00A7b" + world.getWorldName() + " \u00A7fOwner:\u00A7b" + world.getWorldOwner() + " \u00A7fNether:" + colorizeBoolean(world.isNetherWorld()) + " \u00A7fTime:\u00A7b" + world.getTimeLockType().toString());
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fAutoload:" + colorizeBoolean(world.isAutoconnectWorld()) + " \u00A7fSeed:\u00A7b" + world.getWorldSeed() + " \u00A7fWeather:\u00A7b" + world.getWeatherLockType().toString());
                     sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A76=================\u00A7fWORLD PROTECTION\u00A76=================");
                     sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fHostiles:" + colorizeBoolean(world.isAllowHostiles()) + " \u00A7fNeutrals:" + colorizeBoolean(world.isAllowNeutrals()) + " \u00A7fFireSPRD:" + colorizeBoolean(world.isAllowFireSpread()) + " \u00A7fLavaFIRE:" + colorizeBoolean(world.isAllowLavaFire()));
                     sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fWaterSPRD:" + colorizeBoolean(world.isAllowWaterSpread()) + " \u00A7fLightningFIRE:" + colorizeBoolean(world.isAllowLightningFire()) + " \u00A7fLavaSPRD:" + colorizeBoolean(world.isAllowLavaSpread()));
@@ -421,12 +433,14 @@ class Wxw implements CommandExecutor {
         if (allowed) {
             if ((args != null) && (args.length >= 1)) {
                 String worldName = null, playerName = null;
-                boolean doHostiles = false, doNeutrals = false, doAutoLoad = false, doPvP = false, doTimeLock = false;
-                boolean hostiles = false, neutrals = false, autoLoad = false, pvp = false, dayLock = false, nightLock = false;
+                boolean doHostiles = false, doNeutrals = false, doAutoLoad = false, doPvP = false;
+                boolean hostiles = false, neutrals = false, autoLoad = false, pvp = false;
                 boolean doLavaSpread = false, doFireSpread = false, doLavaFire = false, doWaterSpread = false, doLightningFire = false;
                 boolean lavaSpread = false, fireSpread = false, lavaFire = false, waterSpread = false, lightningFire = false;
                 boolean doPlayerLightningDamage = false, doPlayerDamage = false, doPlayerDrown = false, doPlayerLavaDamage = false, doPlayerFallDamage = false, doPlayerFireDamage = false;
                 boolean playerLightningDamage = false, playerDamage = false, playerDrown = false, playerLavaDamage = false, playerFallDamage = false, playerFireDamage = false;
+                TimeType timeLockType = null;
+                WeatherType weatherLockType = null;
                 boolean conflict = false;
                 for (final String arg : args) {
                     final String atlc = arg.toLowerCase();
@@ -458,6 +472,28 @@ class Wxw implements CommandExecutor {
                                     sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_OWNER_ON_CONSOLE.toString() + "-owner");
                                     return true;
                                 }
+                            }
+                        }
+                        else if (atlc.startsWith("-time")) {
+                            if (timeLockType != null) {
+                                conflict = true;
+                            }
+                            else if (atlc.contains("|")) {
+                                timeLockType = TimeType.getTimeType(arg.split("\\|")[1].trim().toUpperCase());
+                            }
+                            else {
+                                sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + "-time");
+                            }
+                        }
+                        else if (atlc.startsWith("-weather")) {
+                            if (weatherLockType != null) {
+                                conflict = true;
+                            }
+                            else if (atlc.contains("|")) {
+                                weatherLockType = WeatherType.getWeatherType(arg.split("\\|")[1].trim().toUpperCase());
+                            }
+                            else {
+                                sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + "-weather");
                             }
                         }
                         else if (atlc.contains("autoload")) {
@@ -516,24 +552,7 @@ class Wxw implements CommandExecutor {
                                 }
                             }
                         }
-                        else if (atlc.contains("lock")) {
-                            if (doTimeLock) {
-                                conflict = true;
-                            }
-                            else {
-                                doTimeLock = true;
-                                if (atlc.startsWith("-night")) {
-                                    nightLock = true;
-                                }
-                                else if (atlc.startsWith("-day")) {
-                                    dayLock = true;
-                                }
-                                else {
-                                    dayLock = false;
-                                    nightLock = false;
-                                }
-                            }
-                        }
+
                         else if (atlc.contains("lightningdamage")) {
                             if (doPlayerLightningDamage) {
                                 conflict = true;
@@ -696,7 +715,7 @@ class Wxw implements CommandExecutor {
                 if (worldName != null) {
                     final WormholeWorld world = WorldManager.getWorld(worldName);
                     if (world != null) {
-                        if (doHostiles || doNeutrals || doAutoLoad || doPvP || doTimeLock || (playerName != null) || doPlayerLightningDamage || doPlayerDamage || doPlayerDrown || doPlayerLavaDamage || doPlayerFallDamage || doPlayerFireDamage || doLavaSpread || doFireSpread || doLavaFire || doWaterSpread || doLightningFire) {
+                        if (doHostiles || doNeutrals || doAutoLoad || doPvP || (playerName != null) || (weatherLockType != null) || (timeLockType != null) || doPlayerLightningDamage || doPlayerDamage || doPlayerDrown || doPlayerLavaDamage || doPlayerFallDamage || doPlayerFireDamage || doLavaSpread || doFireSpread || doLavaFire || doWaterSpread || doLightningFire) {
                             if (doHostiles) {
                                 world.setAllowHostiles(hostiles);
                             }
@@ -745,16 +764,11 @@ class Wxw implements CommandExecutor {
                             if (doLightningFire) {
                                 world.setAllowLightningFire(lightningFire);
                             }
-                            if (doTimeLock) {
-                                if (nightLock) {
-                                    world.setTimeLockType("night");
-                                }
-                                else if (dayLock) {
-                                    world.setTimeLockType("day");
-                                }
-                                else {
-                                    world.setTimeLockType("none");
-                                }
+                            if (timeLockType != null) {
+                                world.setTimeLockType(timeLockType);
+                            }
+                            if (weatherLockType != null) {
+                                world.setWeatherLockType(weatherLockType);
                             }
                             WorldManager.addWorld(world);
                             if (doAutoLoad) {
@@ -762,6 +776,7 @@ class Wxw implements CommandExecutor {
                             }
                             if (thisPlugin.getServer().getWorld(worldName) != null) {
                                 WormholeXTremeWorlds.getScheduler().scheduleSyncDelayedTask(thisPlugin, new ScheduleAction(world, ActionType.ClearEntities));
+                                WormholeXTremeWorlds.getScheduler().scheduleSyncDelayedTask(thisPlugin, new ScheduleAction(world, ActionType.SetWeather));
                             }
                             final String[] w = new String[1];
                             w[0] = worldName;

@@ -23,19 +23,12 @@ import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.PluginManager;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
-import com.wormhole_xtreme.worlds.config.ConfigManager;
-import com.wormhole_xtreme.worlds.events.block.BlockBurn;
-import com.wormhole_xtreme.worlds.events.block.BlockFromTo;
-import com.wormhole_xtreme.worlds.events.block.BlockIgnite;
-import com.wormhole_xtreme.worlds.events.entity.CreatureSpawn;
-import com.wormhole_xtreme.worlds.events.entity.EntityDamage;
-import com.wormhole_xtreme.worlds.events.player.PlayerRespawn;
-import com.wormhole_xtreme.worlds.events.server.PluginDisable;
-import com.wormhole_xtreme.worlds.events.server.PluginEnable;
-import com.wormhole_xtreme.worlds.events.world.ChunkUnload;
-import com.wormhole_xtreme.worlds.events.world.SpawnChange;
-import com.wormhole_xtreme.worlds.events.world.WorldLoad;
-import com.wormhole_xtreme.worlds.events.world.WorldSave;
+import com.wormhole_xtreme.worlds.events.block.BlockEventHandler;
+import com.wormhole_xtreme.worlds.events.entity.EntityEventHandler;
+import com.wormhole_xtreme.worlds.events.player.PlayerEventHandler;
+import com.wormhole_xtreme.worlds.events.server.ServerEventHandler;
+import com.wormhole_xtreme.worlds.events.weather.WeatherEventHandler;
+import com.wormhole_xtreme.worlds.events.world.WorldEventHandler;
 
 /**
  * The Class EventUtilities.
@@ -50,59 +43,47 @@ public class EventUtilities {
     /** The Constant pluginManager. */
     private static final PluginManager pluginManager = thisPlugin.getServer().getPluginManager();
 
-    /** The Constant plugin. */
-    private static final PluginEnable pluginEnable = new PluginEnable();
-
-    /** The Constant pluginDisable. */
-    private static final PluginDisable pluginDisable = new PluginDisable();
-
-    /** The Constant world. */
-    private static final WorldLoad worldLoad = new WorldLoad();
-
-    /** The Constant worldSave. */
-    private static final WorldSave worldSave = new WorldSave();
-
-    /** The Constant spawnChange. */
-    private static final SpawnChange spawnChange = new SpawnChange();
-
-    /** The Constant creatureSpawn. */
-    private static final CreatureSpawn creatureSpawn = new CreatureSpawn();
-
-    /** The Constant entityDamage. */
-    private static final EntityDamage entityDamage = new EntityDamage();
-
-    /** The Constant chunkUnload. */
-    private static final ChunkUnload chunkUnload = new ChunkUnload();
-
-    /** The Constant blockFromTo. */
-    private static final BlockFromTo blockFromTo = new BlockFromTo();
-
-    /** The Constant blockIgnite. */
-    private static final BlockIgnite blockIgnite = new BlockIgnite();
+    /** The Constant blockEventHandler. */
+    private static final BlockEventHandler blockEventHandler = new BlockEventHandler();
     
-    /** The Constant blockBurn. */
-    private static final BlockBurn blockBurn = new BlockBurn();
+    /** The Constant entityEventHandler. */
+    private static final EntityEventHandler entityEventHandler = new EntityEventHandler();
     
-    /** The Constant playerRespawn. */
-    private static final PlayerRespawn playerRespawn = new PlayerRespawn();
+    /** The Constant playerEventHandler. */
+    private static final PlayerEventHandler playerEventHandler = new PlayerEventHandler();
+    
+    /** The Constant serverEventHandler. */
+    private static final ServerEventHandler serverEventHandler = new ServerEventHandler();
+    
+    /** The Constant worldEventHandler. */
+    private static final WorldEventHandler worldEventHandler = new WorldEventHandler();
+    
+    /** The Constant weatherEventHandler. */
+    private static final WeatherEventHandler weatherEventHandler = new WeatherEventHandler();
 
     /**
      * Register events.
      */
     public static void registerEvents() {
-        pluginManager.registerEvent(Event.Type.PLUGIN_ENABLE, pluginEnable, Priority.Monitor, thisPlugin);
-        pluginManager.registerEvent(Event.Type.PLUGIN_DISABLE, pluginDisable, Priority.Monitor, thisPlugin);
-        pluginManager.registerEvent(Event.Type.WORLD_LOAD, worldLoad, Priority.Monitor, thisPlugin);
-        pluginManager.registerEvent(Event.Type.WORLD_SAVE, worldSave, Priority.Monitor, thisPlugin);
-        pluginManager.registerEvent(Event.Type.SPAWN_CHANGE, spawnChange, Priority.Monitor, thisPlugin);
-        pluginManager.registerEvent(Event.Type.CREATURE_SPAWN, creatureSpawn, Priority.Lowest, thisPlugin);
-        pluginManager.registerEvent(Event.Type.ENTITY_DAMAGE, entityDamage, Priority.Lowest, thisPlugin);
-        pluginManager.registerEvent(Event.Type.CHUNK_UNLOAD, chunkUnload, Priority.High, thisPlugin);
-        pluginManager.registerEvent(Event.Type.BLOCK_FROMTO, blockFromTo, Priority.Lowest, thisPlugin);
-        pluginManager.registerEvent(Event.Type.BLOCK_IGNITE, blockIgnite, Priority.Lowest, thisPlugin);
-        pluginManager.registerEvent(Event.Type.BLOCK_BURN, blockBurn, Priority.Lowest, thisPlugin);
-        if (ConfigManager.getServerOptionSpawnCommand()) {
-            pluginManager.registerEvent(Event.Type.PLAYER_RESPAWN, playerRespawn, Priority.Normal, thisPlugin);
-        }
+        pluginManager.registerEvent(Event.Type.PLUGIN_ENABLE, serverEventHandler, Priority.Monitor, thisPlugin);
+        pluginManager.registerEvent(Event.Type.PLUGIN_DISABLE, serverEventHandler, Priority.Monitor, thisPlugin);
+        
+        pluginManager.registerEvent(Event.Type.WORLD_LOAD, worldEventHandler, Priority.Monitor, thisPlugin);
+        pluginManager.registerEvent(Event.Type.WORLD_SAVE, worldEventHandler, Priority.Monitor, thisPlugin);
+        pluginManager.registerEvent(Event.Type.SPAWN_CHANGE, worldEventHandler, Priority.Monitor, thisPlugin);
+        pluginManager.registerEvent(Event.Type.CHUNK_UNLOAD, worldEventHandler, Priority.High, thisPlugin);
+        
+        pluginManager.registerEvent(Event.Type.BLOCK_FROMTO, blockEventHandler, Priority.Lowest, thisPlugin);
+        pluginManager.registerEvent(Event.Type.BLOCK_IGNITE, blockEventHandler, Priority.Lowest, thisPlugin);
+        pluginManager.registerEvent(Event.Type.BLOCK_BURN, blockEventHandler, Priority.Lowest, thisPlugin);
+        
+        pluginManager.registerEvent(Event.Type.PLAYER_RESPAWN, playerEventHandler, Priority.Lowest, thisPlugin);
+        
+        pluginManager.registerEvent(Event.Type.CREATURE_SPAWN, entityEventHandler, Priority.Lowest, thisPlugin);
+        pluginManager.registerEvent(Event.Type.ENTITY_DAMAGE, entityEventHandler, Priority.Lowest, thisPlugin);
+        
+        pluginManager.registerEvent(Event.Type.WEATHER_CHANGE, weatherEventHandler, Priority.Lowest, thisPlugin);
+        pluginManager.registerEvent(Event.Type.THUNDER_CHANGE, weatherEventHandler, Priority.Lowest, thisPlugin);
+        pluginManager.registerEvent(Event.Type.LIGHTNING_STRIKE, weatherEventHandler, Priority.Lowest, thisPlugin);
     }
 }

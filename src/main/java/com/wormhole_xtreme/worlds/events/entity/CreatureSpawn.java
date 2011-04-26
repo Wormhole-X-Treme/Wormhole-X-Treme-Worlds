@@ -18,17 +18,12 @@
  */
 package com.wormhole_xtreme.worlds.events.entity;
 
-import java.util.logging.Level;
-
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Flying;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.WaterMob;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.EntityListener;
 
-import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
@@ -37,26 +32,22 @@ import com.wormhole_xtreme.worlds.world.WormholeWorld;
  * 
  * @author alron
  */
-public class CreatureSpawn extends EntityListener {
+public class CreatureSpawn {
 
-    /** The this plugin. */
-    private static WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
-
-    /* (non-Javadoc)
-     * @see org.bukkit.event.entity.EntityListener#onCreatureSpawn(org.bukkit.event.entity.CreatureSpawnEvent)
+    /**
+     * Handle creature spawn.
+     * 
+     * @param entity
+     *            the entity
+     * @return true, if successful
      */
-    @Override
-    public void onCreatureSpawn(final CreatureSpawnEvent event) {
-        if ( !event.isCancelled()) {
-            thisPlugin.prettyLog(Level.FINEST, false, "Caught creature spawn on world: " + event.getLocation().getWorld().getName() + " creature type: " + event.getCreatureType().toString());
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(event.getLocation().getWorld().getName());
-            final Entity eventEntity = event.getEntity();
-            if ((eventEntity != null) && (wormholeWorld != null)) {
-                if (( !wormholeWorld.isAllowHostiles() && ((eventEntity instanceof Monster) || (eventEntity instanceof Flying))) || ( !wormholeWorld.isAllowNeutrals() && ((eventEntity instanceof Animals) || (eventEntity instanceof WaterMob)))) {
-                    event.setCancelled(true);
-                    thisPlugin.prettyLog(Level.FINEST, false, "Denied hostile creature spawn on world: " + event.getLocation().getWorld().getName() + " creature type: " + event.getCreatureType().toString());
-                }
+    static boolean handleCreatureSpawn(final Entity entity) {
+        if ((entity != null) && WorldManager.isWormholeWorld(entity.getWorld().getName())) {
+            final WormholeWorld wormholeWorld = WorldManager.getWorld(entity.getWorld().getName());
+            if (( !wormholeWorld.isAllowHostiles() && ((entity instanceof Monster) || (entity instanceof Flying))) || ( !wormholeWorld.isAllowNeutrals() && ((entity instanceof Animals) || (entity instanceof WaterMob)))) {
+                return true;
             }
         }
+        return false;
     }
 }

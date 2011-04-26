@@ -18,13 +18,9 @@
  */
 package com.wormhole_xtreme.worlds.events.block;
 
-import java.util.logging.Level;
-
-import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
-import org.bukkit.event.block.BlockListener;
 
-import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
@@ -33,36 +29,36 @@ import com.wormhole_xtreme.worlds.world.WormholeWorld;
  * 
  * @author alron
  */
-public class BlockIgnite extends BlockListener {
+class BlockIgnite {
 
-    /** The Constant thisPlugin. */
-    private static final WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
-
-    /* (non-Javadoc)
-     * @see org.bukkit.event.block.BlockListener#onBlockIgnite(org.bukkit.event.block.BlockIgniteEvent)
+    /**
+     * Handle block ignite.
+     * 
+     * @param block
+     *            the block
+     * @param igniteCause
+     *            the ignite cause
+     * @return true, if successful
      */
-    @Override
-    public void onBlockIgnite(final BlockIgniteEvent event) {
-        if ( !event.isCancelled() && (event.getBlock() != null)) {
-            final String worldName = event.getBlock().getWorld().getName();
-            if (WorldManager.isWormholeWorld(worldName)) {
-                final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
-                final IgniteCause igniteCause = event.getCause();
-                if (igniteCause != null) {
-                    if ( !wormholeWorld.isAllowLavaFire() && (igniteCause == IgniteCause.LAVA)) {
-                        event.setCancelled(true);
-                        thisPlugin.prettyLog(Level.FINE, false, "Cancelled Lava Fire Event on " + wormholeWorld.getWorldName());
-                    }
-                    else if ( !wormholeWorld.isAllowFireSpread() && (igniteCause == IgniteCause.SPREAD)) {
-                        event.setCancelled(true);
-                        thisPlugin.prettyLog(Level.FINE, false, "Cancelled Fire Spread Event on " + wormholeWorld.getWorldName());
-                    }
-                    else if ( !wormholeWorld.isAllowLightningFire() && (igniteCause == IgniteCause.LIGHTNING)) {
-                        event.setCancelled(true);
-                        thisPlugin.prettyLog(Level.FINE, false, "Cancelled Lightning Fire Event on " + wormholeWorld.getWorldName());
-                    }
+    static boolean handleBlockIgnite(final Block block, final IgniteCause igniteCause) {
+        final String worldName = block.getWorld().getName();
+        if (WorldManager.isWormholeWorld(worldName)) {
+            final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
+            if (igniteCause != null) {
+                switch (igniteCause) {
+                    case LAVA :
+                        return wormholeWorld.isAllowLavaFire() ? false : true;
+                    case SPREAD :
+                        return wormholeWorld.isAllowFireSpread() ? false : true;
+                    case LIGHTNING :
+                        return wormholeWorld.isAllowLightningFire() ? false : true;
+                    case FLINT_AND_STEEL :
+                        return wormholeWorld.isAllowPlayerFireStart() ? false : true;
+                    default :
+                        break;
                 }
             }
         }
+        return false;
     }
 }

@@ -16,30 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.wormhole_xtreme.worlds.events.world;
-
-import com.wormhole_xtreme.worlds.world.WorldManager;
-import com.wormhole_xtreme.worlds.world.WormholeWorld;
+package com.wormhole_xtreme.worlds.events.weather;
 
 /**
- * The Class World.
+ * The Class LightningStrike.
  * 
  * @author alron
  */
-class WorldLoad {
+class LightningStrike {
 
     /**
-     * Handle world load.
+     * Handle lightning strike.
      * 
      * @param worldName
      *            the world name
      * @return true, if successful
      */
-    static boolean handleWorldLoad(final String worldName) {
-        if (WorldManager.isWormholeWorld(worldName)) {
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
-            return wormholeWorld.isWorldLoaded() ? false : WorldManager.loadWorld(wormholeWorld);
-        }
+    static boolean handleLightningStrike(final String worldName) {
         return false;
     }
 }

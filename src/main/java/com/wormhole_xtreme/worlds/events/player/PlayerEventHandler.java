@@ -16,35 +16,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.wormhole_xtreme.worlds.events.world;
+package com.wormhole_xtreme.worlds.events.player;
 
 import java.util.logging.Level;
 
-import org.bukkit.World;
-import org.bukkit.event.world.WorldListener;
-import org.bukkit.event.world.WorldSaveEvent;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
+import com.wormhole_xtreme.worlds.config.ConfigManager;
 
 /**
- * The Class WorldSave.
+ * The Class PlayerEventHandler.
  * 
  * @author alron
  */
-public class WorldSave extends WorldListener {
+public class PlayerEventHandler extends PlayerListener {
 
     /** The Constant thisPlugin. */
     private static final WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
 
     /* (non-Javadoc)
-     * @see org.bukkit.event.world.WorldListener#onWorldSave(org.bukkit.event.world.WorldSaveEvent)
+     * @see org.bukkit.event.player.PlayerListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)
      */
     @Override
-    public void onWorldSave(final WorldSaveEvent event) {
-        final World world = event.getWorld();
-        if (world != null) {
-            thisPlugin.prettyLog(Level.FINE, false, "Caught World Save: " + world.getName());
+    public void onPlayerRespawn(final PlayerRespawnEvent event) {
+        final Player player;
+        if (ConfigManager.getServerOptionSpawnCommand() && ((player = event.getPlayer()) != null)) {
+            final Location respawnLocation = PlayerRespawn.handlePlayerRespawn(player);
+            if (respawnLocation != null) {
+                event.setRespawnLocation(respawnLocation);
+                thisPlugin.prettyLog(Level.FINE, false, "Respawned Player  " + event.getPlayer().getName() + " on " + event.getPlayer().getWorld().getName());
+            }
         }
     }
-
 }

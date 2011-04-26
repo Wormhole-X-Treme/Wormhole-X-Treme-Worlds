@@ -89,6 +89,15 @@ public class ConfigManager {
 
         /** The world option to lock time at midnight. */
         worldOptionTimeLockNight,
+        
+        /** The world option to lock weather clear. */
+        worldOptionWeatherClear,
+        
+        /** The world option to lock weather rainy. */
+        worldOptionWeatherRain,
+        
+        /** The world option to lock weather stormy. */
+        worldOptionWeatherStorm,
 
         /** The world option no lava spread. */
         worldOptionNoLavaSpread,

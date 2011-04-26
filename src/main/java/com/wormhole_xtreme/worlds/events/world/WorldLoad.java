@@ -16,35 +16,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.wormhole_xtreme.worlds.events;
+package com.wormhole_xtreme.worlds.events.world;
 
 import java.util.logging.Level;
 
 import org.bukkit.World;
 import org.bukkit.event.world.WorldListener;
-import org.bukkit.event.world.WorldSaveEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 
 /**
- * The Class WorldSave.
+ * The Class World.
  * 
  * @author alron
  */
-public class WorldSave extends WorldListener {
+public class WorldLoad extends WorldListener {
 
     /** The Constant thisPlugin. */
     private static final WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
 
     /* (non-Javadoc)
-     * @see org.bukkit.event.world.WorldListener#onWorldSave(org.bukkit.event.world.WorldSaveEvent)
+     * @see org.bukkit.event.world.WorldListener#onWorldLoad(org.bukkit.event.world.WorldLoadEvent)
      */
     @Override
-    public void onWorldSave(final WorldSaveEvent event) {
+    public void onWorldLoad(final WorldLoadEvent event) {
         final World world = event.getWorld();
         if (world != null) {
-            thisPlugin.prettyLog(Level.FINE, false, "Caught World Save: " + world.getName());
+            thisPlugin.prettyLog(Level.FINE, false, "World Load Caught: " + world.getName());
         }
     }
-
 }

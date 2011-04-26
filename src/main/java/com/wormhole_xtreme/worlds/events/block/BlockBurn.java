@@ -16,34 +16,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.wormhole_xtreme.worlds.events;
+package com.wormhole_xtreme.worlds.events.block;
 
 import java.util.logging.Level;
 
-import org.bukkit.World;
-import org.bukkit.event.world.WorldListener;
-import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockListener;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
+import com.wormhole_xtreme.worlds.world.WorldManager;
+import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
 /**
- * The Class World.
- * 
  * @author alron
+ * 
  */
-public class WorldLoad extends WorldListener {
+public class BlockBurn extends BlockListener {
 
     /** The Constant thisPlugin. */
     private static final WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
 
     /* (non-Javadoc)
-     * @see org.bukkit.event.world.WorldListener#onWorldLoad(org.bukkit.event.world.WorldLoadEvent)
+     * @see org.bukkit.event.block.BlockListener#onBlockBurn(org.bukkit.event.block.BlockBurnEvent)
      */
     @Override
-    public void onWorldLoad(final WorldLoadEvent event) {
-        final World world = event.getWorld();
-        if (world != null) {
-            thisPlugin.prettyLog(Level.FINE, false, "World Load Caught: " + world.getName());
+    public void onBlockBurn(final BlockBurnEvent event) {
+        if ( !event.isCancelled() && (event.getBlock() != null)) {
+            final String worldName = event.getBlock().getWorld().getName();
+            if (WorldManager.isWormholeWorld(worldName)) {
+                final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
+                if ( !wormholeWorld.isAllowFireSpread()) {
+                    event.setCancelled(true);
+                    thisPlugin.prettyLog(Level.FINE, false, "Cancelled Fire Burn Event on " + wormholeWorld.getWorldName());
+                }
+            }
         }
     }
 }

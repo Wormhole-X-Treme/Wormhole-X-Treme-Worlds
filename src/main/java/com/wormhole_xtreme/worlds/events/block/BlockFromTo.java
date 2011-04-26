@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.wormhole_xtreme.worlds.events;
+package com.wormhole_xtreme.worlds.events.block;
 
 import java.util.logging.Level;
 
-import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockListener;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
@@ -28,26 +28,32 @@ import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
 /**
- * @author alron
+ * The Class BlockFromTo.
  * 
+ * @author alron
  */
-public class BlockBurn extends BlockListener {
+public class BlockFromTo extends BlockListener {
 
     /** The Constant thisPlugin. */
     private static final WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
 
     /* (non-Javadoc)
-     * @see org.bukkit.event.block.BlockListener#onBlockBurn(org.bukkit.event.block.BlockBurnEvent)
+     * @see org.bukkit.event.block.BlockListener#onBlockFromTo(org.bukkit.event.block.BlockFromToEvent)
      */
     @Override
-    public void onBlockBurn(final BlockBurnEvent event) {
+    public void onBlockFromTo(final BlockFromToEvent event) {
         if ( !event.isCancelled() && (event.getBlock() != null)) {
             final String worldName = event.getBlock().getWorld().getName();
             if (WorldManager.isWormholeWorld(worldName)) {
                 final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
-                if ( !wormholeWorld.isAllowFireSpread()) {
+                final int blockTypeId = event.getBlock().getTypeId();
+                if ( !wormholeWorld.isAllowWaterSpread() && ((blockTypeId == 8) || (blockTypeId == 9))) {
                     event.setCancelled(true);
-                    thisPlugin.prettyLog(Level.FINE, false, "Cancelled Fire Burn Event on " + wormholeWorld.getWorldName());
+                    thisPlugin.prettyLog(Level.FINE, false, "Cancelled Water Spread Event on " + wormholeWorld.getWorldName());
+                }
+                else if ( !wormholeWorld.isAllowLavaSpread() && ((blockTypeId == 10) || (blockTypeId == 11))) {
+                    event.setCancelled(true);
+                    thisPlugin.prettyLog(Level.FINE, false, "Cancelled Lava Spread Event on " + wormholeWorld.getWorldName());
                 }
             }
         }

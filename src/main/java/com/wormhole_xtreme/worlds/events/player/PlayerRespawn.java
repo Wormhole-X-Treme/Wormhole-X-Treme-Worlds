@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.wormhole_xtreme.worlds.events;
+package com.wormhole_xtreme.worlds.events.player;
 
 import java.util.logging.Level;
 

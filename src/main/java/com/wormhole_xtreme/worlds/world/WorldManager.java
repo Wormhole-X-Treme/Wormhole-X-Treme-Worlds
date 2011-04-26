@@ -231,13 +231,13 @@ public class WorldManager {
                 }
                 else {
                     wormholeWorld.setThisWorld(thisPlugin.getServer().createWorld(wormholeWorld.getWorldName(), worldEnvironment));
-                    wormholeWorld.setWorldSeed(wormholeWorld.getThisWorld().getId());
+                    wormholeWorld.setWorldSeed(wormholeWorld.getThisWorld().getSeed());
                 }
                 wormholeWorld.getThisWorld().save();
             }
             else {
                 wormholeWorld.setThisWorld(thisPlugin.getServer().getWorld(worldName));
-                wormholeWorld.setWorldSeed(wormholeWorld.getThisWorld().getId());
+                wormholeWorld.setWorldSeed(wormholeWorld.getThisWorld().getSeed());
             }
 
             wormholeWorld.setWorldSpawn(wormholeWorld.isNetherWorld()
@@ -608,7 +608,7 @@ public class WorldManager {
             wormholeWorld.getThisWorld().setSpawnLocation(wormholeWorld.getWorldCustomSpawn()[0], wormholeWorld.getWorldCustomSpawn()[1], wormholeWorld.getWorldCustomSpawn()[2]);
             wormholeWorld.setWorldSpawn(wormholeWorld.getThisWorld().getSpawnLocation());
             if (wormholeWorld.getWorldSeed() == 0) {
-                wormholeWorld.setWorldSeed(wormholeWorld.getThisWorld().getId());
+                wormholeWorld.setWorldSeed(wormholeWorld.getThisWorld().getSeed());
             }
             wormholeWorld.setWorldLoaded(true);
             if (addWorld(wormholeWorld)) {

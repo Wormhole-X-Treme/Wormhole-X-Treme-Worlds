@@ -591,7 +591,7 @@ public class XMLConfig {
             createConfigNode(eventWriter, "allowWaterSpread", "boolean", Boolean.valueOf(world.isAllowWaterSpread()).toString(), "Does water spread happen on this world?");
             createConfigNode(eventWriter, "allowLightningFire", "boolean", Boolean.valueOf(world.isAllowLightningFire()).toString(), "Is lightning fire allowed on this world?");
             createConfigNode(eventWriter, "timeLockType", "TimeType", world.getTimeLockType().toString(), "What time lock type this world has enabled. DAY, NIGHT, NONE. Anything else becomes NONE.");
-            createConfigNode(eventWriter, "weatherLockType", "WeatherType", world.getTimeLockType().toString(), "What weather lock type this world has enabled. CLEAR, RAIN, STORM, NONE. Anything else becomes NONE.");
+            createConfigNode(eventWriter, "weatherLockType", "WeatherType", world.getWeatherLockType().toString(), "What weather lock type this world has enabled. CLEAR, RAIN, STORM, NONE. Anything else becomes NONE.");
             createConfigNode(eventWriter, "worldCustomSpawn", "int[]", world.getWorldCustomSpawn()[0] + "|" + world.getWorldCustomSpawn()[1] + "|" + world.getWorldCustomSpawn()[2], "World custom spawn location in X|Y|Z ints.");
             createConfigNode(eventWriter, "worldSeed", "long", Long.valueOf(world.getWorldSeed()).toString(), "The seed used when this world was generated. Can be used to generate a new world with the exact same terrain.");
         }

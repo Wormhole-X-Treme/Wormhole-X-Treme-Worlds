@@ -182,7 +182,7 @@ class Wxw implements CommandExecutor {
                     else if (atlc.startsWith("-seed")) {
                         if (atlc.contains("|")) {
                             try {
-                                worldSeed = Long.valueOf(arg.split("\\|")[1].trim());
+                                worldSeed = Long.parseLong(arg.split("\\|")[1].trim());
                                 worldOptionKeyList.add(WorldOptionKeys.worldOptionSeed);
                             }
                             catch (final NumberFormatException e) {

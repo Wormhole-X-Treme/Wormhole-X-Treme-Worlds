@@ -186,12 +186,7 @@ class Wxw implements CommandExecutor {
                                 worldOptionKeyList.add(WorldOptionKeys.worldOptionSeed);
                             }
                             catch (final NumberFormatException e) {
-                                final char[] seedCharArray = arg.split("\\|")[1].trim().toCharArray();
-                                final StringBuilder seedString = new StringBuilder();
-                                for (final char seedChar : seedCharArray) {
-                                    seedString.append((int) seedChar);
-                                }
-                                worldSeed = Long.valueOf(seedString.toString());
+                                worldSeed = Long.valueOf(arg.split("\\|")[1].trim().hashCode());
                                 worldOptionKeyList.add(WorldOptionKeys.worldOptionSeed);
                             }
                         }

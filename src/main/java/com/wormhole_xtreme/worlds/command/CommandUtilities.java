@@ -38,7 +38,7 @@ import com.wormhole_xtreme.worlds.world.WormholeWorld;
 public class CommandUtilities {
 
     /** The Constant thisPlugin. */
-    final static WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
+    private final static WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
 
     /**
      * Parses the command options and returns a cleaned up array of commands.<br>
@@ -118,7 +118,7 @@ public class CommandUtilities {
      *            The String[] argument list to escape quotes on.
      * @return String[] with properly escaped quotes.
      */
-    static String[] commandEscaper(final String[] args) {
+    private static String[] commandEscaper(final String[] args) {
         StringBuilder tempString = new StringBuilder();
         boolean startQuoteFound = false;
         boolean endQuoteFound = false;

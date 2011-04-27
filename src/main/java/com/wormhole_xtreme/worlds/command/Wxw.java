@@ -36,10 +36,10 @@ import com.wormhole_xtreme.worlds.config.ResponseType;
 import com.wormhole_xtreme.worlds.permissions.PermissionType;
 import com.wormhole_xtreme.worlds.scheduler.ScheduleAction;
 import com.wormhole_xtreme.worlds.scheduler.ScheduleAction.ActionType;
+import com.wormhole_xtreme.worlds.world.TimeLockType;
+import com.wormhole_xtreme.worlds.world.WeatherLockType;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
-import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.TimeType;
-import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.WeatherType;
 
 /**
  * The wxw command class.
@@ -439,8 +439,8 @@ class Wxw implements CommandExecutor {
                 boolean lavaSpread = false, fireSpread = false, lavaFire = false, waterSpread = false, lightningFire = false;
                 boolean doPlayerLightningDamage = false, doPlayerDamage = false, doPlayerDrown = false, doPlayerLavaDamage = false, doPlayerFallDamage = false, doPlayerFireDamage = false;
                 boolean playerLightningDamage = false, playerDamage = false, playerDrown = false, playerLavaDamage = false, playerFallDamage = false, playerFireDamage = false;
-                TimeType timeLockType = null;
-                WeatherType weatherLockType = null;
+                TimeLockType timeLockType = null;
+                WeatherLockType weatherLockType = null;
                 boolean conflict = false;
                 for (final String arg : args) {
                     final String atlc = arg.toLowerCase();
@@ -479,7 +479,7 @@ class Wxw implements CommandExecutor {
                                 conflict = true;
                             }
                             else if (atlc.contains("|")) {
-                                timeLockType = TimeType.getTimeType(arg.split("\\|")[1].trim().toUpperCase());
+                                timeLockType = TimeLockType.getTimeType(arg.split("\\|")[1].trim().toUpperCase());
                             }
                             else {
                                 sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + "-time");
@@ -490,7 +490,7 @@ class Wxw implements CommandExecutor {
                                 conflict = true;
                             }
                             else if (atlc.contains("|")) {
-                                weatherLockType = WeatherType.getWeatherType(arg.split("\\|")[1].trim().toUpperCase());
+                                weatherLockType = WeatherLockType.getWeatherType(arg.split("\\|")[1].trim().toUpperCase());
                             }
                             else {
                                 sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + "-weather");

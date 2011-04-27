@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
  * @author alron
  *
  */
-public class Spawn implements CommandExecutor {
+class Spawn implements CommandExecutor {
 
     /* (non-Javadoc)
      * @see org.bukkit.command.CommandExecutor#onCommand(org.bukkit.command.CommandSender, org.bukkit.command.Command, java.lang.String, java.lang.String[])

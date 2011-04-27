@@ -41,10 +41,10 @@ import org.bukkit.plugin.PluginDescriptionFile;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ConfigManager.ServerOptionKeys;
+import com.wormhole_xtreme.worlds.world.TimeLockType;
+import com.wormhole_xtreme.worlds.world.WeatherLockType;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
-import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.TimeType;
-import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.WeatherType;
 
 /**
  * The Class WormholeXTtremeWorldsConfig.
@@ -310,8 +310,8 @@ public class XMLConfig {
         final XMLEventReader eventReader = XMLInputFactory.newInstance().createXMLEventReader(fileInputStream);
         XMLEvent event;
         String worldName = null, worldOwner = null, worldCustomSpawn = null;
-        TimeType timeLockType = TimeType.NONE;
-        WeatherType weatherLockType = WeatherType.NONE;
+        TimeLockType timeLockType = TimeLockType.NONE;
+        WeatherLockType weatherLockType = WeatherLockType.NONE;
         boolean allowHostiles = true, allowNeutrals = true;
         boolean netherWorld = false, autoconnectWorld = true;
         boolean allowPlayerDamage = true, allowPlayerDrown = true, allowPvP = true, allowPlayerLavaDamage = true, allowPlayerFallDamage = true, allowPlayerLightningDamage=true, allowPlayerFireDamage=true;
@@ -407,10 +407,10 @@ public class XMLConfig {
                     allowPvP = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
                 }
                 else if (optionName.equals("timeLockType")) {
-                    timeLockType = TimeType.getTimeType(String.valueOf(optionValue).trim().toUpperCase());
+                    timeLockType = TimeLockType.getTimeType(String.valueOf(optionValue).trim().toUpperCase());
                 }
                 else if (optionName.equals("weatherLockType")) {
-                    weatherLockType = WeatherType.getWeatherType(String.valueOf(optionValue).trim().toUpperCase());
+                    weatherLockType = WeatherLockType.getWeatherType(String.valueOf(optionValue).trim().toUpperCase());
                 }
                 else if (optionName.equals("worldSeed")) {
                     try {

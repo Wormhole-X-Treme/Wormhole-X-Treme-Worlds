@@ -26,9 +26,6 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.TimeType;
-import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.WeatherType;
-
 /**
  * The WormholeWorld instance. Everything that we know about a world can be found here.
  * What we know about the world is distrusted though, as we cannot be sure data fed to us
@@ -106,13 +103,13 @@ public class WormholeWorld {
     /** The weather lock. */
     private boolean weatherLock = false;
     /** The weather lock type. */
-    private WeatherType weatherLockType = WeatherType.NONE;
+    private WeatherLockType weatherLockType = WeatherLockType.NONE;
     /** The allow thunder. */
     private boolean allowWeatherThunder = true;
     /** The time lock. */
     private boolean timeLock = false;
     /** The time lock type. */
-    private TimeType timeLockType = TimeType.NONE;
+    private TimeLockType timeLockType = TimeLockType.NONE;
 
     /** The loaded. */
     private boolean loaded = false;
@@ -183,7 +180,7 @@ public class WormholeWorld {
      * 
      * @return the time lock type
      */
-    public TimeType getTimeLockType() {
+    public TimeLockType getTimeLockType() {
         return timeLockType;
     }
 
@@ -192,7 +189,7 @@ public class WormholeWorld {
      * 
      * @return the weather lock type
      */
-    public WeatherType getWeatherLockType() {
+    public WeatherLockType getWeatherLockType() {
         return weatherLockType;
     }
 
@@ -489,17 +486,6 @@ public class WormholeWorld {
     }
 
     /**
-     * Removes the sticky chunk forcefully.
-     * 
-     * @param stickyChunk
-     *            the sticky chunk
-     * @return true, if successful
-     */
-    public boolean removeStickyChunk(final Chunk stickyChunk) {
-        return removeStickyChunk(stickyChunk, null, true);
-    }
-
-    /**
      * Removes the sticky chunk.
      * 
      * @param stickyChunk
@@ -523,7 +509,7 @@ public class WormholeWorld {
      *            the force
      * @return true, if successful
      */
-    public boolean removeStickyChunk(final Chunk stickyChunk, final String ownerPlugin, final boolean force) {
+    private boolean removeStickyChunk(final Chunk stickyChunk, final String ownerPlugin, final boolean force) {
         if ((stickyChunk != null) && stickyChunks.containsKey(stickyChunk)) {
             final ArrayList<String> pluginArrayList = stickyChunks.get(stickyChunk);
             if (force) {
@@ -780,7 +766,7 @@ public class WormholeWorld {
      * @param timeLockType
      *            the new time lock type
      */
-    public void setTimeLockType(final TimeType timeLockType) {
+    public void setTimeLockType(final TimeLockType timeLockType) {
         switch (timeLockType) {
             case DAY :
             case NIGHT :
@@ -812,7 +798,7 @@ public class WormholeWorld {
      * @param weatherLockType
      *            the new weather lock type
      */
-    public void setWeatherLockType(final WeatherType weatherLockType) {
+    public void setWeatherLockType(final WeatherLockType weatherLockType) {
         switch (weatherLockType) {
             case CLEAR :
             case RAIN :

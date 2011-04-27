@@ -51,12 +51,9 @@ public class WormholeXTremeWorlds extends JavaPlugin {
     /** The scheduler. */
     private static BukkitScheduler scheduler = null;
 
-    /** The load time. */
-    private static boolean loadTime = true;
-
     /** The time schedule id. */
     private static int timeScheduleId = -1;
-    
+
     /** The world handler. */
     private static WorldHandler worldHandler = null;
 
@@ -74,7 +71,7 @@ public class WormholeXTremeWorlds extends JavaPlugin {
      * 
      * @return This logger
      */
-    public static Logger getThisLogger() {
+    private static Logger getThisLogger() {
         return thisLogger;
     }
 
@@ -97,26 +94,13 @@ public class WormholeXTremeWorlds extends JavaPlugin {
     }
 
     /**
-     * Checks if is load time.
+     * Gets the world handler.
      * 
-     * @return true, if is load time
+     * @return the world handler
      */
-    public static boolean isLoadTime() {
-        return loadTime;
+    public static WorldHandler getWorldHandler() {
+        return worldHandler;
     }
-
-
-
-    /**
-     * Sets the load time.
-     * 
-     * @param loadTime
-     *            the new load time
-     */
-    private static void setLoadTime(final boolean loadTime) {
-        WormholeXTremeWorlds.loadTime = loadTime;
-    }
-
 
     /**
      * Sets the scheduler.
@@ -156,6 +140,16 @@ public class WormholeXTremeWorlds extends JavaPlugin {
      */
     private static void setTimeScheduleId(final int timeScheduleId) {
         WormholeXTremeWorlds.timeScheduleId = timeScheduleId;
+    }
+
+    /**
+     * Sets the world handler.
+     * 
+     * @param worldHandler
+     *            the new world handler
+     */
+    private static void setWorldHandler(final WorldHandler worldHandler) {
+        WormholeXTremeWorlds.worldHandler = worldHandler;
     }
 
     /* (non-Javadoc)
@@ -204,7 +198,6 @@ public class WormholeXTremeWorlds extends JavaPlugin {
         if (loaded > 0) {
             prettyLog(Level.INFO, false, "Auto-loaded " + loaded + " worlds.");
         }
-        setLoadTime(false);
         setWorldHandler(new WorldHandler());
         prettyLog(Level.INFO, true, "Load Completed.");
     }
@@ -232,24 +225,5 @@ public class WormholeXTremeWorlds extends JavaPlugin {
         else {
             getThisLogger().log(severity, prettyLogLine + message);
         }
-    }
-
-    /**
-     * Sets the world handler.
-     * 
-     * @param worldHandler
-     *            the new world handler
-     */
-    private static void setWorldHandler(WorldHandler worldHandler) {
-        WormholeXTremeWorlds.worldHandler = worldHandler;
-    }
-
-    /**
-     * Gets the world handler.
-     * 
-     * @return the world handler
-     */
-    public static WorldHandler getWorldHandler() {
-        return worldHandler;
     }
 }

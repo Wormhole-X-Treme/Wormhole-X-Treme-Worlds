@@ -39,12 +39,10 @@ public class ScheduleAction implements Runnable {
         /** The Time lock noon. */
         TimeLock,
 
-        /** The Create world. */
-        CreateWorld,
-
         /** The Clear entities. */
         ClearEntities,
-        
+
+        /** The Set weather. */
         SetWeather
     }
 

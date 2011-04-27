@@ -24,7 +24,7 @@ public class PluginSupport {
      * 
      * @return the help
      */
-    public static Help getHelp() {
+    protected static Help getHelp() {
         return help;
     }
 

@@ -26,7 +26,7 @@ import com.wormhole_xtreme.worlds.world.WormholeWorld;
  * 
  * @author alron
  */
-public class WeatherChange {
+class WeatherChange {
 
     /**
      * Handle weather change.

@@ -32,7 +32,7 @@ import com.wormhole_xtreme.worlds.world.WormholeWorld;
  * 
  * @author alron
  */
-public class CreatureSpawn {
+class CreatureSpawn {
 
     /**
      * Handle creature spawn.

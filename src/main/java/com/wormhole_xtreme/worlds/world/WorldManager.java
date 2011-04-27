@@ -39,8 +39,6 @@ import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ConfigManager;
 import com.wormhole_xtreme.worlds.config.ConfigManager.WorldOptionKeys;
 import com.wormhole_xtreme.worlds.config.XMLConfig;
-import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.TimeType;
-import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.WeatherType;
 
 /**
  * The Class WorldManager.
@@ -50,7 +48,7 @@ import com.wormhole_xtreme.worlds.world.WormholeWorldTypes.WeatherType;
 public class WorldManager {
 
     /** The world list. */
-    private static ConcurrentHashMap<String, WormholeWorld> worldList = new ConcurrentHashMap<String, WormholeWorld>();
+    private final static ConcurrentHashMap<String, WormholeWorld> worldList = new ConcurrentHashMap<String, WormholeWorld>();
 
     /** The Constant thisPlugin. */
     private final static WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
@@ -142,7 +140,7 @@ public class WorldManager {
      *            the destination
      * @return true, if successful
      */
-    public static boolean checkSafeTeleportDestination(final Location destination) {
+    private static boolean checkSafeTeleportDestination(final Location destination) {
         if (destination != null) {
             final Block safeBlock = destination.getBlock();
             if (checkSafeBlock(safeBlock) && checkSafeBlockAbove(safeBlock) && checkSafeBlockBelow(safeBlock)) {
@@ -176,11 +174,11 @@ public class WorldManager {
                     final WormholeWorld wormholeWorld = worldList.get(key);
                     if ((wormholeWorld != null) && wormholeWorld.isWorldLoaded() && wormholeWorld.isTimeLock()) {
                         final long worldRelativeTime = wormholeWorld.getThisWorld().getTime() % 24000;
-                        if ((worldRelativeTime > 11800) && (wormholeWorld.getTimeLockType() == TimeType.DAY)) {
+                        if ((worldRelativeTime > 11800) && (wormholeWorld.getTimeLockType() == TimeLockType.DAY)) {
                             thisPlugin.prettyLog(Level.FINE, false, "Set world: " + key + " New time: 0" + " Old Time: " + worldRelativeTime);
                             wormholeWorld.getThisWorld().setTime(0);
                         }
-                        else if (((worldRelativeTime < 13500) || (worldRelativeTime > 21800)) && (wormholeWorld.getTimeLockType() == TimeType.NIGHT)) {
+                        else if (((worldRelativeTime < 13500) || (worldRelativeTime > 21800)) && (wormholeWorld.getTimeLockType() == TimeLockType.NIGHT)) {
                             thisPlugin.prettyLog(Level.FINE, false, "Set world: " + key + " New time: 13700" + " Old Time: " + worldRelativeTime);
                             wormholeWorld.getThisWorld().setTime(13700);
                         }
@@ -221,7 +219,7 @@ public class WorldManager {
      *            the wormhole world
      * @return true, if successful
      */
-    public static boolean createWorld(final WormholeWorld wormholeWorld) {
+    private static boolean createWorld(final WormholeWorld wormholeWorld) {
         if (wormholeWorld != null) {
             wormholeWorld.setWorldLoaded(true);
             final String worldName = wormholeWorld.getWorldName();
@@ -305,19 +303,19 @@ public class WorldManager {
                             wormholeWorld.setWorldSeed(worldSeed);
                             break;
                         case worldOptionTimeLockDay :
-                            wormholeWorld.setTimeLockType(TimeType.DAY);
+                            wormholeWorld.setTimeLockType(TimeLockType.DAY);
                             break;
                         case worldOptionTimeLockNight :
-                            wormholeWorld.setTimeLockType(TimeType.NIGHT);
+                            wormholeWorld.setTimeLockType(TimeLockType.NIGHT);
                             break;
                         case worldOptionWeatherClear :
-                            wormholeWorld.setWeatherLockType(WeatherType.CLEAR);
+                            wormholeWorld.setWeatherLockType(WeatherLockType.CLEAR);
                             break;
                         case worldOptionWeatherRain :
-                            wormholeWorld.setWeatherLockType(WeatherType.RAIN);
+                            wormholeWorld.setWeatherLockType(WeatherLockType.RAIN);
                             break;
                         case worldOptionWeatherStorm :
-                            wormholeWorld.setWeatherLockType(WeatherType.STORM);
+                            wormholeWorld.setWeatherLockType(WeatherLockType.STORM);
                             break;
                         case worldOptionNoLavaSpread :
                             wormholeWorld.setAllowLavaSpread(false);
@@ -369,7 +367,7 @@ public class WorldManager {
      *            the wormhole world
      * @return the location
      */
-    public static Location findSafeSpawn(final Location spawnLocation, final int yDepth, final int xzDepth) {
+    private static Location findSafeSpawn(final Location spawnLocation, final int yDepth, final int xzDepth) {
         if (spawnLocation != null) {
             final int worldSpawnY = spawnLocation.getBlockY();
             final int worldSpawnX = spawnLocation.getBlockX();

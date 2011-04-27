@@ -63,7 +63,7 @@ public enum PermissionType {
     SPAWN("wxw.spawn");
 
     /** The permission node. */
-    private String permissionNode;
+    private final String permissionNode;
 
     /** The Constant permissionMap. */
     private static final Map<String, PermissionType> permissionMap = new HashMap<String, PermissionType>();
@@ -84,7 +84,7 @@ public enum PermissionType {
      *            the permission node
      * @return the permission type
      */
-    public static PermissionType fromPermissionNode(final String permissionNode) {
+    public static PermissionType fromPermissionNode(final String permissionNode) { // NO_UCD
         return permissionMap.get(permissionNode);
     }
 

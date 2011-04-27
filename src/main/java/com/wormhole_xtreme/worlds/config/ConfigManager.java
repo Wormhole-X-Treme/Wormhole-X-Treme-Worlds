@@ -30,7 +30,7 @@ public class ConfigManager {
     /**
      * The Enum OptionKeys.
      */
-    public enum ServerOptionKeys {
+    enum ServerOptionKeys {
 
         /** The server option permissions. */
         serverOptionPermissions,
@@ -134,7 +134,7 @@ public class ConfigManager {
     }
 
     /** The Constant options. */
-    public static final ConcurrentHashMap<ServerOptionKeys, ServerOption> serverOptions = new ConcurrentHashMap<ServerOptionKeys, ServerOption>();
+    protected static final ConcurrentHashMap<ServerOptionKeys, ServerOption> serverOptions = new ConcurrentHashMap<ServerOptionKeys, ServerOption>();
 
     /**
      * Gets the server option.
@@ -315,7 +315,7 @@ public class ConfigManager {
      * @param b
      *            the new server option help
      */
-    public static void setServerOptionHelp(final boolean b) {
+    public static void setServerOptionHelp(final boolean b) { // NO_UCD
         ConfigManager.setOptionValue(ServerOptionKeys.serverOptionHelp, b);
     }
 
@@ -325,7 +325,7 @@ public class ConfigManager {
      * @param b
      *            the new server option ops bypass permissions
      */
-    public static void setServerOptionOpsBypassPermissions(final boolean b) {
+    public static void setServerOptionOpsBypassPermissions(final boolean b) { // NO_UCD
         ConfigManager.setOptionValue(ServerOptionKeys.serverOptionOpsBypassPermissions, b);
     }
 
@@ -335,7 +335,7 @@ public class ConfigManager {
      * @param b
      *            the new server option permissions
      */
-    public static void setServerOptionPermissions(final boolean b) {
+    public static void setServerOptionPermissions(final boolean b) { // NO_UCD
         ConfigManager.setOptionValue(ServerOptionKeys.serverOptionPermissions, b);
     }
 
@@ -345,7 +345,7 @@ public class ConfigManager {
      * @param b
      *            the new server option spawn command
      */
-    public static void setServerOptionSpawnCommand(final boolean b) {
+    public static void setServerOptionSpawnCommand(final boolean b) { // NO_UCD
         ConfigManager.setOptionValue(ServerOptionKeys.serverOptionSpawnCommand, b);
     }
 
@@ -355,7 +355,7 @@ public class ConfigManager {
      * @param b
      *            the new server option timelock
      */
-    public static void setServerOptionTimelock(final boolean b) {
+    public static void setServerOptionTimelock(final boolean b) { // NO_UCD
         ConfigManager.setOptionValue(ServerOptionKeys.serverOptionTimelock, b);
     }
 }

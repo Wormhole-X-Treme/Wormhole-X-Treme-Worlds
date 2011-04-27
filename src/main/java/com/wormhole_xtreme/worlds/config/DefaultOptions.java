@@ -24,7 +24,7 @@ import com.wormhole_xtreme.worlds.config.ConfigManager.ServerOptionKeys;
  * @author alron
  * 
  */
-public class DefaultOptions {
+class DefaultOptions {
 
     /** The Constant defaultOptions. */
     final static ServerOption[] defaultServerOptions = {

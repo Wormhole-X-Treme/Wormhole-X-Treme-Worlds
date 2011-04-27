@@ -37,7 +37,7 @@ import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
  */
 public class EntityEventHandler extends EntityListener {
     /** The this plugin. */
-    private static WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
+    private final static WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
 
     /* (non-Javadoc)
      * @see org.bukkit.event.entity.EntityListener#onCreatureSpawn(org.bukkit.event.entity.CreatureSpawnEvent)

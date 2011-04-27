@@ -25,7 +25,7 @@ import com.wormhole_xtreme.worlds.config.ConfigManager.ServerOptionKeys;
  * 
  * @author alron
  */
-public class ServerOption {
+class ServerOption {
 
     /** The option key. */
     private ServerOptionKeys optionKey;
@@ -56,7 +56,7 @@ public class ServerOption {
      * @param optionPlugin
      *            the option plugin
      */
-    public ServerOption(final ServerOptionKeys optionKey, final String optionDescription, final String optionType,
+    protected ServerOption(final ServerOptionKeys optionKey, final String optionDescription, final String optionType,
         final Object optionValue, final String optionPlugin) {
         if ((optionKey != null) && (optionDescription != null) && (optionValue != null) && (optionPlugin != null)) {
             setOptionKey(optionKey);

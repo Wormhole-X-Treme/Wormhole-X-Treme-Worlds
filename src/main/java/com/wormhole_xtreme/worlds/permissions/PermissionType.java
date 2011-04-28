@@ -109,21 +109,20 @@ public enum PermissionType {
      * @return true, if successful
      */
     public boolean checkPermission(final Player player) {
-        if (player == null) {
-            return false;
+        if (player != null) {
+            boolean allowed = false;
+            if ((player.isOp() && !ConfigManager.getServerOptionPermissions()) || (player.isOp() && ConfigManager.getServerOptionOpsBypassPermissions())) {
+                allowed = true;
+            }
+            else if ((PluginSupport.getPermissionHandler() != null) && PluginSupport.getPermissionHandler().has(player, permissionNode)) {
+                allowed = true;
+            }
+            if (allowed) {
+                thisPlugin.prettyLog(Level.FINE, false, "Player: \"" + player.getName() + "\" granted \"" + toString() + "\" permissions.");
+                return true;
+            }
+            thisPlugin.prettyLog(Level.FINE, false, "Player: \"" + player.getName() + "\" denied \"" + toString() + "\" permissions.");
         }
-        boolean allowed = false;
-        if ((player.isOp() && !ConfigManager.getServerOptionPermissions()) || (player.isOp() && ConfigManager.getServerOptionOpsBypassPermissions())) {
-            allowed = true;
-        }
-        else if ((PluginSupport.getPermissionHandler() != null) && PluginSupport.getPermissionHandler().has(player, permissionNode)) {
-            allowed = true;
-        }
-        if (allowed) {
-            thisPlugin.prettyLog(Level.FINE, false, "Player: \"" + player.getName() + "\" granted \"" + toString() + "\" permissions.");
-            return true;
-        }
-        thisPlugin.prettyLog(Level.FINE, false, "Player: \"" + player.getName() + "\" denied \"" + toString() + "\" permissions.");
         return false;
     }
 

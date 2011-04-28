@@ -39,8 +39,6 @@ class ServerOption {
     /** The option value. */
     private Object optionValue;
 
-    /** The option plugin. */
-    private String optionPlugin;
 
     /**
      * Instantiates a new option.
@@ -53,17 +51,14 @@ class ServerOption {
      *            the option type
      * @param optionValue
      *            the option value
-     * @param optionPlugin
-     *            the option plugin
      */
     protected ServerOption(final ServerOptionKeys optionKey, final String optionDescription, final String optionType,
-        final Object optionValue, final String optionPlugin) {
-        if ((optionKey != null) && (optionDescription != null) && (optionValue != null) && (optionPlugin != null)) {
+        final Object optionValue) {
+        if ((optionKey != null) && (optionDescription != null) && (optionValue != null)) {
             setOptionKey(optionKey);
             setOptionDescription(optionDescription);
             setOptionType(optionType);
             setOptionValue(optionValue);
-            setOptionPlugin(optionPlugin);
         }
     }
 
@@ -83,15 +78,6 @@ class ServerOption {
      */
     public ServerOptionKeys getOptionKey() {
         return optionKey;
-    }
-
-    /**
-     * Gets the option plugin.
-     * 
-     * @return the option plugin
-     */
-    public String getOptionPlugin() {
-        return optionPlugin;
     }
 
     /**
@@ -130,16 +116,6 @@ class ServerOption {
      */
     private void setOptionKey(final ServerOptionKeys optionKey) {
         this.optionKey = optionKey;
-    }
-
-    /**
-     * Sets the option plugin.
-     * 
-     * @param optionPlugin
-     *            the new option plugin
-     */
-    private void setOptionPlugin(final String optionPlugin) {
-        this.optionPlugin = optionPlugin;
     }
 
     /**

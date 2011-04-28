@@ -304,7 +304,7 @@ public class ConfigManager {
      */
     private static void setOptionValue(final ServerOptionKeys optionKey, final Object optionValue) {
         final ServerOption o = serverOptions.get(optionKey);
-        if (optionValue != null) {
+        if (o != null && optionValue != null) {
             o.setOptionValue(optionValue);
         }
     }

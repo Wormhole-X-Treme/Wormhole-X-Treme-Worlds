@@ -427,7 +427,7 @@ class Wxw implements CommandExecutor {
         }
         if (allowed) {
             if ((args != null) && (args.length >= 1)) {
-                String worldName = null, playerName = null;
+                String worldName = "", playerName = "";
                 boolean doHostiles = false, doNeutrals = false, doAutoLoad = false, doPvP = false;
                 boolean hostiles = false, neutrals = false, autoLoad = false, pvp = false;
                 boolean doLavaSpread = false, doFireSpread = false, doLavaFire = false, doWaterSpread = false, doLightningFire = false;
@@ -441,7 +441,7 @@ class Wxw implements CommandExecutor {
                     final String atlc = arg.toLowerCase();
                     if (atlc.startsWith("-")) {
                         if (atlc.startsWith("-name")) {
-                            if (worldName != null) {
+                            if (worldName.length() > 0) {
                                 conflict = true;
                             }
                             else if (atlc.contains("|")) {
@@ -453,7 +453,7 @@ class Wxw implements CommandExecutor {
                             }
                         }
                         else if (atlc.startsWith("-owner")) {
-                            if (playerName != null) {
+                            if (playerName.length() > 0) {
                                 conflict = true;
                             }
                             else if (atlc.contains("|")) {
@@ -707,10 +707,10 @@ class Wxw implements CommandExecutor {
                 if (conflict) {
                     sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting or duplicate commands specified.");
                 }
-                if (worldName != null) {
+                if (worldName.length() > 0) {
                     final WormholeWorld world = WorldManager.getWorld(worldName);
                     if (world != null) {
-                        if (doHostiles || doNeutrals || doAutoLoad || doPvP || (playerName != null) || (weatherLockType != null) || (timeLockType != null) || doPlayerLightningDamage || doPlayerDamage || doPlayerDrown || doPlayerLavaDamage || doPlayerFallDamage || doPlayerFireDamage || doLavaSpread || doFireSpread || doLavaFire || doWaterSpread || doLightningFire) {
+                        if (doHostiles || doNeutrals || doAutoLoad || doPvP || (playerName.length() > 0) || (weatherLockType != null) || (timeLockType != null) || doPlayerLightningDamage || doPlayerDamage || doPlayerDrown || doPlayerLavaDamage || doPlayerFallDamage || doPlayerFireDamage || doLavaSpread || doFireSpread || doLavaFire || doWaterSpread || doLightningFire) {
                             if (doHostiles) {
                                 world.setAllowHostiles(hostiles);
                             }
@@ -723,7 +723,7 @@ class Wxw implements CommandExecutor {
                             if (doAutoLoad) {
                                 world.setAutoconnectWorld(autoLoad);
                             }
-                            if (playerName != null) {
+                            if (playerName.length() > 0) {
                                 world.setWorldOwner(playerName);
                             }
                             if (doPlayerLightningDamage) {

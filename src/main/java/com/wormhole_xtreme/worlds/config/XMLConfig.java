@@ -334,8 +334,7 @@ public class XMLConfig {
         boolean allowHostiles = true, allowNeutrals = true;
         boolean netherWorld = false, autoconnectWorld = true;
         boolean allowPlayerDamage = true, allowPlayerDrown = true, allowPvP = true;
-        final boolean allowPlayerLavaDamage = true;
-        boolean allowPlayerFallDamage = true, allowPlayerLightningDamage = true, allowPlayerFireDamage = true;
+        boolean allowPlayerFallDamage = true, allowPlayerLightningDamage = true, allowPlayerFireDamage = true, allowPlayerLavaDamage = true;
         boolean allowFireSpread = true, allowLavaFire = true, allowLavaSpread = true, allowWaterSpread = true, allowLightningFire = true;
 
         long worldSeed = 0;
@@ -405,6 +404,9 @@ public class XMLConfig {
                 }
                 else if (optionName.equals("allowPlayerFireDamage")) {
                     allowPlayerFireDamage = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
+                }
+                else if (optionName.equals("allowPlayerLavaDamage")) {
+                    allowPlayerLavaDamage = Boolean.valueOf(optionValue.toString().trim().toLowerCase());
                 }
                 else if (optionName.equals("allowLavaFire")) {
                     allowLavaFire = Boolean.valueOf(optionValue.toString().trim().toLowerCase());

@@ -9,16 +9,16 @@ import com.nijiko.permissions.PermissionHandler;
 
 /**
  * @author alron
- *
+ * 
  */
 public class PluginSupport {
-    
+
     /** The help. */
     private static Help help = null;
 
     /** The permission handler. */
     private static PermissionHandler permissionHandler = null;
-    
+
     /**
      * Gets the help.
      * 
@@ -36,7 +36,7 @@ public class PluginSupport {
     public static PermissionHandler getPermissionHandler() {
         return permissionHandler;
     }
-    
+
     /**
      * Sets the help.
      * 
@@ -46,7 +46,7 @@ public class PluginSupport {
     static void setHelp(final Help help) {
         PluginSupport.help = help;
     }
-    
+
     /**
      * Sets the permission handler.
      * 

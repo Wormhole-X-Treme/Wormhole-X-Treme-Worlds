@@ -70,9 +70,9 @@ public class CommandUtilities {
                         commandHasArgs = true;
                         tempString.append("|");
                     }
-                    catch (NumberFormatException e) {
+                    catch (final NumberFormatException e) {
                         commandFoundNoArgs = true;
-                    } 
+                    }
                 }
                 commandFound = true;
             }

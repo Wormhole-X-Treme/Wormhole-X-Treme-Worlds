@@ -18,7 +18,6 @@
  */
 package com.wormhole_xtreme.worlds.world;
 
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -114,8 +113,10 @@ public class WormholeWorld {
     /** The loaded. */
     private boolean loaded = false;
 
-    /** The sticky chunks. */
-    private final ConcurrentHashMap<Chunk, ArrayList<String>> stickyChunks = new ConcurrentHashMap<Chunk, ArrayList<String>>();
+//    /** The sticky chunks. */
+//    private final ConcurrentHashMap<Chunk, ArrayList<String>> stickyChunks = new ConcurrentHashMap<Chunk, ArrayList<String>>();
+
+    private final ConcurrentHashMap<Chunk, ConcurrentHashMap<String, Integer>> worldStickyChunks = new ConcurrentHashMap<Chunk, ConcurrentHashMap<String, Integer>>();
 
     /**
      * Instantiates a new world.
@@ -124,8 +125,41 @@ public class WormholeWorld {
 
     }
 
+//    /**
+//     * Adds the sticky chunk.
+//     * 
+//     * @param stickyChunk
+//     *            the sticky chunk
+//     * @param ownerPlugin
+//     *            the owner plugin
+//     * @return true, if successful
+//     */
+//    public boolean addStickyChunk(final Chunk stickyChunk, final String ownerPlugin) {
+//        if ((ownerPlugin != null) && (stickyChunk != null)) {
+//            ArrayList<String> pluginArrayList = new ArrayList<String>();
+//            if (stickyChunks.containsKey(stickyChunk)) {
+//                pluginArrayList = stickyChunks.get(stickyChunk);
+//                if ((pluginArrayList != null) && !pluginArrayList.contains(ownerPlugin)) {
+//                    pluginArrayList.add(ownerPlugin);
+//                    stickyChunks.put(stickyChunk, pluginArrayList);
+//                }
+//                else if (pluginArrayList == null) {
+//                    pluginArrayList = new ArrayList<String>();
+//                    pluginArrayList.add(ownerPlugin);
+//                    stickyChunks.put(stickyChunk, pluginArrayList);
+//                }
+//            }
+//            else {
+//                pluginArrayList.add(ownerPlugin);
+//                stickyChunks.put(stickyChunk, pluginArrayList);
+//            }
+//            return true;
+//        }
+//        return false;
+//    }
+
     /**
-     * Adds the sticky chunk.
+     * Adds the world sticky chunk.
      * 
      * @param stickyChunk
      *            the sticky chunk
@@ -133,24 +167,16 @@ public class WormholeWorld {
      *            the owner plugin
      * @return true, if successful
      */
-    public boolean addStickyChunk(final Chunk stickyChunk, final String ownerPlugin) {
-        if ((ownerPlugin != null) && (stickyChunk != null)) {
-            ArrayList<String> pluginArrayList = new ArrayList<String>();
-            if (stickyChunks.containsKey(stickyChunk)) {
-                pluginArrayList = stickyChunks.get(stickyChunk);
-                if ((pluginArrayList != null) && !pluginArrayList.contains(ownerPlugin)) {
-                    pluginArrayList.add(ownerPlugin);
-                    stickyChunks.put(stickyChunk, pluginArrayList);
-                }
-                else if (pluginArrayList == null) {
-                    pluginArrayList = new ArrayList<String>();
-                    pluginArrayList.add(ownerPlugin);
-                    stickyChunks.put(stickyChunk, pluginArrayList);
-                }
+    public boolean addWorldStickyChunk(final Chunk stickyChunk, final String ownerPlugin) {
+        if ((stickyChunk != null) && (ownerPlugin != null)) {
+            if (getWorldStickyChunks().containsKey(stickyChunk)) {
+                getWorldStickyChunks().get(stickyChunk).put(ownerPlugin, getWorldStickyChunks().get(stickyChunk).containsKey(ownerPlugin)
+                    ? getWorldStickyChunks().get(stickyChunk).get(ownerPlugin) + 1 : 1);
             }
             else {
-                pluginArrayList.add(ownerPlugin);
-                stickyChunks.put(stickyChunk, pluginArrayList);
+                final ConcurrentHashMap<String, Integer> ownerPlugins = new ConcurrentHashMap<String, Integer>();
+                ownerPlugins.put(ownerPlugin, 1);
+                getWorldStickyChunks().put(stickyChunk, ownerPlugins);
             }
             return true;
         }
@@ -158,13 +184,22 @@ public class WormholeWorld {
     }
 
     /**
-     * Gets the all sticky chunks.
+     * Gets the all world sticky chunks.
      * 
-     * @return the all sticky chunks
+     * @return the all world sticky chunks
      */
-    public Set<Chunk> getAllStickyChunks() {
-        return stickyChunks.keySet();
+    public Set<Chunk> getAllWorldStickyChunks() {
+        return getWorldStickyChunks().keySet();
     }
+
+//    /**
+//     * Gets the all sticky chunks.
+//     * 
+//     * @return the all sticky chunks
+//     */
+//    public Set<Chunk> getAllStickyChunks() {
+//        return stickyChunks.keySet();
+//    }
 
     /**
      * Gets the this world.
@@ -247,6 +282,10 @@ public class WormholeWorld {
         return new int[]{
             (int) worldSpawn.getX(), (int) worldSpawn.getY(), (int) worldSpawn.getZ()
         };
+    }
+
+    public ConcurrentHashMap<Chunk, ConcurrentHashMap<String, Integer>> getWorldStickyChunks() {
+        return worldStickyChunks;
     }
 
     /**
@@ -448,17 +487,6 @@ public class WormholeWorld {
     }
 
     /**
-     * Checks if is sticky chunk.
-     * 
-     * @param stickyChunk
-     *            the sticky chunk
-     * @return true, if is sticky chunk
-     */
-    public boolean isStickyChunk(final Chunk stickyChunk) {
-        return stickyChunks.containsKey(stickyChunk);
-    }
-
-    /**
      * Checks if is time lock.
      * 
      * @return true, if is time lock
@@ -466,6 +494,17 @@ public class WormholeWorld {
     public boolean isTimeLock() {
         return timeLock;
     }
+
+//    /**
+//     * Checks if is sticky chunk.
+//     * 
+//     * @param stickyChunk
+//     *            the sticky chunk
+//     * @return true, if is sticky chunk
+//     */
+//    public boolean isStickyChunk(final Chunk stickyChunk) {
+//        return stickyChunks.containsKey(stickyChunk);
+//    }
 
     /**
      * Checks if is weather lock.
@@ -486,49 +525,89 @@ public class WormholeWorld {
     }
 
     /**
-     * Removes the sticky chunk.
+     * Checks if is world sticky chunk.
      * 
      * @param stickyChunk
      *            the sticky chunk
-     * @param ownerPlugin
-     *            the owner plugin
-     * @return true, if successful
+     * @return true, if is world sticky chunk
      */
-    public boolean removeStickyChunk(final Chunk stickyChunk, final String ownerPlugin) {
-        return removeStickyChunk(stickyChunk, ownerPlugin, false);
+    public boolean isWorldStickyChunk(final Chunk stickyChunk) {
+        return getWorldStickyChunks().containsKey(stickyChunk);
     }
 
     /**
-     * Removes the sticky chunk.
+     * Removes the world sticky chunk.
      * 
      * @param stickyChunk
      *            the sticky chunk
      * @param ownerPlugin
      *            the owner plugin
-     * @param force
-     *            the force
      * @return true, if successful
      */
-    private boolean removeStickyChunk(final Chunk stickyChunk, final String ownerPlugin, final boolean force) {
-        if ((stickyChunk != null) && stickyChunks.containsKey(stickyChunk)) {
-            final ArrayList<String> pluginArrayList = stickyChunks.get(stickyChunk);
-            if (force) {
-                stickyChunks.remove(stickyChunk);
-                return true;
-            }
-            else if ((ownerPlugin != null) && (pluginArrayList != null) && pluginArrayList.contains(ownerPlugin)) {
-                if (pluginArrayList.size() == 1) {
-                    stickyChunks.remove(stickyChunk);
+    public boolean removeWorldStickyChunk(final Chunk stickyChunk, final String ownerPlugin) {
+        if ((stickyChunk != null) && (ownerPlugin != null)) {
+            if (getWorldStickyChunks().containsKey(stickyChunk)) {
+                if (getWorldStickyChunks().get(stickyChunk).containsKey(ownerPlugin)) {
+                    if (getWorldStickyChunks().get(stickyChunk).get(ownerPlugin) > 1) {
+                        getWorldStickyChunks().get(stickyChunk).put(ownerPlugin, getWorldStickyChunks().get(stickyChunk).get(ownerPlugin) - 1);
+                    }
+                    else if (getWorldStickyChunks().get(stickyChunk).size() > 1) {
+                        getWorldStickyChunks().get(stickyChunk).remove(ownerPlugin);
+                    }
+                    else {
+                        getWorldStickyChunks().remove(stickyChunk);
+                    }
+                    return true;
                 }
-                else {
-                    pluginArrayList.remove(ownerPlugin);
-                    stickyChunks.put(stickyChunk, pluginArrayList);
-                }
-                return true;
             }
         }
         return false;
     }
+
+//    /**
+//     * Removes the sticky chunk.
+//     * 
+//     * @param stickyChunk
+//     *            the sticky chunk
+//     * @param ownerPlugin
+//     *            the owner plugin
+//     * @return true, if successful
+//     */
+//    public boolean removeStickyChunk(final Chunk stickyChunk, final String ownerPlugin) {
+//        return removeStickyChunk(stickyChunk, ownerPlugin, false);
+//    }
+
+//    /**
+//     * Removes the sticky chunk.
+//     * 
+//     * @param stickyChunk
+//     *            the sticky chunk
+//     * @param ownerPlugin
+//     *            the owner plugin
+//     * @param force
+//     *            the force
+//     * @return true, if successful
+//     */
+//    private boolean removeStickyChunk(final Chunk stickyChunk, final String ownerPlugin, final boolean force) {
+//        if ((stickyChunk != null) && stickyChunks.containsKey(stickyChunk)) {
+//            final ArrayList<String> pluginArrayList = stickyChunks.get(stickyChunk);
+//            if (force) {
+//                stickyChunks.remove(stickyChunk);
+//                return true;
+//            }
+//            else if ((ownerPlugin != null) && (pluginArrayList != null) && pluginArrayList.contains(ownerPlugin)) {
+//                if (pluginArrayList.size() == 1) {
+//                    stickyChunks.remove(stickyChunk);
+//                }
+//                else {
+//                    pluginArrayList.remove(ownerPlugin);
+//                    stickyChunks.put(stickyChunk, pluginArrayList);
+//                }
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     /**
      * Sets the allow fire spread.

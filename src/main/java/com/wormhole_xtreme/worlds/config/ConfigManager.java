@@ -89,13 +89,13 @@ public class ConfigManager {
 
         /** The world option to lock time at midnight. */
         worldOptionTimeLockNight,
-        
+
         /** The world option to lock weather clear. */
         worldOptionWeatherClear,
-        
+
         /** The world option to lock weather rainy. */
         worldOptionWeatherRain,
-        
+
         /** The world option to lock weather stormy. */
         worldOptionWeatherStorm,
 
@@ -304,7 +304,7 @@ public class ConfigManager {
      */
     private static void setOptionValue(final ServerOptionKeys optionKey, final Object optionValue) {
         final ServerOption o = serverOptions.get(optionKey);
-        if (o != null && optionValue != null) {
+        if ((o != null) && (optionValue != null)) {
             o.setOptionValue(optionValue);
         }
     }

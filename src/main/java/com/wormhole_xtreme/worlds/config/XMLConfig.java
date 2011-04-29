@@ -110,6 +110,23 @@ public class XMLConfig {
         eventWriter.add(end);
     }
 
+    private static void createHeaderFooter(final XMLEventWriter eventWriter, final boolean header) throws XMLStreamException {
+        final XMLEventFactory eventFactory = XMLEventFactory.newFactory();
+        final XMLEvent end = eventFactory.createDTD("\n");
+        if (header) {
+            eventWriter.add(eventFactory.createStartDocument());
+            eventWriter.add(end);
+            eventWriter.add(eventFactory.createStartElement("", "", "WormholeXTremeWorlds"));
+            eventWriter.add(end);
+        }
+        else {
+            eventWriter.add(eventFactory.createEndElement("", "", "WormholeXTremeWorlds"));
+            eventWriter.add(end);
+            eventWriter.add(eventFactory.createEndDocument());
+
+        }
+    }
+
     /**
      * @param worldName
      */
@@ -316,9 +333,11 @@ public class XMLConfig {
         WeatherLockType weatherLockType = WeatherLockType.NONE;
         boolean allowHostiles = true, allowNeutrals = true;
         boolean netherWorld = false, autoconnectWorld = true;
-        boolean allowPlayerDamage = true, allowPlayerDrown = true, allowPvP = true, allowPlayerLavaDamage = true, allowPlayerFallDamage = true, allowPlayerLightningDamage=true, allowPlayerFireDamage=true;
+        boolean allowPlayerDamage = true, allowPlayerDrown = true, allowPvP = true;
+        final boolean allowPlayerLavaDamage = true;
+        boolean allowPlayerFallDamage = true, allowPlayerLightningDamage = true, allowPlayerFireDamage = true;
         boolean allowFireSpread = true, allowLavaFire = true, allowLavaSpread = true, allowWaterSpread = true, allowLightningFire = true;
-        
+
         long worldSeed = 0;
         while (eventReader.hasNext()) {
             String optionName = null;
@@ -352,7 +371,7 @@ public class XMLConfig {
                     optionValue = event.asCharacters().getData();
                 }
             }
-            if (optionName != null && optionValue != null) {
+            if ((optionName != null) && (optionValue != null)) {
                 thisPlugin.prettyLog(Level.CONFIG, false, "Got from World XML read: " + optionName + ", " + optionType + ", " + optionValue);
                 if (optionName.equals("worldName")) {
                     worldName = String.valueOf(optionValue).trim();
@@ -467,10 +486,10 @@ public class XMLConfig {
             if ( !allowPlayerFallDamage) {
                 world.setAllowPlayerFallDamage(allowPlayerFallDamage);
             }
-            if (!allowPlayerLightningDamage) {
+            if ( !allowPlayerLightningDamage) {
                 world.setAllowPlayerLightningDamage(allowPlayerLightningDamage);
             }
-            if (!allowPlayerFireDamage) {
+            if ( !allowPlayerFireDamage) {
                 world.setAllowPlayerFireDamage(allowPlayerFireDamage);
             }
             if ( !allowFireSpread) {
@@ -485,7 +504,7 @@ public class XMLConfig {
             if ( !allowWaterSpread) {
                 world.setAllowWaterSpread(allowWaterSpread);
             }
-            if (!allowLightningFire) {
+            if ( !allowLightningFire) {
                 world.setAllowLightningFire(allowLightningFire);
             }
             if (worldSeed != 0) {
@@ -549,63 +568,45 @@ public class XMLConfig {
         }
     }
 
-
     private static void saveServerConfigFile(final FileOutputStream fileOutputStream, final ServerOption[] options) throws XMLStreamException {
         final XMLEventWriter eventWriter = XMLOutputFactory.newInstance().createXMLEventWriter(fileOutputStream);
         createHeaderFooter(eventWriter, true);
-            for (final ServerOption element : options) {
-                createConfigNode(eventWriter, element.getOptionKey().toString(), element.getOptionType(), element.getOptionValue().toString(), element.getOptionDescription());
-            }
+        for (final ServerOption element : options) {
+            createConfigNode(eventWriter, element.getOptionKey().toString(), element.getOptionType(), element.getOptionValue().toString(), element.getOptionDescription());
+        }
         createHeaderFooter(eventWriter, false);
         eventWriter.close();
     }
-    
-    private static void saveWorldConfigFile(final FileOutputStream fileOutputStream,final WormholeWorld world) throws XMLStreamException{
+
+    private static void saveWorldConfigFile(final FileOutputStream fileOutputStream, final WormholeWorld world) throws XMLStreamException {
         final XMLEventWriter eventWriter = XMLOutputFactory.newInstance().createXMLEventWriter(fileOutputStream);
         createHeaderFooter(eventWriter, true);
         createConfigNode(eventWriter, "worldName", "String", world.getWorldName(), "The name of this world. Do not change unless you have renamed the world on disk.");
-            createConfigNode(eventWriter, "worldOwner", "String", world.getWorldOwner(), "The owner of this world. Can be any player. Factors into permissions and iConomy support.");
-            createConfigNode(eventWriter, "netherWorld", "boolean", Boolean.valueOf(world.isNetherWorld()).toString(), "Is this a nether world? BE SURE TO HAVE THIS RIGHT!");
-            createConfigNode(eventWriter, "autoconnectWorld", "boolean", Boolean.valueOf(world.isAutoconnectWorld()).toString(), "Does this world automatically get loaded at server start? Non connected worlds can be loaded in game as needed.");
-            createConfigNode(eventWriter, "allowHostiles", "boolean", Boolean.valueOf(world.isAllowHostiles()).toString(), "Are hostiles allowed on this world?");
-            createConfigNode(eventWriter, "allowNeutrals", "boolean", Boolean.valueOf(world.isAllowNeutrals()).toString(), "Are neutrals allowed on this world?");
-            createConfigNode(eventWriter, "allowPlayerDamage", "boolean", Boolean.valueOf(world.isAllowPlayerDamage()).toString(), "Can players take damage on this world?");
-            createConfigNode(eventWriter, "allowPlayerDrown", "boolean", Boolean.valueOf(world.isAllowPlayerDrown()).toString(), "Can players drown on this world?");
-            createConfigNode(eventWriter, "allowPvP", "boolean", Boolean.valueOf(world.isAllowPvP()).toString(), "Does this world allow PvP?");
-            createConfigNode(eventWriter, "allowPlayerLavaDamage", "boolean", Boolean.valueOf(world.isAllowPlayerLavaDamage()).toString(), "Do players take lava damage on this world?");
-            createConfigNode(eventWriter, "allowPlayerFallDamage", "boolean", Boolean.valueOf(world.isAllowPlayerFallDamage()).toString(), "Do players take fall damage on this world?");
-            createConfigNode(eventWriter, "allowPlayerLightningDamage", "boolean", Boolean.valueOf(world.isAllowPlayerLightningDamage()).toString(), "Do players take damage from lightning on this world?");
-            createConfigNode(eventWriter, "allowPlayerFireDamage", "boolean", Boolean.valueOf(world.isAllowPlayerFireDamage()).toString(), "Do players take fire damage on this world?");
-            createConfigNode(eventWriter, "allowFireSpread", "boolean", Boolean.valueOf(world.isAllowFireSpread()).toString(), "Is fire spread allowed on this world?");
-            createConfigNode(eventWriter, "allowLavaFire", "boolean", Boolean.valueOf(world.isAllowLavaFire()).toString(), "Is lava fire allowed on this world?");
-            createConfigNode(eventWriter, "allowLavaSpread", "boolean", Boolean.valueOf(world.isAllowLavaSpread()).toString(), "Is lava spread allowed on this world?");
-            createConfigNode(eventWriter, "allowWaterSpread", "boolean", Boolean.valueOf(world.isAllowWaterSpread()).toString(), "Does water spread happen on this world?");
-            createConfigNode(eventWriter, "allowLightningFire", "boolean", Boolean.valueOf(world.isAllowLightningFire()).toString(), "Is lightning fire allowed on this world?");
-            createConfigNode(eventWriter, "timeLockType", "TimeType", world.getTimeLockType().toString(), "What time lock type this world has enabled. DAY, NIGHT, NONE. Anything else becomes NONE.");
-            createConfigNode(eventWriter, "weatherLockType", "WeatherType", world.getWeatherLockType().toString(), "What weather lock type this world has enabled. CLEAR, RAIN, STORM, NONE. Anything else becomes NONE.");
-            createConfigNode(eventWriter, "worldCustomSpawn", "int[]", world.getWorldCustomSpawn()[0] + "|" + world.getWorldCustomSpawn()[1] + "|" + world.getWorldCustomSpawn()[2], "World custom spawn location in X|Y|Z ints.");
-            createConfigNode(eventWriter, "worldSeed", "long", Long.valueOf(world.getWorldSeed()).toString(), "The seed used when this world was generated. Can be used to generate a new world with the exact same terrain.");
-            createHeaderFooter(eventWriter, false);
-            eventWriter.close();
+        createConfigNode(eventWriter, "worldOwner", "String", world.getWorldOwner(), "The owner of this world. Can be any player. Factors into permissions and iConomy support.");
+        createConfigNode(eventWriter, "netherWorld", "boolean", Boolean.valueOf(world.isNetherWorld()).toString(), "Is this a nether world? BE SURE TO HAVE THIS RIGHT!");
+        createConfigNode(eventWriter, "autoconnectWorld", "boolean", Boolean.valueOf(world.isAutoconnectWorld()).toString(), "Does this world automatically get loaded at server start? Non connected worlds can be loaded in game as needed.");
+        createConfigNode(eventWriter, "allowHostiles", "boolean", Boolean.valueOf(world.isAllowHostiles()).toString(), "Are hostiles allowed on this world?");
+        createConfigNode(eventWriter, "allowNeutrals", "boolean", Boolean.valueOf(world.isAllowNeutrals()).toString(), "Are neutrals allowed on this world?");
+        createConfigNode(eventWriter, "allowPlayerDamage", "boolean", Boolean.valueOf(world.isAllowPlayerDamage()).toString(), "Can players take damage on this world?");
+        createConfigNode(eventWriter, "allowPlayerDrown", "boolean", Boolean.valueOf(world.isAllowPlayerDrown()).toString(), "Can players drown on this world?");
+        createConfigNode(eventWriter, "allowPvP", "boolean", Boolean.valueOf(world.isAllowPvP()).toString(), "Does this world allow PvP?");
+        createConfigNode(eventWriter, "allowPlayerLavaDamage", "boolean", Boolean.valueOf(world.isAllowPlayerLavaDamage()).toString(), "Do players take lava damage on this world?");
+        createConfigNode(eventWriter, "allowPlayerFallDamage", "boolean", Boolean.valueOf(world.isAllowPlayerFallDamage()).toString(), "Do players take fall damage on this world?");
+        createConfigNode(eventWriter, "allowPlayerLightningDamage", "boolean", Boolean.valueOf(world.isAllowPlayerLightningDamage()).toString(), "Do players take damage from lightning on this world?");
+        createConfigNode(eventWriter, "allowPlayerFireDamage", "boolean", Boolean.valueOf(world.isAllowPlayerFireDamage()).toString(), "Do players take fire damage on this world?");
+        createConfigNode(eventWriter, "allowFireSpread", "boolean", Boolean.valueOf(world.isAllowFireSpread()).toString(), "Is fire spread allowed on this world?");
+        createConfigNode(eventWriter, "allowLavaFire", "boolean", Boolean.valueOf(world.isAllowLavaFire()).toString(), "Is lava fire allowed on this world?");
+        createConfigNode(eventWriter, "allowLavaSpread", "boolean", Boolean.valueOf(world.isAllowLavaSpread()).toString(), "Is lava spread allowed on this world?");
+        createConfigNode(eventWriter, "allowWaterSpread", "boolean", Boolean.valueOf(world.isAllowWaterSpread()).toString(), "Does water spread happen on this world?");
+        createConfigNode(eventWriter, "allowLightningFire", "boolean", Boolean.valueOf(world.isAllowLightningFire()).toString(), "Is lightning fire allowed on this world?");
+        createConfigNode(eventWriter, "timeLockType", "TimeType", world.getTimeLockType().toString(), "What time lock type this world has enabled. DAY, NIGHT, NONE. Anything else becomes NONE.");
+        createConfigNode(eventWriter, "weatherLockType", "WeatherType", world.getWeatherLockType().toString(), "What weather lock type this world has enabled. CLEAR, RAIN, STORM, NONE. Anything else becomes NONE.");
+        createConfigNode(eventWriter, "worldCustomSpawn", "int[]", world.getWorldCustomSpawn()[0] + "|" + world.getWorldCustomSpawn()[1] + "|" + world.getWorldCustomSpawn()[2], "World custom spawn location in X|Y|Z ints.");
+        createConfigNode(eventWriter, "worldSeed", "long", Long.valueOf(world.getWorldSeed()).toString(), "The seed used when this world was generated. Can be used to generate a new world with the exact same terrain.");
+        createHeaderFooter(eventWriter, false);
+        eventWriter.close();
     }
-    
-    private static void createHeaderFooter(XMLEventWriter eventWriter, boolean header) throws XMLStreamException {
-        final XMLEventFactory eventFactory = XMLEventFactory.newFactory();
-        final XMLEvent end = eventFactory.createDTD("\n");
-        if (header) {
-            eventWriter.add(eventFactory.createStartDocument());
-            eventWriter.add(end);
-            eventWriter.add(eventFactory.createStartElement("", "", "WormholeXTremeWorlds"));
-            eventWriter.add(end);
-        }
-        else {
-            eventWriter.add(eventFactory.createEndElement("", "", "WormholeXTremeWorlds"));
-            eventWriter.add(end);
-            eventWriter.add(eventFactory.createEndDocument());
-            
-        }
-    }
-    
+
     /**
      * Save xml config.
      * 
@@ -704,7 +705,7 @@ public class XMLConfig {
             int i = 0;
             for (final ServerOptionKeys key : list) {
                 final ServerOption o = ConfigManager.serverOptions.get(key);
-                if (o != null && o.getOptionKey() != null && o.getOptionDescription() != null && o.getOptionType() != null && o.getOptionValue() != null ) {
+                if ((o != null) && (o.getOptionKey() != null) && (o.getOptionDescription() != null) && (o.getOptionType() != null) && (o.getOptionValue() != null)) {
                     optionArray[i] = new ServerOption(o.getOptionKey(), o.getOptionDescription(), o.getOptionType(), o.getOptionValue());
                     i++;
                 }

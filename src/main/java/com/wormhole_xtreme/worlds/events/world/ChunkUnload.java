@@ -40,7 +40,7 @@ class ChunkUnload {
     static boolean handleChunkUnload(final Chunk chunk) {
         if (WorldManager.isWormholeWorld(chunk.getWorld().getName())) {
             final WormholeWorld wormholeWorld = WorldManager.getWorld(chunk.getWorld().getName());
-            return wormholeWorld.isStickyChunk(chunk);
+            return wormholeWorld.isWorldStickyChunk(chunk);
         }
         return false;
     }

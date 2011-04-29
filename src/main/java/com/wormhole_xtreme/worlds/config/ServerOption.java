@@ -39,7 +39,6 @@ class ServerOption {
     /** The option value. */
     private Object optionValue;
 
-
     /**
      * Instantiates a new option.
      * 

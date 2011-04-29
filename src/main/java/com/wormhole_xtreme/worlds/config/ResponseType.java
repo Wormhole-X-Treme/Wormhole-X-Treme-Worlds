@@ -43,7 +43,7 @@ public enum ResponseType {
 
     /** The WORLD DOES NOT EXIST ERROR message. */
     ERROR_WORLD_NOT_EXIST(ERROR_HEADER.toString() + "World does not exist or is not loaded: "),
-    
+
     /** The WORLD ALLREADY EXISTS ERROR message. */
     ERROR_WORLD_ALLREADY_EXISTS(ERROR_HEADER.toString() + "World allready exists: "),
 
@@ -52,14 +52,14 @@ public enum ResponseType {
 
     /** The NO ARGS GIVEN ERROR message. */
     ERROR_NO_ARGS_GIVEN(ERROR_HEADER.toString() + "Command specified requires arguments: "),
-    
+
     NORMAL_MODIFY_COMMAND_ARGS1(NORMAL_HEADER.toString() + "\u00A75Req\u00A77: -name <world> \u00A75Opt\u00A77: -owner <player>,"),
     NORMAL_MODIFY_COMMAND_ARGS2(NORMAL_HEADER.toString() + "-time [day|night|\u00A76none\u00A77], -(no)\u00A76autoload\u00A77, -(no)\u00A76lavaspread\u00A77,"),
     NORMAL_MODIFY_COMMAND_ARGS3(NORMAL_HEADER.toString() + "-(no)\u00A76neutrals\u00A77, -(no)\u00A76firespread\u00A77, -(no)\u00A76lavafire\u00A77, -(no)\u00A76hostiles\u00A77,"),
     NORMAL_MODIFY_COMMAND_ARGS4(NORMAL_HEADER.toString() + "-(no)\u00A76waterspread\u00A77, -(no)\u00A76lightningfire\u00A77, -(no)\u00A76lightningdamage\u00A77,"),
     NORMAL_MODIFY_COMMAND_ARGS5(NORMAL_HEADER.toString() + "-(no)\u00A76damage\u00A77, -(no)\u00A76drown\u00A77, -(no)\u00A76pvp\u00A77, -(no)\u00A76lavadamage\u00A77,"),
     NORMAL_MODIFY_COMMAND_ARGS6(NORMAL_HEADER.toString() + "-(no)\u00A76falldamage\u00A77, -(no)\u00A76firedamage\u00A77, -weather [clear|rain|storm|\u00A76none\u00A77]"),
-    
+
     NORMAL_CREATE_COMMAND_ARGS1(NORMAL_HEADER.toString() + "\u00A75Req\u00A77: -name <world> \u00A75Opt\u00A77: -owner <player>, -seed <num>,"),
     NORMAL_CREATE_COMMAND_ARGS2(NORMAL_HEADER.toString() + "-night, -day, -noautoload, -nolavaspread, -nodrown,"),
     NORMAL_CREATE_COMMAND_ARGS3(NORMAL_HEADER.toString() + "-noneutrals, -nofirespread, -nolavafire, -nohostiles, -nopvp,"),
@@ -78,7 +78,7 @@ public enum ResponseType {
 
     /** The COMMAND ONLY AVAILABLE ON MANAGED WORLDS message. */
     ERROR_COMMAND_ONLY_MANAGED_WORLD(ERROR_HEADER.toString() + "Command only available on managed worlds: "),
-    
+
     ERROR_PVP_NOT_ALLOWED(ERROR_HEADER.toString() + "PvP \u00A74NOT" + FOOTER.toString() + " allowed on this world: ");
 
     /** The response string. */

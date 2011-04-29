@@ -27,11 +27,13 @@ import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
 /**
- * @author alron
+ * The Class WorldHandler.
  * 
+ * @author alron
  */
 public class WorldHandler {
 
+    /** The Constant thisPlugin. */
     private static final WormholeXTremeWorlds thisPlugin = WormholeXTremeWorlds.getThisPlugin();
 
     /**
@@ -66,6 +68,24 @@ public class WorldHandler {
                     return WorldManager.addWorld(wormholeWorld);
                 }
             }
+        }
+        return false;
+    }
+
+    /**
+     * Load world.
+     * 
+     * @param worldName
+     *            the world name
+     * @return true, if successful
+     */
+    public boolean loadWorld(final String worldName) {
+        if (WorldManager.isWormholeWorld(worldName)) {
+            final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
+            if ( !wormholeWorld.isWorldLoaded()) {
+                WorldManager.loadWorld(wormholeWorld);
+            }
+            return true;
         }
         return false;
     }

@@ -544,11 +544,11 @@ public class WorldManager {
     }
 
     /**
-     * Gets the world.
+     * Gets the wormholeWorld.
      * 
      * @param worldName
      *            the world name
-     * @return the world
+     * @return the wormholeWorld
      */
     public static WormholeWorld getWorld(final String worldName) {
         return worldList.get(worldName);

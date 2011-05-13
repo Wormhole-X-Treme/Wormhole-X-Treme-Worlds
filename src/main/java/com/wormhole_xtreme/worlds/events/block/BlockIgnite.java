@@ -47,11 +47,11 @@ class BlockIgnite {
             if (igniteCause != null) {
                 switch (igniteCause) {
                     case LAVA :
-                        return wormholeWorld.isAllowLavaFire() ? false : true;
+                        return wormholeWorld.isAllowWorldLavaFire() ? false : true;
                     case SPREAD :
-                        return wormholeWorld.isAllowFireSpread() ? false : true;
+                        return wormholeWorld.isAllowWorldFireSpread() ? false : true;
                     case LIGHTNING :
-                        return wormholeWorld.isAllowLightningFire() ? false : true;
+                        return wormholeWorld.isAllowWorldLightningFire() ? false : true;
                     case FLINT_AND_STEEL :
                         return wormholeWorld.isAllowPlayerFireStart() ? false : true;
                     default :

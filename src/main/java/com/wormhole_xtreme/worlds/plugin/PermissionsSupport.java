@@ -61,8 +61,8 @@ public class PermissionsSupport {
                 final Plugin test = pluginManager.getPlugin("Permissions");
                 if (test != null) {
                     final String version = test.getDescription().getVersion();
-                    if ( !version.startsWith("2.5") && !version.startsWith("2.6") && !version.startsWith("2.7")) {
-                        thisPlugin.prettyLog(Level.WARNING, false, "Not a supported version of Permissions. Recommended is 2.7.x");
+                    if ( !version.startsWith("2.5") && !version.startsWith("2.6") && !version.startsWith("2.7") && !version.startsWith("3.0")) {
+                        thisPlugin.prettyLog(Level.WARNING, false, "Not a supported version of Permissions. Recommended is 3.0.x");
                     }
                     try {
                         PluginSupport.setPermissionHandler(((Permissions) test).getHandler());

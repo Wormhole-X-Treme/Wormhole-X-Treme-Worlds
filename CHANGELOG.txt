@@ -1,3 +1,5 @@
+v0.5 :
+
 v0.4 2011.04.24 09:20 PST:
 
 - Initial sticky chunk support. We allow plugins to register chunks that do not unload. When the chunk is no longer

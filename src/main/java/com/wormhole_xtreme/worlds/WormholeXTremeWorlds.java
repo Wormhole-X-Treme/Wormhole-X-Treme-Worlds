@@ -192,7 +192,7 @@ public class WormholeXTremeWorlds extends JavaPlugin {
         setThisPlugin(this);
         setThisLogger(getThisPlugin().getServer().getLogger());
         setScheduler(getThisPlugin().getServer().getScheduler());
-        prettyLog(Level.INFO, true, getThisPlugin().getDescription().getAuthors().toString() + "Load Beginning.");
+        prettyLog(Level.INFO, true, "Load Beginning.");
         XMLConfig.loadXmlConfig(getThisPlugin().getDescription());
         final int loaded = WorldManager.loadAutoconnectWorlds();
         if (loaded > 0) {
@@ -220,10 +220,10 @@ public class WormholeXTremeWorlds extends JavaPlugin {
         String prettyLogLine = prettyName;
         if (version) {
             prettyLogLine += prettyVersion;
-            getThisLogger().log(severity, prettyLogLine + message);
+            getThisLogger().log(severity, prettyLogLine + " " + message);
         }
         else {
-            getThisLogger().log(severity, prettyLogLine + message);
+            getThisLogger().log(severity, prettyLogLine + " " + message);
         }
     }
 }

@@ -44,7 +44,7 @@ class CreatureSpawn {
     static boolean handleCreatureSpawn(final Entity entity) {
         if ((entity != null) && WorldManager.isWormholeWorld(entity.getWorld().getName())) {
             final WormholeWorld wormholeWorld = WorldManager.getWorld(entity.getWorld().getName());
-            if (( !wormholeWorld.isAllowHostiles() && ((entity instanceof Monster) || (entity instanceof Flying))) || ( !wormholeWorld.isAllowNeutrals() && ((entity instanceof Animals) || (entity instanceof WaterMob)))) {
+            if (( !wormholeWorld.isAllowWorldSpawnHostiles() && ((entity instanceof Monster) || (entity instanceof Flying))) || ( !wormholeWorld.isAllowWorldSpawnNeutrals() && ((entity instanceof Animals) || (entity instanceof WaterMob)))) {
                 return true;
             }
         }

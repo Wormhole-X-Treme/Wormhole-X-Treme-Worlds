@@ -47,10 +47,10 @@ class BlockFromTo {
                 switch (blockType) {
                     case WATER :
                     case STATIONARY_WATER :
-                        return wormholeWorld.isAllowWaterSpread() ? false : true;
+                        return wormholeWorld.isAllowWorldWaterSpread() ? false : true;
                     case LAVA :
                     case STATIONARY_LAVA :
-                        return wormholeWorld.isAllowLavaSpread() ? false : true;
+                        return wormholeWorld.isAllowWorldLavaSpread() ? false : true;
                     default :
                         break;
                 }

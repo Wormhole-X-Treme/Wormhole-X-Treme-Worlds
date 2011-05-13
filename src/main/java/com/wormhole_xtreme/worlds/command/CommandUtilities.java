@@ -24,11 +24,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
-import com.wormhole_xtreme.worlds.config.ConfigManager;
-import com.wormhole_xtreme.worlds.config.ResponseType;
-import com.wormhole_xtreme.worlds.permissions.PermissionType;
-import com.wormhole_xtreme.worlds.world.WorldManager;
-import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
 /**
  * The Class CommandUtilities.
@@ -181,29 +176,6 @@ public class CommandUtilities {
     }
 
     /**
-     * Do spawn world.
-     * 
-     * @param player
-     *            the player
-     * @return true, if successful
-     */
-    static boolean doSpawnWorld(final Player player) {
-        if (PermissionType.SPAWN.checkPermission(player)) {
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(player.getWorld().getName());
-            if (wormholeWorld != null) {
-                player.teleport(WorldManager.getSafeSpawnLocation(wormholeWorld, player));
-            }
-            else {
-                player.sendMessage(ResponseType.ERROR_COMMAND_ONLY_MANAGED_WORLD.toString() + "spawn");
-            }
-        }
-        else {
-            player.sendMessage(ResponseType.ERROR_PERMISSION_NO.toString());
-        }
-        return true;
-    }
-
-    /**
      * Player check.
      * 
      * @param sender
@@ -224,8 +196,5 @@ public class CommandUtilities {
      */
     public static void registerCommands() {
         thisPlugin.getCommand("wxw").setExecutor(new Wxw());
-        if (ConfigManager.getServerOptionSpawnCommand()) {
-            thisPlugin.getCommand("spawn").setExecutor(new Spawn());
-        }
     }
 }

@@ -21,8 +21,12 @@ package com.wormhole_xtreme.worlds.handler;
 import java.util.logging.Level;
 
 import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
+import com.wormhole_xtreme.worlds.config.ResponseType;
+import com.wormhole_xtreme.worlds.permissions.PermissionType;
 import com.wormhole_xtreme.worlds.world.WorldManager;
 import com.wormhole_xtreme.worlds.world.WormholeWorld;
 
@@ -73,6 +77,19 @@ public class WorldHandler {
     }
 
     /**
+     * Gets the player respawn location.
+     * 
+     * @param player
+     *            the player
+     * @return the player respawn location
+     */
+    public Location getPlayerRespawnLocation(final Player player) {
+        final String worldName = player.getWorld().getName();
+        return WorldManager.isWormholeWorld(worldName)
+            ? WorldManager.getSafeSpawnLocation(WorldManager.getWorld(worldName), player) : null;
+    }
+
+    /**
      * Load world.
      * 
      * @param worldName
@@ -116,4 +133,59 @@ public class WorldHandler {
         }
         return false;
     }
+
+    /**
+     * Spawn player.
+     * 
+     * @param player
+     *            the player
+     * @return true, if successful
+     */
+    public boolean spawnPlayer(final Player player) {
+        return spawnPlayer(player, null, true);
+    }
+
+    /**
+     * Spawn player.
+     * 
+     * @param player
+     *            the player
+     * @param permissionCheck
+     *            the permission check
+     * @return true, if successful
+     */
+    public boolean spawnPlayer(final Player player, final boolean permissionCheck) { // NO_UCD
+        return spawnPlayer(player, null, permissionCheck);
+    }
+
+    /**
+     * Spawn player.
+     * 
+     * @param player
+     *            the player
+     * @param worldName
+     *            the world name
+     * @param permissionCheck
+     *            the permission check
+     * @return true, if successful
+     */
+    public boolean spawnPlayer(final Player player, final String worldName, final boolean permissionCheck) { // NO_UCD
+        if (player != null) {
+            if (permissionCheck && !PermissionType.SPAWN.checkPermission(player)) {
+                player.sendMessage(ResponseType.ERROR_PERMISSION_NO.toString());
+            }
+            else {
+                final WormholeWorld wormholeWorld = worldName != null ? WorldManager.getWorld(worldName)
+                    : WorldManager.getWorldFromPlayer(player);
+                if (wormholeWorld != null) {
+                    return player.teleport(WorldManager.getSafeSpawnLocation(wormholeWorld, player));
+                }
+                else {
+                    player.sendMessage(ResponseType.ERROR_COMMAND_ONLY_MANAGED_WORLD.toString());
+                }
+            }
+        }
+        return false;
+    }
+
 }

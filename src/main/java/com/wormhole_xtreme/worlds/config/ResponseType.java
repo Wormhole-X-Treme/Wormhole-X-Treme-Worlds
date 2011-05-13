@@ -77,7 +77,7 @@ public enum ResponseType {
     ERROR_COMMAND_REQUIRES_OWNER_ON_CONSOLE(ERROR_HEADER.toString() + "Command requires an owner to be specified when called from console: "),
 
     /** The COMMAND ONLY AVAILABLE ON MANAGED WORLDS message. */
-    ERROR_COMMAND_ONLY_MANAGED_WORLD(ERROR_HEADER.toString() + "Command only available on managed worlds: "),
+    ERROR_COMMAND_ONLY_MANAGED_WORLD(ERROR_HEADER.toString() + "Command only available on managed worlds."),
 
     ERROR_PVP_NOT_ALLOWED(ERROR_HEADER.toString() + "PvP \u00A74NOT" + FOOTER.toString() + " allowed on this world: ");
 

@@ -25,7 +25,6 @@ import org.bukkit.plugin.PluginManager;
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.events.block.BlockEventHandler;
 import com.wormhole_xtreme.worlds.events.entity.EntityEventHandler;
-import com.wormhole_xtreme.worlds.events.player.PlayerEventHandler;
 import com.wormhole_xtreme.worlds.events.server.ServerEventHandler;
 import com.wormhole_xtreme.worlds.events.weather.WeatherEventHandler;
 import com.wormhole_xtreme.worlds.events.world.WorldEventHandler;
@@ -48,9 +47,6 @@ public class EventUtilities {
 
     /** The Constant entityEventHandler. */
     private static final EntityEventHandler entityEventHandler = new EntityEventHandler();
-
-    /** The Constant playerEventHandler. */
-    private static final PlayerEventHandler playerEventHandler = new PlayerEventHandler();
 
     /** The Constant serverEventHandler. */
     private static final ServerEventHandler serverEventHandler = new ServerEventHandler();
@@ -76,8 +72,6 @@ public class EventUtilities {
         pluginManager.registerEvent(Event.Type.BLOCK_FROMTO, blockEventHandler, Priority.Lowest, thisPlugin);
         pluginManager.registerEvent(Event.Type.BLOCK_IGNITE, blockEventHandler, Priority.Lowest, thisPlugin);
         pluginManager.registerEvent(Event.Type.BLOCK_BURN, blockEventHandler, Priority.Lowest, thisPlugin);
-
-        pluginManager.registerEvent(Event.Type.PLAYER_RESPAWN, playerEventHandler, Priority.Lowest, thisPlugin);
 
         pluginManager.registerEvent(Event.Type.CREATURE_SPAWN, entityEventHandler, Priority.Lowest, thisPlugin);
         pluginManager.registerEvent(Event.Type.ENTITY_DAMAGE, entityEventHandler, Priority.Lowest, thisPlugin);

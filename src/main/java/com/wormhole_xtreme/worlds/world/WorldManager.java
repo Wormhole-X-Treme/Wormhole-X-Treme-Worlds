@@ -197,11 +197,11 @@ public class WorldManager {
      */
     public static int clearWorldCreatures(final WormholeWorld wormholeWorld) {
         int cleared = 0;
-        if ( !wormholeWorld.isAllowHostiles() || !wormholeWorld.isAllowNeutrals()) {
+        if ( !wormholeWorld.isAllowWorldSpawnHostiles() || !wormholeWorld.isAllowWorldSpawnNeutrals()) {
             final List<LivingEntity> entityList = wormholeWorld.getThisWorld().getLivingEntities();
 
             for (final LivingEntity entity : entityList) {
-                if (( !wormholeWorld.isAllowHostiles() && ((entity instanceof Monster) || (entity instanceof Flying))) || ( !wormholeWorld.isAllowNeutrals() && ((entity instanceof Animals) || (entity instanceof WaterMob)))) {
+                if (( !wormholeWorld.isAllowWorldSpawnHostiles() && ((entity instanceof Monster) || (entity instanceof Flying))) || ( !wormholeWorld.isAllowWorldSpawnNeutrals() && ((entity instanceof Animals) || (entity instanceof WaterMob)))) {
                     thisPlugin.prettyLog(Level.FINE, false, "Removed entity: " + entity);
                     entity.remove();
                     cleared++;
@@ -258,6 +258,7 @@ public class WorldManager {
             wormholeWorld.setWorldCustomSpawn(tempSpawn);
             clearWorldCreatures(wormholeWorld);
             setWorldWeather(wormholeWorld);
+            setWorldPvP(wormholeWorld);
             return addWorld(wormholeWorld);
         }
         return false;
@@ -288,10 +289,10 @@ public class WorldManager {
                             wormholeWorld.setNetherWorld(true);
                             break;
                         case worldOptionNoHostiles :
-                            wormholeWorld.setAllowHostiles(false);
+                            wormholeWorld.setAllowWorldSpawnHostiles(false);
                             break;
                         case worldOptionNoNeutrals :
-                            wormholeWorld.setAllowNeutrals(false);
+                            wormholeWorld.setAllowWorldSpawnNeutrals(false);
                             break;
                         case worldOptionNoPvP :
                             wormholeWorld.setAllowPvP(false);
@@ -318,22 +319,22 @@ public class WorldManager {
                             wormholeWorld.setWeatherLockType(WeatherLockType.STORM);
                             break;
                         case worldOptionNoLavaSpread :
-                            wormholeWorld.setAllowLavaSpread(false);
+                            wormholeWorld.setAllowWorldLavaSpread(false);
                             break;
                         case worldOptionNoPlayerDrown :
                             wormholeWorld.setAllowPlayerDrown(false);
                             break;
                         case worldOptionNoFireSpread :
-                            wormholeWorld.setAllowFireSpread(false);
+                            wormholeWorld.setAllowWorldFireSpread(false);
                             break;
                         case worldOptionNoLavaFire :
-                            wormholeWorld.setAllowLavaFire(false);
+                            wormholeWorld.setAllowWorldLavaFire(false);
                             break;
                         case worldOptionNoWaterSpread :
-                            wormholeWorld.setAllowWaterSpread(false);
+                            wormholeWorld.setAllowWorldWaterSpread(false);
                             break;
                         case worldOptionNoLightningFire :
-                            wormholeWorld.setAllowLightningFire(false);
+                            wormholeWorld.setAllowWorldLightningFire(false);
                             break;
                         case worldOptionNoPlayerLightningDamage :
                             wormholeWorld.setAllowPlayerLightningDamage(false);
@@ -627,6 +628,7 @@ public class WorldManager {
                     thisPlugin.prettyLog(Level.INFO, false, "Cleared \"" + c + "\" creature entities on world \"" + wormholeWorld.getWorldName() + "\"");
                 }
                 setWorldWeather(wormholeWorld);
+                setWorldPvP(wormholeWorld);
                 return true;
             }
         }
@@ -690,6 +692,18 @@ public class WorldManager {
         if (world != null) {
             XMLConfig.deleteXmlWorldConfig(world.getWorldName());
             worldList.remove(world.getWorldName());
+        }
+    }
+
+    /**
+     * Sets the world pv p.
+     * 
+     * @param wormholeWorld
+     *            the new world pv p
+     */
+    public static void setWorldPvP(final WormholeWorld wormholeWorld) {
+        if (wormholeWorld.isWorldLoaded()) {
+            wormholeWorld.getThisWorld().setPVP(wormholeWorld.isAllowPvP());
         }
     }
 

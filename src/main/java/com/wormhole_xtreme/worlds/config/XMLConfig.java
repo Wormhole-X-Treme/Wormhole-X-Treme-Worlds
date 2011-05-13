@@ -462,10 +462,10 @@ public class XMLConfig {
             };
             world.setWorldCustomSpawn(wcs);
             if ( !allowHostiles) {
-                world.setAllowHostiles(allowHostiles);
+                world.setAllowWorldSpawnHostiles(allowHostiles);
             }
             if ( !allowNeutrals) {
-                world.setAllowNeutrals(allowNeutrals);
+                world.setAllowWorldSpawnNeutrals(allowNeutrals);
             }
             if (netherWorld) {
                 world.setNetherWorld(netherWorld);
@@ -495,19 +495,19 @@ public class XMLConfig {
                 world.setAllowPlayerFireDamage(allowPlayerFireDamage);
             }
             if ( !allowFireSpread) {
-                world.setAllowFireSpread(allowFireSpread);
+                world.setAllowWorldFireSpread(allowFireSpread);
             }
             if ( !allowLavaFire) {
-                world.setAllowLavaFire(allowLavaFire);
+                world.setAllowWorldLavaFire(allowLavaFire);
             }
             if ( !allowLavaSpread) {
-                world.setAllowLavaSpread(allowLavaSpread);
+                world.setAllowWorldLavaSpread(allowLavaSpread);
             }
             if ( !allowWaterSpread) {
-                world.setAllowWaterSpread(allowWaterSpread);
+                world.setAllowWorldWaterSpread(allowWaterSpread);
             }
             if ( !allowLightningFire) {
-                world.setAllowLightningFire(allowLightningFire);
+                world.setAllowWorldLightningFire(allowLightningFire);
             }
             if (worldSeed != 0) {
                 world.setWorldSeed(worldSeed);
@@ -587,8 +587,8 @@ public class XMLConfig {
         createConfigNode(eventWriter, "worldOwner", "String", world.getWorldOwner(), "The owner of this world. Can be any player. Factors into permissions and iConomy support.");
         createConfigNode(eventWriter, "netherWorld", "boolean", Boolean.valueOf(world.isNetherWorld()).toString(), "Is this a nether world? BE SURE TO HAVE THIS RIGHT!");
         createConfigNode(eventWriter, "autoconnectWorld", "boolean", Boolean.valueOf(world.isAutoconnectWorld()).toString(), "Does this world automatically get loaded at server start? Non connected worlds can be loaded in game as needed.");
-        createConfigNode(eventWriter, "allowHostiles", "boolean", Boolean.valueOf(world.isAllowHostiles()).toString(), "Are hostiles allowed on this world?");
-        createConfigNode(eventWriter, "allowNeutrals", "boolean", Boolean.valueOf(world.isAllowNeutrals()).toString(), "Are neutrals allowed on this world?");
+        createConfigNode(eventWriter, "allowHostiles", "boolean", Boolean.valueOf(world.isAllowWorldSpawnHostiles()).toString(), "Are hostiles allowed on this world?");
+        createConfigNode(eventWriter, "allowNeutrals", "boolean", Boolean.valueOf(world.isAllowWorldSpawnNeutrals()).toString(), "Are neutrals allowed on this world?");
         createConfigNode(eventWriter, "allowPlayerDamage", "boolean", Boolean.valueOf(world.isAllowPlayerDamage()).toString(), "Can players take damage on this world?");
         createConfigNode(eventWriter, "allowPlayerDrown", "boolean", Boolean.valueOf(world.isAllowPlayerDrown()).toString(), "Can players drown on this world?");
         createConfigNode(eventWriter, "allowPvP", "boolean", Boolean.valueOf(world.isAllowPvP()).toString(), "Does this world allow PvP?");
@@ -596,11 +596,11 @@ public class XMLConfig {
         createConfigNode(eventWriter, "allowPlayerFallDamage", "boolean", Boolean.valueOf(world.isAllowPlayerFallDamage()).toString(), "Do players take fall damage on this world?");
         createConfigNode(eventWriter, "allowPlayerLightningDamage", "boolean", Boolean.valueOf(world.isAllowPlayerLightningDamage()).toString(), "Do players take damage from lightning on this world?");
         createConfigNode(eventWriter, "allowPlayerFireDamage", "boolean", Boolean.valueOf(world.isAllowPlayerFireDamage()).toString(), "Do players take fire damage on this world?");
-        createConfigNode(eventWriter, "allowFireSpread", "boolean", Boolean.valueOf(world.isAllowFireSpread()).toString(), "Is fire spread allowed on this world?");
-        createConfigNode(eventWriter, "allowLavaFire", "boolean", Boolean.valueOf(world.isAllowLavaFire()).toString(), "Is lava fire allowed on this world?");
-        createConfigNode(eventWriter, "allowLavaSpread", "boolean", Boolean.valueOf(world.isAllowLavaSpread()).toString(), "Is lava spread allowed on this world?");
-        createConfigNode(eventWriter, "allowWaterSpread", "boolean", Boolean.valueOf(world.isAllowWaterSpread()).toString(), "Does water spread happen on this world?");
-        createConfigNode(eventWriter, "allowLightningFire", "boolean", Boolean.valueOf(world.isAllowLightningFire()).toString(), "Is lightning fire allowed on this world?");
+        createConfigNode(eventWriter, "allowFireSpread", "boolean", Boolean.valueOf(world.isAllowWorldFireSpread()).toString(), "Is fire spread allowed on this world?");
+        createConfigNode(eventWriter, "allowLavaFire", "boolean", Boolean.valueOf(world.isAllowWorldLavaFire()).toString(), "Is lava fire allowed on this world?");
+        createConfigNode(eventWriter, "allowLavaSpread", "boolean", Boolean.valueOf(world.isAllowWorldLavaSpread()).toString(), "Is lava spread allowed on this world?");
+        createConfigNode(eventWriter, "allowWaterSpread", "boolean", Boolean.valueOf(world.isAllowWorldWaterSpread()).toString(), "Does water spread happen on this world?");
+        createConfigNode(eventWriter, "allowLightningFire", "boolean", Boolean.valueOf(world.isAllowWorldLightningFire()).toString(), "Is lightning fire allowed on this world?");
         createConfigNode(eventWriter, "timeLockType", "TimeType", world.getTimeLockType().toString(), "What time lock type this world has enabled. DAY, NIGHT, NONE. Anything else becomes NONE.");
         createConfigNode(eventWriter, "weatherLockType", "WeatherType", world.getWeatherLockType().toString(), "What weather lock type this world has enabled. CLEAR, RAIN, STORM, NONE. Anything else becomes NONE.");
         createConfigNode(eventWriter, "worldCustomSpawn", "int[]", world.getWorldCustomSpawn()[0] + "|" + world.getWorldCustomSpawn()[1] + "|" + world.getWorldCustomSpawn()[2], "World custom spawn location in X|Y|Z ints.");

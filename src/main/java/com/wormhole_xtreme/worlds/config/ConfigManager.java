@@ -32,17 +32,14 @@ public class ConfigManager {
      */
     enum ServerOptionKeys {
 
-        /** The server option permissions. */
-        serverOptionPermissions,
+        /** The server option help. */
+        serverOptionHelp,
 
         /** The server option ops bypass permissions. */
         serverOptionOpsBypassPermissions,
 
-        /** The server option help. */
-        serverOptionHelp,
-
-        /** The server option spawn command. */
-        serverOptionSpawnCommand,
+        /** The server option permissions. */
+        serverOptionPermissions,
 
         /** The server option timelock. */
         serverOptionTimelock
@@ -69,20 +66,53 @@ public class ConfigManager {
         /** The world option nether. */
         worldOptionNether,
 
+        /** The world option no connect. */
+        worldOptionNoConnect,
+
+        /** The world option no fire spread. */
+        worldOptionNoFireSpread,
+
         /** The world option no hostiles. */
         worldOptionNoHostiles,
+
+        /** The world option no lava fire. */
+        worldOptionNoLavaFire,
+
+        /** The world option no lava spread. */
+        worldOptionNoLavaSpread,
+
+        /** The world option no lightning fire. */
+        worldOptionNoLightningFire,
 
         /** The world option no neutrals. */
         worldOptionNoNeutrals,
 
-        /** The world option seed. */
-        worldOptionSeed,
+        /** The world option no player damage. */
+        worldOptionNoPlayerDamage,
 
-        /** The world option no connect. */
-        worldOptionNoConnect,
+        /** The world option no player drown. */
+        worldOptionNoPlayerDrown,
+
+        /** The world option no player fall damage. */
+        worldOptionNoPlayerFallDamage,
+
+        /** The world option no player fire damage. */
+        worldOptionNoPlayerFireDamage,
+
+        /** The world option no player lava damage. */
+        worldOptionNoPlayerLavaDamage,
+
+        /** The world option no player lightning damage. */
+        worldOptionNoPlayerLightningDamage,
 
         /** The world option for no PvP. */
         worldOptionNoPvP,
+
+        /** The world option no water spread. */
+        worldOptionNoWaterSpread,
+
+        /** The world option seed. */
+        worldOptionSeed,
 
         /** The world option to lock time at noon. */
         worldOptionTimeLockDay,
@@ -97,40 +127,7 @@ public class ConfigManager {
         worldOptionWeatherRain,
 
         /** The world option to lock weather stormy. */
-        worldOptionWeatherStorm,
-
-        /** The world option no lava spread. */
-        worldOptionNoLavaSpread,
-
-        /** The world option no player drown. */
-        worldOptionNoPlayerDrown,
-
-        /** The world option no fire spread. */
-        worldOptionNoFireSpread,
-
-        /** The world option no lava fire. */
-        worldOptionNoLavaFire,
-
-        /** The world option no water spread. */
-        worldOptionNoWaterSpread,
-
-        /** The world option no lightning fire. */
-        worldOptionNoLightningFire,
-
-        /** The world option no player lightning damage. */
-        worldOptionNoPlayerLightningDamage,
-
-        /** The world option no player damage. */
-        worldOptionNoPlayerDamage,
-
-        /** The world option no player lava damage. */
-        worldOptionNoPlayerLavaDamage,
-
-        /** The world option no player fall damage. */
-        worldOptionNoPlayerFallDamage,
-
-        /** The world option no player fire damage. */
-        worldOptionNoPlayerFireDamage
+        worldOptionWeatherStorm
     }
 
     /** The Constant options. */
@@ -189,21 +186,6 @@ public class ConfigManager {
         }
         else {
             return true;
-        }
-    }
-
-    /**
-     * Gets the server option spawn command.
-     * 
-     * @return the server option spawn command
-     */
-    public static boolean getServerOptionSpawnCommand() {
-        final ServerOption o = getServerOption(ServerOptionKeys.serverOptionSpawnCommand);
-        if (o != null) {
-            return Boolean.valueOf(o.getOptionValue().toString());
-        }
-        else {
-            return false;
         }
     }
 
@@ -337,16 +319,6 @@ public class ConfigManager {
      */
     public static void setServerOptionPermissions(final boolean b) { // NO_UCD
         ConfigManager.setOptionValue(ServerOptionKeys.serverOptionPermissions, b);
-    }
-
-    /**
-     * Sets the server option spawn command.
-     * 
-     * @param b
-     *            the new server option spawn command
-     */
-    public static void setServerOptionSpawnCommand(final boolean b) { // NO_UCD
-        ConfigManager.setOptionValue(ServerOptionKeys.serverOptionSpawnCommand, b);
     }
 
     /**

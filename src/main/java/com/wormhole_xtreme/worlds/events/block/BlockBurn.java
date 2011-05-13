@@ -41,7 +41,7 @@ class BlockBurn {
         final String worldName = block.getWorld().getName();
         if (WorldManager.isWormholeWorld(worldName)) {
             final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
-            if ( !wormholeWorld.isAllowFireSpread()) {
+            if ( !wormholeWorld.isAllowWorldFireSpread()) {
                 return true;
             }
         }

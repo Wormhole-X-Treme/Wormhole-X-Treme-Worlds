@@ -40,8 +40,8 @@ class BlockBurn {
     static boolean handleBlockBurn(final Block block) {
         final String worldName = block.getWorld().getName();
         if (WorldManager.isWormholeWorld(worldName)) {
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
-            if ( !wormholeWorld.isAllowWorldFireSpread()) {
+            final WormholeWorld wormholeWorld = WorldManager.getWormholeWorld(worldName);
+            if ( !wormholeWorld.isWorldAllowFireSpread() || !wormholeWorld.isWorldAllowFire()) {
                 return true;
             }
         }

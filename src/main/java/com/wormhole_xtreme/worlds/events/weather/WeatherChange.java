@@ -37,9 +37,9 @@ class WeatherChange {
      */
     static boolean handleWeatherChange(final String worldName, final boolean rain) {
         if (WorldManager.isWormholeWorld(worldName)) {
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
-            if (wormholeWorld.isWeatherLock()) {
-                switch (wormholeWorld.getWeatherLockType()) {
+            final WormholeWorld wormholeWorld = WorldManager.getWormholeWorld(worldName);
+            if (wormholeWorld.isWorldWeatherLock()) {
+                switch (wormholeWorld.getWorldWeatherLockType()) {
                     case CLEAR :
                         return rain ? true : false;
                     case RAIN :

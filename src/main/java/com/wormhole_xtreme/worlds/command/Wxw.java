@@ -18,7 +18,6 @@
  */
 package com.wormhole_xtreme.worlds.command;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,7 +30,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
-import com.wormhole_xtreme.worlds.config.ConfigManager.WorldOptionKeys;
 import com.wormhole_xtreme.worlds.config.ResponseType;
 import com.wormhole_xtreme.worlds.permissions.PermissionType;
 import com.wormhole_xtreme.worlds.scheduler.ScheduleAction;
@@ -77,117 +75,178 @@ class Wxw implements CommandExecutor {
      * @return true, if successful
      */
     private static boolean doCreateWorld(final CommandSender sender, final String[] args) {
-        boolean allowed = false;
-        if (CommandUtilities.playerCheck(sender)) {
-            allowed = PermissionType.CREATE.checkPermission((Player) sender);
-        }
-        else {
-            allowed = true;
-        }
-        if (allowed) {
+        if ( !CommandUtilities.playerCheck(sender) || PermissionType.CREATE.checkPermission((Player) sender)) {
             if ((args != null) && (args.length >= 1)) {
-                String playerName = null;
-                String worldName = null;
-                long worldSeed = 0;
-                final ArrayList<WorldOptionKeys> worldOptionKeyList = new ArrayList<WorldOptionKeys>();
-
+                final WormholeWorld wormholeWorld = new WormholeWorld();
                 for (final String arg : args) {
                     final String atlc = arg.toLowerCase();
-                    if (atlc.startsWith("-owner")) {
+                    if (atlc.startsWith("-na")) {
                         if (atlc.contains("|")) {
-                            playerName = arg.split("\\|")[1].trim();
-                        }
-                        else {
-                            if (CommandUtilities.playerCheck(sender)) {
-                                playerName = ((Player) sender).getName();
-                            }
-                            else {
-                                sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_OWNER_ON_CONSOLE.toString() + "-owner");
-                                return true;
-                            }
-                        }
-                    }
-                    else if (atlc.startsWith("-name")) {
-                        if (atlc.contains("|")) {
-                            worldName = arg.split("\\|")[1].trim();
+                            wormholeWorld.setWorldName(arg.split("\\|")[1].trim());
                         }
                         else {
                             sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + "-name");
                             return true;
                         }
                     }
-                    else if (atlc.startsWith("-nether")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNether);
+                    else if (atlc.startsWith("-pl")) {
+                        if (atlc.contains("|")) {
+                            for (final String playerOption : arg.split("\\|")[1].contains(",")
+                                ? arg.split("\\|")[1].split(",") : new String[]{
+                                    arg.split("\\|")[1]
+                                }) {
+                                if (playerOption.equalsIgnoreCase("contact")) {
+                                    wormholeWorld.setPlayerAllowContactDamage(false);
+                                }
+                                else if (playerOption.equalsIgnoreCase("all")) {
+                                    wormholeWorld.setPlayerAllowDamage(false);
+                                }
+                                else if (playerOption.equalsIgnoreCase("drown")) {
+                                    wormholeWorld.setPlayerAllowDrown(false);
+                                }
+                                else if (playerOption.equalsIgnoreCase("explosion")) {
+                                    wormholeWorld.setPlayerAllowExplosionDamage(false);
+                                }
+                                else if (playerOption.equalsIgnoreCase("fall")) {
+                                    wormholeWorld.setPlayerAllowFallDamage(false);
+                                }
+                                else if (playerOption.equalsIgnoreCase("fire")) {
+                                    wormholeWorld.setPlayerAllowFireDamage(false);
+                                }
+                                else if (playerOption.equalsIgnoreCase("lava")) {
+                                    wormholeWorld.setPlayerAllowLavaDamage(false);
+                                }
+                                else if (playerOption.equalsIgnoreCase("lightning")) {
+                                    wormholeWorld.setPlayerAllowLightningDamage(false);
+                                }
+                                else if (playerOption.equalsIgnoreCase("suffocation")) {
+                                    wormholeWorld.setPlayerAllowSuffocation(false);
+                                }
+                                else if (playerOption.equalsIgnoreCase("void")) {
+                                    wormholeWorld.setPlayerAllowVoidDamage(false);
+                                }
+                                else {
+                                    sender.sendMessage(ResponseType.ERROR_ARG_NOT_VALID.toString() + "-player");
+                                    return true;
+                                }
+                            }
+                        }
+                        else {
+                            sender.sendMessage(ResponseType.ERROR_OPTION_REQUIRES_ARGS.toString() + "-player");
+                            return true;
+                        }
                     }
-                    else if (atlc.startsWith("-noautoload")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoConnect);
+                    else if (atlc.startsWith("-wo")) {
+                        if (atlc.contains("|")) {
+                            for (final String worldOption : arg.split("\\|")[1].contains(",")
+                                ? arg.split("\\|")[1].split(",") : new String[]{
+                                    arg.split("\\|")[1]
+                                }) {
+                                if (worldOption.equalsIgnoreCase("fire")) {
+                                    wormholeWorld.setWorldAllowFire(false);
+                                }
+                                else if (worldOption.equalsIgnoreCase("firespread")) {
+                                    wormholeWorld.setWorldAllowFireSpread(false);
+                                }
+                                else if (worldOption.equalsIgnoreCase("lavafire")) {
+                                    wormholeWorld.setWorldAllowLavaFire(false);
+                                }
+                                else if (worldOption.equalsIgnoreCase("lavaspread")) {
+                                    wormholeWorld.setWorldAllowLavaSpread(false);
+                                }
+                                else if (worldOption.equalsIgnoreCase("lightningfire")) {
+                                    wormholeWorld.setWorldAllowLightningFire(false);
+                                }
+                                else if (worldOption.equalsIgnoreCase("pvp")) {
+                                    wormholeWorld.setWorldAllowPvP(false);
+                                }
+                                else if (worldOption.equalsIgnoreCase("firestart")) {
+                                    wormholeWorld.setWorldAllowPlayerStartFire(false);
+                                }
+                                else if (worldOption.equalsIgnoreCase("hostiles")) {
+                                    wormholeWorld.setWorldAllowSpawnHostiles(false);
+                                }
+                                else if (worldOption.equalsIgnoreCase("neutrals")) {
+                                    wormholeWorld.setWorldAllowSpawnNeutrals(false);
+                                }
+                                else if (worldOption.equalsIgnoreCase("waterspread")) {
+                                    wormholeWorld.setWorldAllowWaterSpread(false);
+                                }
+                                else if (worldOption.equalsIgnoreCase("autoload")) {
+                                    wormholeWorld.setWorldAutoload(false);
+                                }
+                                else if (worldOption.equalsIgnoreCase("nether")) {
+                                    wormholeWorld.setWorldTypeNether(true);
+                                }
+                                else {
+                                    sender.sendMessage(ResponseType.ERROR_ARG_NOT_VALID.toString() + "-world");
+                                    return true;
+                                }
+                            }
+                        }
+                        else {
+                            sender.sendMessage(ResponseType.ERROR_OPTION_REQUIRES_ARGS.toString() + "-world");
+                            return true;
+                        }
                     }
-                    else if (atlc.startsWith("-nohostiles")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoHostiles);
+                    else if (atlc.startsWith("-ti")) {
+                        if (atlc.contains("|")) {
+                            if ( !atlc.contains(",")) {
+                                if (arg.split("\\|")[1].equalsIgnoreCase("day")) {
+                                    wormholeWorld.setWorldTimeLockType(TimeLockType.DAY);
+                                }
+                                else if (arg.split("\\|")[1].equalsIgnoreCase("night")) {
+                                    wormholeWorld.setWorldTimeLockType(TimeLockType.NIGHT);
+                                }
+                                else {
+                                    sender.sendMessage(ResponseType.ERROR_ARG_NOT_VALID.toString() + "-time");
+                                    return true;
+                                }
+                            }
+                            else {
+                                sender.sendMessage(ResponseType.ERROR_OPTION_REQUIRES_ONE_ARG.toString() + "-time");
+                                return true;
+                            }
+                        }
+                        else {
+                            sender.sendMessage(ResponseType.ERROR_OPTION_REQUIRES_ARGS.toString() + "-time");
+                            return true;
+                        }
                     }
-                    else if (atlc.startsWith("-noneutrals")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoNeutrals);
+                    else if (atlc.startsWith("-we")) {
+                        if (atlc.contains("|")) {
+                            if ( !atlc.contains(",")) {
+                                if (arg.split("\\|")[1].equalsIgnoreCase("clear")) {
+                                    wormholeWorld.setWorldWeatherLockType(WeatherLockType.CLEAR);
+                                }
+                                else if (arg.split("\\|")[1].equalsIgnoreCase("rain")) {
+                                    wormholeWorld.setWorldWeatherLockType(WeatherLockType.RAIN);
+                                }
+                                else if (arg.split("\\|")[1].equalsIgnoreCase("rain")) {
+                                    wormholeWorld.setWorldWeatherLockType(WeatherLockType.STORM);
+                                }
+                                else {
+                                    sender.sendMessage(ResponseType.ERROR_ARG_NOT_VALID.toString() + "-weather");
+                                    return true;
+                                }
+                            }
+                            else {
+                                sender.sendMessage(ResponseType.ERROR_OPTION_REQUIRES_ONE_ARG.toString() + "-weather");
+                                return true;
+                            }
+                        }
+                        else {
+                            sender.sendMessage(ResponseType.ERROR_OPTION_REQUIRES_ARGS.toString() + "-weather");
+                            return true;
+                        }
                     }
-                    else if (atlc.startsWith("-nopvp")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoPvP);
-                    }
-                    else if (atlc.equals("-night")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionTimeLockNight);
-                    }
-                    else if (atlc.equals("-day")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionTimeLockDay);
-                    }
-                    else if (atlc.equals("-clear")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionWeatherClear);
-                    }
-                    else if (atlc.equals("-rain")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionWeatherRain);
-                    }
-                    else if (atlc.equals("-storm")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionWeatherStorm);
-                    }
-                    else if (atlc.startsWith("-nolavaspread")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoLavaSpread);
-                    }
-                    else if (atlc.startsWith("-nodrown")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoPlayerDrown);
-                    }
-                    else if (atlc.startsWith("-nofirespread")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoFireSpread);
-                    }
-                    else if (atlc.startsWith("-nolavafire")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoLavaFire);
-                    }
-                    else if (atlc.startsWith("-nowaterspread")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoWaterSpread);
-                    }
-                    else if (atlc.startsWith("-nolightningfire")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoLightningFire);
-                    }
-                    else if (atlc.startsWith("-nolightningdamage")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoPlayerLightningDamage);
-                    }
-                    else if (atlc.startsWith("-nodamage")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoPlayerDamage);
-                    }
-                    else if (atlc.startsWith("-nolavadamage")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoPlayerLavaDamage);
-                    }
-                    else if (atlc.startsWith("-nofalldamage")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoPlayerFallDamage);
-                    }
-                    else if (atlc.startsWith("-nofiredamage")) {
-                        worldOptionKeyList.add(WorldOptionKeys.worldOptionNoPlayerFireDamage);
-                    }
-                    else if (atlc.startsWith("-seed")) {
+                    else if (atlc.startsWith("-se")) {
                         if (atlc.contains("|")) {
                             try {
-                                worldSeed = Long.parseLong(arg.split("\\|")[1].trim());
-                                worldOptionKeyList.add(WorldOptionKeys.worldOptionSeed);
+                                wormholeWorld.setWorldSeed(Long.parseLong(arg.split("\\|")[1].trim()));
                             }
                             catch (final NumberFormatException e) {
-                                worldSeed = Long.valueOf(arg.split("\\|")[1].trim().hashCode());
-                                worldOptionKeyList.add(WorldOptionKeys.worldOptionSeed);
+                                wormholeWorld.setWorldSeed(Long.valueOf(arg.split("\\|")[1].trim().hashCode()));
                             }
                         }
                         else {
@@ -197,35 +256,19 @@ class Wxw implements CommandExecutor {
                     }
 
                 }
-
-                if (worldName == null) {
+                if (wormholeWorld.getWorldName() == null) {
                     sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + "create");
                     return true;
                 }
-
-                if (playerName == null) {
-                    if (CommandUtilities.playerCheck(sender)) {
-                        playerName = ((Player) sender).getName();
-                    }
-                    else {
-                        sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_OWNER_ON_CONSOLE.toString() + "create");
-                        return true;
-                    }
-                }
-                if (worldOptionKeyList.contains(WorldOptionKeys.worldOptionTimeLockNight) && worldOptionKeyList.contains(WorldOptionKeys.worldOptionTimeLockDay)) {
-                    sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting time lock commands specified.");
-                    return true;
-                }
-                final WorldOptionKeys[] worldOptionKeys = worldOptionKeyList.toArray(new WorldOptionKeys[worldOptionKeyList.size()]);
-                if (WorldManager.createWormholeWorld(playerName, worldName, worldOptionKeys, worldSeed)) {
-                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "World: " + worldName + " created with owner: " + playerName);
+                if (WorldManager.createWormholeWorld(wormholeWorld)) {
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "World: " + wormholeWorld.getWorldName() + " created");
                 }
                 else {
-                    sender.sendMessage(ResponseType.ERROR_WORLD_ALLREADY_EXISTS.toString() + worldName);
+                    sender.sendMessage(ResponseType.ERROR_WORLD_ALLREADY_EXISTS.toString() + wormholeWorld.getWorldName());
                 }
             }
             else {
-                sender.sendMessage(ResponseType.ERROR_NO_ARGS_GIVEN.toString() + "create");
+                sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_ARGS.toString() + "create");
                 sender.sendMessage(ResponseType.NORMAL_CREATE_COMMAND_ARGS1.toString());
                 sender.sendMessage(ResponseType.NORMAL_CREATE_COMMAND_ARGS2.toString());
                 sender.sendMessage(ResponseType.NORMAL_CREATE_COMMAND_ARGS3.toString());
@@ -252,7 +295,7 @@ class Wxw implements CommandExecutor {
     private static boolean doGoWorld(final Player player, final String[] args) {
         if (PermissionType.GO.checkPermission(player)) {
             if ((args != null) && (args.length == 1)) {
-                final WormholeWorld wormholeWorld = WorldManager.getWorld(args[0]);
+                final WormholeWorld wormholeWorld = WorldManager.getWormholeWorld(args[0]);
                 if ((wormholeWorld != null) && (wormholeWorld.isWorldLoaded())) {
                     player.teleport(WorldManager.getSafeSpawnLocation(wormholeWorld, player));
                 }
@@ -291,17 +334,17 @@ class Wxw implements CommandExecutor {
         if (allowed) {
             if (CommandUtilities.playerCheck(sender) || ((args != null) && (args.length == 1))) {
                 final WormholeWorld world = args.length == 0 ? WorldManager.getWorldFromPlayer((Player) sender)
-                    : WorldManager.getWorld(args[0]);
+                    : WorldManager.getWormholeWorld(args[0]);
                 if (world != null) {
                     sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A76=======================\u00A7fINFO\u00A76=======================");
-                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fWorld:\u00A7b" + world.getWorldName() + " \u00A7fOwner:\u00A7b" + world.getWorldOwner() + " \u00A7fNether:" + colorizeBoolean(world.isNetherWorld()) + " \u00A7fTime:\u00A7b" + world.getTimeLockType().toString());
-                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fAutoload:" + colorizeBoolean(world.isAutoconnectWorld()) + " \u00A7fSeed:\u00A7b" + world.getWorldSeed() + " \u00A7fWeather:\u00A7b" + world.getWeatherLockType().toString());
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fWorld:\u00A7b" + world.getWorldName() + " \u00A7fNether:" + colorizeBoolean(world.isWorldTypeNether()) + " \u00A7fTime:\u00A7b" + world.getWorldTimeLockType().toString());
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fAutoload:" + colorizeBoolean(world.isWorldAutoload()) + " \u00A7fSeed:\u00A7b" + world.getWorldSeed() + " \u00A7fWeather:\u00A7b" + world.getWorldWeatherLockType().toString());
                     sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A76=================\u00A7fWORLD PROTECTION\u00A76=================");
-                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fHostiles:" + colorizeBoolean(world.isAllowWorldSpawnHostiles()) + " \u00A7fNeutrals:" + colorizeBoolean(world.isAllowWorldSpawnNeutrals()) + " \u00A7fFireSPRD:" + colorizeBoolean(world.isAllowWorldFireSpread()) + " \u00A7fLavaFIRE:" + colorizeBoolean(world.isAllowWorldLavaFire()));
-                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fWaterSPRD:" + colorizeBoolean(world.isAllowWorldWaterSpread()) + " \u00A7fLightningFIRE:" + colorizeBoolean(world.isAllowWorldLightningFire()) + " \u00A7fLavaSPRD:" + colorizeBoolean(world.isAllowWorldLavaSpread()));
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fHostiles:" + colorizeBoolean(world.isWorldAllowSpawnHostiles()) + " \u00A7fNeutrals:" + colorizeBoolean(world.isWorldAllowSpawnNeutrals()) + " \u00A7fFireSPRD:" + colorizeBoolean(world.isWorldAllowFireSpread()) + " \u00A7fLavaFIRE:" + colorizeBoolean(world.isWorldAllowLavaFire()));
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fWaterSPRD:" + colorizeBoolean(world.isWorldAllowWaterSpread()) + " \u00A7fLightningFIRE:" + colorizeBoolean(world.isWorldAllowLightningFire()) + " \u00A7fLavaSPRD:" + colorizeBoolean(world.isWorldAllowLavaSpread()));
                     sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A76=================\u00A7fPLAYER PROTECTION\u00A76================");
-                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fDrown:" + colorizeBoolean(world.isAllowPlayerDrown()) + " \u00A7fLavaDMG:" + colorizeBoolean(world.isAllowPlayerLavaDamage()) + " \u00A7fFallDMG:" + colorizeBoolean(world.isAllowPlayerFallDamage()) + " \u00A7fLgtngDMG:" + colorizeBoolean(world.isAllowPlayerLightningDamage()));
-                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fFireDMG:" + colorizeBoolean(world.isAllowPlayerFireDamage()) + " \u00A7fPvPDMG:" + colorizeBoolean(world.isAllowPvP()) + " \u00A7fAllDMG:" + colorizeBoolean(world.isAllowPlayerDamage()));
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fDrown:" + colorizeBoolean(world.isPlayerAllowDrown()) + " \u00A7fLavaDMG:" + colorizeBoolean(world.isPlayerAllowLavaDamage()) + " \u00A7fFallDMG:" + colorizeBoolean(world.isPlayerAllowFallDamage()) + " \u00A7fLgtngDMG:" + colorizeBoolean(world.isPlayerAllowLightningDamage()));
+                    sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "\u00A7fFireDMG:" + colorizeBoolean(world.isPlayerAllowFireDamage()) + " \u00A7fPvPDMG:" + colorizeBoolean(world.isWorldAllowPvP()) + " \u00A7fAllDMG:" + colorizeBoolean(world.isPlayerAllowDamage()));
 
                 }
                 else {
@@ -389,7 +432,7 @@ class Wxw implements CommandExecutor {
         }
         if (allowed) {
             if ((args != null) && (args.length == 1)) {
-                final WormholeWorld wormholeWorld = WorldManager.getWorld(args[0]);
+                final WormholeWorld wormholeWorld = WorldManager.getWormholeWorld(args[0]);
                 if (wormholeWorld != null) {
                     WorldManager.loadWorld(wormholeWorld);
                     sender.sendMessage(ResponseType.NORMAL_HEADER + "Connected world: " + args[0]);
@@ -427,7 +470,7 @@ class Wxw implements CommandExecutor {
         }
         if (allowed) {
             if ((args != null) && (args.length >= 1)) {
-                String worldName = "", playerName = "";
+                String worldName = "";
                 boolean doHostiles = false, doNeutrals = false, doAutoLoad = false, doPvP = false;
                 boolean hostiles = false, neutrals = false, autoLoad = false, pvp = false;
                 boolean doLavaSpread = false, doFireSpread = false, doLavaFire = false, doWaterSpread = false, doLightningFire = false;
@@ -450,23 +493,6 @@ class Wxw implements CommandExecutor {
                             else {
                                 sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_WORLDNAME.toString() + "-name");
                                 return true;
-                            }
-                        }
-                        else if (atlc.startsWith("-owner")) {
-                            if (playerName.length() > 0) {
-                                conflict = true;
-                            }
-                            else if (atlc.contains("|")) {
-                                playerName = arg.split("\\|")[1].trim();
-                            }
-                            else {
-                                if (CommandUtilities.playerCheck(sender)) {
-                                    playerName = ((Player) sender).getName();
-                                }
-                                else {
-                                    sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_OWNER_ON_CONSOLE.toString() + "-owner");
-                                    return true;
-                                }
                             }
                         }
                         else if (atlc.startsWith("-time")) {
@@ -708,62 +734,59 @@ class Wxw implements CommandExecutor {
                     sender.sendMessage(ResponseType.ERROR_HEADER.toString() + "Conflicting or duplicate commands specified.");
                 }
                 if (worldName.length() > 0) {
-                    final WormholeWorld world = WorldManager.getWorld(worldName);
+                    final WormholeWorld world = WorldManager.getWormholeWorld(worldName);
                     if (world != null) {
-                        if (doHostiles || doNeutrals || doAutoLoad || doPvP || (playerName.length() > 0) || (weatherLockType != null) || (timeLockType != null) || doPlayerLightningDamage || doPlayerDamage || doPlayerDrown || doPlayerLavaDamage || doPlayerFallDamage || doPlayerFireDamage || doLavaSpread || doFireSpread || doLavaFire || doWaterSpread || doLightningFire) {
+                        if (doHostiles || doNeutrals || doAutoLoad || doPvP || (weatherLockType != null) || (timeLockType != null) || doPlayerLightningDamage || doPlayerDamage || doPlayerDrown || doPlayerLavaDamage || doPlayerFallDamage || doPlayerFireDamage || doLavaSpread || doFireSpread || doLavaFire || doWaterSpread || doLightningFire) {
                             if (doHostiles) {
-                                world.setAllowWorldSpawnHostiles(hostiles);
+                                world.setWorldAllowSpawnHostiles(hostiles);
                             }
                             if (doNeutrals) {
-                                world.setAllowWorldSpawnNeutrals(neutrals);
+                                world.setWorldAllowSpawnNeutrals(neutrals);
                             }
                             if (doPvP) {
-                                world.setAllowPvP(pvp);
+                                world.setWorldAllowPvP(pvp);
                             }
                             if (doAutoLoad) {
-                                world.setAutoconnectWorld(autoLoad);
-                            }
-                            if (playerName.length() > 0) {
-                                world.setWorldOwner(playerName);
+                                world.setWorldAutoload(autoLoad);
                             }
                             if (doPlayerLightningDamage) {
-                                world.setAllowPlayerLightningDamage(playerLightningDamage);
+                                world.setPlayerAllowLightningDamage(playerLightningDamage);
                             }
                             if (doPlayerDamage) {
-                                world.setAllowPlayerDamage(playerDamage);
+                                world.setPlayerAllowDamage(playerDamage);
                             }
                             if (doPlayerDrown) {
-                                world.setAllowPlayerDrown(playerDrown);
+                                world.setPlayerAllowDrown(playerDrown);
                             }
                             if (doPlayerLavaDamage) {
-                                world.setAllowPlayerLavaDamage(playerLavaDamage);
+                                world.setPlayerAllowLavaDamage(playerLavaDamage);
                             }
                             if (doPlayerFallDamage) {
-                                world.setAllowPlayerFallDamage(playerFallDamage);
+                                world.setPlayerAllowFallDamage(playerFallDamage);
                             }
                             if (doPlayerFireDamage) {
-                                world.setAllowPlayerFireDamage(playerFireDamage);
+                                world.setPlayerAllowFireDamage(playerFireDamage);
                             }
                             if (doLavaSpread) {
-                                world.setAllowWorldLavaSpread(lavaSpread);
+                                world.setWorldAllowLavaSpread(lavaSpread);
                             }
                             if (doFireSpread) {
-                                world.setAllowWorldFireSpread(fireSpread);
+                                world.setWorldAllowFireSpread(fireSpread);
                             }
                             if (doLavaFire) {
-                                world.setAllowWorldLavaFire(lavaFire);
+                                world.setWorldAllowLavaFire(lavaFire);
                             }
                             if (doWaterSpread) {
-                                world.setAllowWorldWaterSpread(waterSpread);
+                                world.setWorldAllowWaterSpread(waterSpread);
                             }
                             if (doLightningFire) {
-                                world.setAllowWorldLightningFire(lightningFire);
+                                world.setWorldAllowLightningFire(lightningFire);
                             }
                             if (timeLockType != null) {
-                                world.setTimeLockType(timeLockType);
+                                world.setWorldTimeLockType(timeLockType);
                             }
                             if (weatherLockType != null) {
-                                world.setWeatherLockType(weatherLockType);
+                                world.setWorldWeatherLockType(weatherLockType);
                             }
                             WorldManager.addWorld(world);
                             if (doAutoLoad) {
@@ -785,7 +808,7 @@ class Wxw implements CommandExecutor {
                             return doInfoWorld(sender, w);
                         }
                         else {
-                            sender.sendMessage(ResponseType.ERROR_NO_ARGS_GIVEN.toString() + "modify");
+                            sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_ARGS.toString() + "modify");
                             sender.sendMessage(ResponseType.NORMAL_MODIFY_COMMAND_ARGS1.toString());
                             sender.sendMessage(ResponseType.NORMAL_MODIFY_COMMAND_ARGS2.toString());
                             sender.sendMessage(ResponseType.NORMAL_MODIFY_COMMAND_ARGS3.toString());
@@ -803,7 +826,7 @@ class Wxw implements CommandExecutor {
                 }
             }
             else {
-                sender.sendMessage(ResponseType.ERROR_NO_ARGS_GIVEN.toString() + "modify");
+                sender.sendMessage(ResponseType.ERROR_COMMAND_REQUIRES_ARGS.toString() + "modify");
                 sender.sendMessage(ResponseType.NORMAL_MODIFY_COMMAND_ARGS1.toString());
                 sender.sendMessage(ResponseType.NORMAL_MODIFY_COMMAND_ARGS2.toString());
                 sender.sendMessage(ResponseType.NORMAL_MODIFY_COMMAND_ARGS3.toString());
@@ -837,7 +860,7 @@ class Wxw implements CommandExecutor {
         }
         if (allowed) {
             if ((args != null) && (args.length >= 1)) {
-                final WormholeWorld wormholeWorld = WorldManager.getWorld(args[0]);
+                final WormholeWorld wormholeWorld = WorldManager.getWormholeWorld(args[0]);
                 if (wormholeWorld != null) {
                     WorldManager.removeWorld(wormholeWorld);
                     sender.sendMessage(ResponseType.NORMAL_HEADER.toString() + "Removed world: " + args[0] + ". Deleted world config file, world will be unavailable at next server restart.");
@@ -867,7 +890,7 @@ class Wxw implements CommandExecutor {
         if (PermissionType.SET_SPAWN.checkPermission(player)) {
             final Location playerLocation = player.getLocation();
             final World playerWorld = playerLocation.getWorld();
-            final WormholeWorld playerWormholeWorld = WorldManager.getWorld(playerWorld.getName());
+            final WormholeWorld playerWormholeWorld = WorldManager.getWormholeWorld(playerWorld.getName());
             if (playerWormholeWorld != null) {
                 if (playerWorld.setSpawnLocation((int) playerLocation.getX(), (int) playerLocation.getY(), (int) playerLocation.getZ())) {
                     playerWormholeWorld.setWorldSpawn(playerLocation);

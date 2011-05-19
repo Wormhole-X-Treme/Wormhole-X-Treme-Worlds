@@ -37,9 +37,9 @@ class ThunderChange {
      */
     static boolean handleThunderChange(final String worldName, final boolean thunder) {
         if (WorldManager.isWormholeWorld(worldName)) {
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
-            if (wormholeWorld.isWeatherLock()) {
-                switch (wormholeWorld.getWeatherLockType()) {
+            final WormholeWorld wormholeWorld = WorldManager.getWormholeWorld(worldName);
+            if (wormholeWorld.isWorldWeatherLock()) {
+                switch (wormholeWorld.getWorldWeatherLockType()) {
                     case CLEAR :
                     case RAIN :
                         return thunder ? true : false;

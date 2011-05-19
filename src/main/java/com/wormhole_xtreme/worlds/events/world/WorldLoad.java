@@ -37,7 +37,7 @@ class WorldLoad {
      */
     static boolean handleWorldLoad(final String worldName) {
         if (WorldManager.isWormholeWorld(worldName)) {
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
+            final WormholeWorld wormholeWorld = WorldManager.getWormholeWorld(worldName);
             return wormholeWorld.isWorldLoaded() ? false : WorldManager.loadWorld(wormholeWorld);
         }
         return false;

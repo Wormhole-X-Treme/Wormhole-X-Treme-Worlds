@@ -47,7 +47,7 @@ class EntityDamage {
     static boolean handleEntityDamage(final Player player, final DamageCause cause, final Entity damager) {
         final WormholeWorld wormholeWorld = WorldManager.getWorldFromPlayer(player);
         if ((wormholeWorld != null)) {
-            if ( !wormholeWorld.isAllowPlayerDamage()) {
+            if ( !wormholeWorld.isPlayerAllowDamage()) {
                 playerStopFire(player);
                 playerStopDrown(player);
                 return true;
@@ -55,27 +55,27 @@ class EntityDamage {
             else if (cause != null) {
                 switch (cause) {
                     case CONTACT :
-                        return wormholeWorld.isAllowPlayerContactDamage() ? false : true;
+                        return wormholeWorld.isPlayerAllowContactDamage() ? false : true;
                     case ENTITY_ATTACK :
-                        return wormholeWorld.isAllowPvP() ? false : playerStopPvP(damager);
+                        return wormholeWorld.isWorldAllowPvP() ? false : playerStopPvP(damager);
                     case SUFFOCATION :
-                        return wormholeWorld.isAllowPlayerSuffocation() ? false : true;
+                        return wormholeWorld.isPlayerAllowSuffocation() ? false : true;
                     case FALL :
-                        return wormholeWorld.isAllowPlayerFallDamage() ? false : true;
+                        return wormholeWorld.isPlayerAllowFallDamage() ? false : true;
                     case FIRE :
                     case FIRE_TICK :
-                        return wormholeWorld.isAllowPlayerFireDamage() ? false : playerStopFire(player);
+                        return wormholeWorld.isPlayerAllowFireDamage() ? false : playerStopFire(player);
                     case LAVA :
-                        return wormholeWorld.isAllowPlayerLavaDamage() ? false : playerStopFire(player);
+                        return wormholeWorld.isPlayerAllowLavaDamage() ? false : playerStopFire(player);
                     case DROWNING :
-                        return wormholeWorld.isAllowPlayerDrown() ? false : playerStopDrown(player);
+                        return wormholeWorld.isPlayerAllowDrown() ? false : playerStopDrown(player);
                     case BLOCK_EXPLOSION :
                     case ENTITY_EXPLOSION :
-                        return wormholeWorld.isAllowPlayerExplosionDamage() ? false : true;
+                        return wormholeWorld.isPlayerAllowExplosionDamage() ? false : true;
                     case VOID :
-                        return wormholeWorld.isAllowPlayerVoidDamage() ? false : true;
+                        return wormholeWorld.isPlayerAllowVoidDamage() ? false : true;
                     case LIGHTNING :
-                        return wormholeWorld.isAllowPlayerLightningDamage() ? false : playerStopFire(player);
+                        return wormholeWorld.isPlayerAllowLightningDamage() ? false : playerStopFire(player);
                     default :
                         break;
                 }

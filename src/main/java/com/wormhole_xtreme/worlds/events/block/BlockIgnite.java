@@ -43,17 +43,20 @@ class BlockIgnite {
     static boolean handleBlockIgnite(final Block block, final IgniteCause igniteCause) {
         final String worldName = block.getWorld().getName();
         if (WorldManager.isWormholeWorld(worldName)) {
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
-            if (igniteCause != null) {
+            final WormholeWorld wormholeWorld = WorldManager.getWormholeWorld(worldName);
+            if ( !wormholeWorld.isWorldAllowFire()) {
+                return true;
+            }
+            else if (igniteCause != null) {
                 switch (igniteCause) {
                     case LAVA :
-                        return wormholeWorld.isAllowWorldLavaFire() ? false : true;
+                        return wormholeWorld.isWorldAllowLavaFire() ? false : true;
                     case SPREAD :
-                        return wormholeWorld.isAllowWorldFireSpread() ? false : true;
+                        return wormholeWorld.isWorldAllowFireSpread() ? false : true;
                     case LIGHTNING :
-                        return wormholeWorld.isAllowWorldLightningFire() ? false : true;
+                        return wormholeWorld.isWorldAllowLightningFire() ? false : true;
                     case FLINT_AND_STEEL :
-                        return wormholeWorld.isAllowPlayerFireStart() ? false : true;
+                        return wormholeWorld.isWorldAllowPlayerStartFire() ? false : true;
                     default :
                         break;
                 }

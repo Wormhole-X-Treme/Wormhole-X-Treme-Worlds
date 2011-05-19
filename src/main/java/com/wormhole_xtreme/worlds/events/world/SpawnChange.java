@@ -38,7 +38,7 @@ class SpawnChange {
      * @return true, if successful
      */
     static boolean handleSpawnChange(final World world) {
-        final WormholeWorld wormholeWorld = WorldManager.getWorld(world.getName());
+        final WormholeWorld wormholeWorld = WorldManager.getWormholeWorld(world);
         if (wormholeWorld != null) {
             if ((wormholeWorld.getWorldSpawn() != null) && !wormholeWorld.getWorldSpawn().equals(world.getSpawnLocation())) {
                 wormholeWorld.setWorldSpawn(world.getSpawnLocation());

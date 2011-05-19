@@ -54,7 +54,7 @@ public class WorldHandler {
             final String worldName = stickyChunk.getWorld().getName();
             final int stickyChunkX = stickyChunk.getX();
             final int stickyChunkZ = stickyChunk.getZ();
-            WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
+            WormholeWorld wormholeWorld = WorldManager.getWormholeWorld(worldName);
             thisPlugin.prettyLog(Level.FINE, false, "Sticky Chunk Addition: " + stickyChunk.toString() + " World: " + stickyChunk.getWorld().getName() + " Plugin: " + ownerPlugin);
             if (wormholeWorld != null) {
                 if (wormholeWorld.isWorldLoaded() && wormholeWorld.addWorldStickyChunk(stickyChunk, ownerPlugin)) {
@@ -64,7 +64,7 @@ public class WorldHandler {
                     }
                     return WorldManager.addWorld(wormholeWorld);
                 }
-                else if (WorldManager.loadWorld(wormholeWorld) && ((wormholeWorld = WorldManager.getWorld(worldName)) != null) && wormholeWorld.addWorldStickyChunk(stickyChunk, ownerPlugin)) {
+                else if (WorldManager.loadWorld(wormholeWorld) && ((wormholeWorld = WorldManager.getWormholeWorld(worldName)) != null) && wormholeWorld.addWorldStickyChunk(stickyChunk, ownerPlugin)) {
                     if ( !wormholeWorld.getThisWorld().isChunkLoaded(stickyChunkX, stickyChunkZ)) {
                         wormholeWorld.getThisWorld().loadChunk(stickyChunkX, stickyChunkZ);
                         thisPlugin.prettyLog(Level.FINE, false, "Loaded Sticky Chunk: " + stickyChunk.toString());
@@ -86,7 +86,7 @@ public class WorldHandler {
     public Location getPlayerRespawnLocation(final Player player) {
         final String worldName = player.getWorld().getName();
         return WorldManager.isWormholeWorld(worldName)
-            ? WorldManager.getSafeSpawnLocation(WorldManager.getWorld(worldName), player) : null;
+            ? WorldManager.getSafeSpawnLocation(WorldManager.getWormholeWorld(worldName), player) : null;
     }
 
     /**
@@ -98,7 +98,7 @@ public class WorldHandler {
      */
     public boolean loadWorld(final String worldName) {
         if (WorldManager.isWormholeWorld(worldName)) {
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
+            final WormholeWorld wormholeWorld = WorldManager.getWormholeWorld(worldName);
             if ( !wormholeWorld.isWorldLoaded()) {
                 WorldManager.loadWorld(wormholeWorld);
             }
@@ -119,7 +119,7 @@ public class WorldHandler {
     public boolean removeStickyChunk(final Chunk stickyChunk, final String ownerPlugin) {
         if ((stickyChunk != null) && (ownerPlugin != null)) {
             final String worldName = stickyChunk.getWorld().getName();
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
+            final WormholeWorld wormholeWorld = WorldManager.getWormholeWorld(worldName);
             final int stickyChunkX = stickyChunk.getX();
             final int stickyChunkZ = stickyChunk.getZ();
             thisPlugin.prettyLog(Level.FINE, false, "Sticky Chunk Removal: " + stickyChunk.toString() + " World: " + stickyChunk.getWorld().getName() + " Plugin: " + ownerPlugin);
@@ -175,7 +175,7 @@ public class WorldHandler {
                 player.sendMessage(ResponseType.ERROR_PERMISSION_NO.toString());
             }
             else {
-                final WormholeWorld wormholeWorld = worldName != null ? WorldManager.getWorld(worldName)
+                final WormholeWorld wormholeWorld = worldName != null ? WorldManager.getWormholeWorld(worldName)
                     : WorldManager.getWorldFromPlayer(player);
                 if (wormholeWorld != null) {
                     return player.teleport(WorldManager.getSafeSpawnLocation(wormholeWorld, player));

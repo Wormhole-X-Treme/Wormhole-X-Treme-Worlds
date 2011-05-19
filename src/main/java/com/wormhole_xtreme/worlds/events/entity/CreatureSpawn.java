@@ -42,9 +42,9 @@ class CreatureSpawn {
      * @return true, if successful
      */
     static boolean handleCreatureSpawn(final Entity entity) {
-        if ((entity != null) && WorldManager.isWormholeWorld(entity.getWorld().getName())) {
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(entity.getWorld().getName());
-            if (( !wormholeWorld.isAllowWorldSpawnHostiles() && ((entity instanceof Monster) || (entity instanceof Flying))) || ( !wormholeWorld.isAllowWorldSpawnNeutrals() && ((entity instanceof Animals) || (entity instanceof WaterMob)))) {
+        if ((entity != null) && WorldManager.isWormholeWorld(entity.getWorld())) {
+            final WormholeWorld wormholeWorld = WorldManager.getWormholeWorld(entity.getWorld());
+            if (( !wormholeWorld.isWorldAllowSpawnHostiles() && ((entity instanceof Monster) || (entity instanceof Flying))) || ( !wormholeWorld.isWorldAllowSpawnNeutrals() && ((entity instanceof Animals) || (entity instanceof WaterMob)))) {
                 return true;
             }
         }

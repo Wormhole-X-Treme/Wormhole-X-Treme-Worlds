@@ -51,7 +51,7 @@ public enum ResponseType {
     ERROR_WORLD_MAY_BE_ON_DISK(ERROR_HEADER.toString() + "World may exist on disk, but has not been registered with Wormholw X-Treme Worlds."),
 
     /** The NO ARGS GIVEN ERROR message. */
-    ERROR_NO_ARGS_GIVEN(ERROR_HEADER.toString() + "Command specified requires arguments: "),
+    ERROR_COMMAND_REQUIRES_ARGS(ERROR_HEADER.toString() + "Command specified requires arguments: "),
 
     NORMAL_MODIFY_COMMAND_ARGS1(NORMAL_HEADER.toString() + "\u00A75Req\u00A77: -name <world> \u00A75Opt\u00A77: -owner <player>,"),
     NORMAL_MODIFY_COMMAND_ARGS2(NORMAL_HEADER.toString() + "-time [day|night|\u00A76none\u00A77], -(no)\u00A76autoload\u00A77, -(no)\u00A76lavaspread\u00A77,"),
@@ -60,12 +60,12 @@ public enum ResponseType {
     NORMAL_MODIFY_COMMAND_ARGS5(NORMAL_HEADER.toString() + "-(no)\u00A76damage\u00A77, -(no)\u00A76drown\u00A77, -(no)\u00A76pvp\u00A77, -(no)\u00A76lavadamage\u00A77,"),
     NORMAL_MODIFY_COMMAND_ARGS6(NORMAL_HEADER.toString() + "-(no)\u00A76falldamage\u00A77, -(no)\u00A76firedamage\u00A77, -weather [clear|rain|storm|\u00A76none\u00A77]"),
 
-    NORMAL_CREATE_COMMAND_ARGS1(NORMAL_HEADER.toString() + "\u00A75Req\u00A77: -name <world> \u00A75Opt\u00A77: -owner <player>, -seed <num>,"),
-    NORMAL_CREATE_COMMAND_ARGS2(NORMAL_HEADER.toString() + "-night, -day, -noautoload, -nolavaspread, -nodrown,"),
-    NORMAL_CREATE_COMMAND_ARGS3(NORMAL_HEADER.toString() + "-noneutrals, -nofirespread, -nolavafire, -nohostiles, -nopvp,"),
-    NORMAL_CREATE_COMMAND_ARGS4(NORMAL_HEADER.toString() + "-nowaterspread, -nolightningfire, -nolightningdamage,"),
-    NORMAL_CREATE_COMMAND_ARGS5(NORMAL_HEADER.toString() + "-nodamage, -nolavadamage, -nofalldamage, -nofiredamage"),
-    NORMAL_CREATE_COMMAND_ARGS6(NORMAL_HEADER.toString() + "-clear, -rain, -storm"),
+    NORMAL_CREATE_COMMAND_ARGS1(NORMAL_HEADER.toString() + "\u00A75Req\u00A77: -na(me) <world> \u00A75Opt\u00A77: -se(ed) <num|string>,"),
+    NORMAL_CREATE_COMMAND_ARGS2(NORMAL_HEADER.toString() + "-pl(ayer) all,contact,drown,explosion,fall,fire,lava,lightning, "),
+    NORMAL_CREATE_COMMAND_ARGS3(NORMAL_HEADER.toString() + "   suffocation,void"),
+    NORMAL_CREATE_COMMAND_ARGS4(NORMAL_HEADER.toString() + "-wo(rld) fire,firespread,lavafire,lightningfire,pvp,waterspread,"),
+    NORMAL_CREATE_COMMAND_ARGS5(NORMAL_HEADER.toString() + "   firestart,hostiles,neutrals,autoload,nether"),
+    NORMAL_CREATE_COMMAND_ARGS6(NORMAL_HEADER.toString() + "-ti(me) (day|night) -we(ather) (clear|rain|storm)"),
 
     /** The COMMAND REQUIRES A WORLD NAME ERROR message. */
     ERROR_COMMAND_REQUIRES_WORLDNAME(ERROR_HEADER.toString() + "Command requires world name: "),
@@ -73,11 +73,12 @@ public enum ResponseType {
     /** The COMMAND REQUIRES NUMBER VALUE ERROR message. */
     ERROR_COMMAND_REQUIRES_NUMBER(ERROR_HEADER.toString() + "Command requires numeric value: "),
 
-    /** The COMMAND REQUIRES OWNER SPECIFIED ON CONSOLE ERROR message. */
-    ERROR_COMMAND_REQUIRES_OWNER_ON_CONSOLE(ERROR_HEADER.toString() + "Command requires an owner to be specified when called from console: "),
-
     /** The COMMAND ONLY AVAILABLE ON MANAGED WORLDS message. */
     ERROR_COMMAND_ONLY_MANAGED_WORLD(ERROR_HEADER.toString() + "Command only available on managed worlds."),
+
+    ERROR_OPTION_REQUIRES_ARGS(ERROR_HEADER.toString() + "Option requires arguments: "),
+    ERROR_OPTION_REQUIRES_ONE_ARG(ERROR_HEADER.toString() + "Option only takes one argument: "),
+    ERROR_ARG_NOT_VALID(ERROR_HEADER.toString() + "Argument is not valid: "),
 
     ERROR_PVP_NOT_ALLOWED(ERROR_HEADER.toString() + "PvP \u00A74NOT" + FOOTER.toString() + " allowed on this world: ");
 

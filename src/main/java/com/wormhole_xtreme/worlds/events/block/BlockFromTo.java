@@ -41,16 +41,16 @@ class BlockFromTo {
     static boolean handleBlockFromTo(final Block block) {
         final String worldName = block.getWorld().getName();
         if (WorldManager.isWormholeWorld(worldName)) {
-            final WormholeWorld wormholeWorld = WorldManager.getWorld(worldName);
+            final WormholeWorld wormholeWorld = WorldManager.getWormholeWorld(worldName);
             final Material blockType = block.getType();
             if (blockType != null) {
                 switch (blockType) {
                     case WATER :
                     case STATIONARY_WATER :
-                        return wormholeWorld.isAllowWorldWaterSpread() ? false : true;
+                        return wormholeWorld.isWorldAllowWaterSpread() ? false : true;
                     case LAVA :
                     case STATIONARY_LAVA :
-                        return wormholeWorld.isAllowWorldLavaSpread() ? false : true;
+                        return wormholeWorld.isWorldAllowLavaSpread() ? false : true;
                     default :
                         break;
                 }

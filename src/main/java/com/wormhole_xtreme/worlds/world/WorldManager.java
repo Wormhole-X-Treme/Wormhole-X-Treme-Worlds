@@ -37,7 +37,6 @@ import org.bukkit.entity.WaterMob;
 
 import com.wormhole_xtreme.worlds.WormholeXTremeWorlds;
 import com.wormhole_xtreme.worlds.config.ConfigManager;
-import com.wormhole_xtreme.worlds.config.ConfigManager.WorldOptionKeys;
 import com.wormhole_xtreme.worlds.config.XMLConfig;
 
 /**
@@ -172,13 +171,13 @@ public class WorldManager {
             for (final String key : worldList.keySet()) {
                 if (key != null) {
                     final WormholeWorld wormholeWorld = worldList.get(key);
-                    if ((wormholeWorld != null) && wormholeWorld.isWorldLoaded() && wormholeWorld.isTimeLock()) {
+                    if ((wormholeWorld != null) && wormholeWorld.isWorldLoaded() && wormholeWorld.isWorldTimeLock()) {
                         final long worldRelativeTime = wormholeWorld.getThisWorld().getTime() % 24000;
-                        if ((worldRelativeTime > 11800) && (wormholeWorld.getTimeLockType() == TimeLockType.DAY)) {
+                        if ((worldRelativeTime > 11800) && (wormholeWorld.getWorldTimeLockType() == TimeLockType.DAY)) {
                             thisPlugin.prettyLog(Level.FINE, false, "Set world: " + key + " New time: 0" + " Old Time: " + worldRelativeTime);
                             wormholeWorld.getThisWorld().setTime(0);
                         }
-                        else if (((worldRelativeTime < 13500) || (worldRelativeTime > 21800)) && (wormholeWorld.getTimeLockType() == TimeLockType.NIGHT)) {
+                        else if (((worldRelativeTime < 13500) || (worldRelativeTime > 21800)) && (wormholeWorld.getWorldTimeLockType() == TimeLockType.NIGHT)) {
                             thisPlugin.prettyLog(Level.FINE, false, "Set world: " + key + " New time: 13700" + " Old Time: " + worldRelativeTime);
                             wormholeWorld.getThisWorld().setTime(13700);
                         }
@@ -197,11 +196,11 @@ public class WorldManager {
      */
     public static int clearWorldCreatures(final WormholeWorld wormholeWorld) {
         int cleared = 0;
-        if ( !wormholeWorld.isAllowWorldSpawnHostiles() || !wormholeWorld.isAllowWorldSpawnNeutrals()) {
+        if ( !wormholeWorld.isWorldAllowSpawnHostiles() || !wormholeWorld.isWorldAllowSpawnNeutrals()) {
             final List<LivingEntity> entityList = wormholeWorld.getThisWorld().getLivingEntities();
 
             for (final LivingEntity entity : entityList) {
-                if (( !wormholeWorld.isAllowWorldSpawnHostiles() && ((entity instanceof Monster) || (entity instanceof Flying))) || ( !wormholeWorld.isAllowWorldSpawnNeutrals() && ((entity instanceof Animals) || (entity instanceof WaterMob)))) {
+                if (( !wormholeWorld.isWorldAllowSpawnHostiles() && ((entity instanceof Monster) || (entity instanceof Flying))) || ( !wormholeWorld.isWorldAllowSpawnNeutrals() && ((entity instanceof Animals) || (entity instanceof WaterMob)))) {
                     thisPlugin.prettyLog(Level.FINE, false, "Removed entity: " + entity);
                     entity.remove();
                     cleared++;
@@ -212,6 +211,15 @@ public class WorldManager {
         return cleared;
     }
 
+    private static void createDefaultWorld() {
+        final WormholeWorld wormholeWorld = new WormholeWorld();
+        final World world = WormholeXTremeWorlds.getThisPlugin().getServer().getWorlds().get(0);
+        wormholeWorld.setWorldName(world.getName());
+        wormholeWorld.setWorldTypeNether(world.getEnvironment() == Environment.NETHER ? true : false);
+        createWormholeWorld(wormholeWorld);
+        thisPlugin.prettyLog(Level.INFO, false, "Added default world as wormhole world.");
+    }
+
     /**
      * Creates the world.
      * 
@@ -219,11 +227,11 @@ public class WorldManager {
      *            the wormhole world
      * @return true, if successful
      */
-    private static boolean createWorld(final WormholeWorld wormholeWorld) {
-        if (wormholeWorld != null) {
+    public static boolean createWormholeWorld(final WormholeWorld wormholeWorld) {
+        if ((wormholeWorld != null) && !isWormholeWorld(wormholeWorld.getWorldName())) {
             wormholeWorld.setWorldLoaded(true);
             final String worldName = wormholeWorld.getWorldName();
-            final Environment worldEnvironment = wormholeWorld.isNetherWorld() ? Environment.NETHER
+            final Environment worldEnvironment = wormholeWorld.isWorldTypeNether() ? Environment.NETHER
                 : Environment.NORMAL;
 
             if (thisPlugin.getServer().getWorld(worldName) == null) {
@@ -241,7 +249,7 @@ public class WorldManager {
                 wormholeWorld.setWorldSeed(wormholeWorld.getThisWorld().getSeed());
             }
 
-            wormholeWorld.setWorldSpawn(wormholeWorld.isNetherWorld()
+            wormholeWorld.setWorldSpawn(wormholeWorld.isWorldTypeNether()
                 ? findSafeSpawn(wormholeWorld.getThisWorld().getSpawnLocation(), 13, 13)
                 : wormholeWorld.getThisWorld().getSpawnLocation());
 
@@ -260,103 +268,6 @@ public class WorldManager {
             setWorldWeather(wormholeWorld);
             setWorldPvP(wormholeWorld);
             return addWorld(wormholeWorld);
-        }
-        return false;
-    }
-
-    /**
-     * Creates the world.
-     * 
-     * @param ownerName
-     *            the player name
-     * @param worldName
-     *            the world name
-     * @param worldOptionKeys
-     *            the world option keys
-     * @param worldSeed
-     *            the world seed
-     * @return true, if successful
-     */
-    public static boolean createWormholeWorld(final String ownerName, final String worldName, final WorldOptionKeys[] worldOptionKeys, final long worldSeed) {
-        if ((worldName != null) && (getWorld(worldName) == null) && (ownerName != null)) {
-            final WormholeWorld wormholeWorld = new WormholeWorld();
-            wormholeWorld.setWorldName(worldName);
-            wormholeWorld.setWorldOwner(ownerName);
-            if (worldOptionKeys != null) {
-                for (final WorldOptionKeys worldOptionKey : worldOptionKeys) {
-                    switch (worldOptionKey) {
-                        case worldOptionNether :
-                            wormholeWorld.setNetherWorld(true);
-                            break;
-                        case worldOptionNoHostiles :
-                            wormholeWorld.setAllowWorldSpawnHostiles(false);
-                            break;
-                        case worldOptionNoNeutrals :
-                            wormholeWorld.setAllowWorldSpawnNeutrals(false);
-                            break;
-                        case worldOptionNoPvP :
-                            wormholeWorld.setAllowPvP(false);
-                            break;
-                        case worldOptionNoConnect :
-                            wormholeWorld.setAutoconnectWorld(false);
-                            break;
-                        case worldOptionSeed :
-                            wormholeWorld.setWorldSeed(worldSeed);
-                            break;
-                        case worldOptionTimeLockDay :
-                            wormholeWorld.setTimeLockType(TimeLockType.DAY);
-                            break;
-                        case worldOptionTimeLockNight :
-                            wormholeWorld.setTimeLockType(TimeLockType.NIGHT);
-                            break;
-                        case worldOptionWeatherClear :
-                            wormholeWorld.setWeatherLockType(WeatherLockType.CLEAR);
-                            break;
-                        case worldOptionWeatherRain :
-                            wormholeWorld.setWeatherLockType(WeatherLockType.RAIN);
-                            break;
-                        case worldOptionWeatherStorm :
-                            wormholeWorld.setWeatherLockType(WeatherLockType.STORM);
-                            break;
-                        case worldOptionNoLavaSpread :
-                            wormholeWorld.setAllowWorldLavaSpread(false);
-                            break;
-                        case worldOptionNoPlayerDrown :
-                            wormholeWorld.setAllowPlayerDrown(false);
-                            break;
-                        case worldOptionNoFireSpread :
-                            wormholeWorld.setAllowWorldFireSpread(false);
-                            break;
-                        case worldOptionNoLavaFire :
-                            wormholeWorld.setAllowWorldLavaFire(false);
-                            break;
-                        case worldOptionNoWaterSpread :
-                            wormholeWorld.setAllowWorldWaterSpread(false);
-                            break;
-                        case worldOptionNoLightningFire :
-                            wormholeWorld.setAllowWorldLightningFire(false);
-                            break;
-                        case worldOptionNoPlayerLightningDamage :
-                            wormholeWorld.setAllowPlayerLightningDamage(false);
-                            break;
-                        case worldOptionNoPlayerDamage :
-                            wormholeWorld.setAllowPlayerDamage(false);
-                            break;
-                        case worldOptionNoPlayerLavaDamage :
-                            wormholeWorld.setAllowPlayerLavaDamage(false);
-                            break;
-                        case worldOptionNoPlayerFallDamage :
-                            wormholeWorld.setAllowPlayerFallDamage(false);
-                            break;
-                        case worldOptionNoPlayerFireDamage :
-                            wormholeWorld.setAllowPlayerFireDamage(false);
-                            break;
-                        default :
-                            break;
-                    }
-                }
-            }
-            return createWorld(wormholeWorld);
         }
         return false;
     }
@@ -535,24 +446,13 @@ public class WorldManager {
      * @return the safe teleport location
      */
     public static Location getSafeSpawnLocation(final WormholeWorld wormholeWorld, final Player player) {
-        return wormholeWorld.isNetherWorld()
+        return wormholeWorld.isWorldTypeNether()
             ? WorldManager.checkSafeTeleportDestination(wormholeWorld.getWorldSpawn())
                 ? new Location(wormholeWorld.getThisWorld(), wormholeWorld.getWorldSpawn().getBlockX() + 0.5, wormholeWorld.getWorldSpawn().getBlockY(), wormholeWorld.getWorldSpawn().getBlockZ() + 0.5, player.getLocation().getYaw(), player.getLocation().getPitch())
                 : WorldManager.findSafeSpawn(wormholeWorld.getWorldSpawn(), 3, 3)
             : WorldManager.checkSafeTeleportDestination(wormholeWorld.getWorldSpawn())
                 ? new Location(wormholeWorld.getThisWorld(), wormholeWorld.getWorldSpawn().getBlockX() + 0.5, wormholeWorld.getWorldSpawn().getBlockY(), wormholeWorld.getWorldSpawn().getBlockZ() + 0.5, player.getLocation().getYaw(), player.getLocation().getPitch())
                 : new Location(wormholeWorld.getThisWorld(), wormholeWorld.getWorldSpawn().getBlockX() + 0.5, wormholeWorld.getThisWorld().getHighestBlockYAt(wormholeWorld.getWorldSpawn()), wormholeWorld.getWorldSpawn().getBlockZ() + 0.5, player.getLocation().getYaw(), player.getLocation().getPitch());
-    }
-
-    /**
-     * Gets the wormholeWorld.
-     * 
-     * @param worldName
-     *            the world name
-     * @return the wormholeWorld
-     */
-    public static WormholeWorld getWorld(final String worldName) {
-        return worldList.get(worldName);
     }
 
     /**
@@ -564,11 +464,33 @@ public class WorldManager {
      */
     public static WormholeWorld getWorldFromPlayer(final Player player) {
         if (player != null) {
-            return getWorld(player.getWorld().getName());
+            return getWormholeWorld(player.getWorld().getName());
         }
         else {
             return null;
         }
+    }
+
+    /**
+     * Gets the wormholeWorld.
+     * 
+     * @param worldName
+     *            the world name
+     * @return the wormholeWorld
+     */
+    public static WormholeWorld getWormholeWorld(final String worldName) {
+        return worldList.get(worldName);
+    }
+
+    /**
+     * Gets the wormhole world.
+     * 
+     * @param world
+     *            the world
+     * @return the wormhole world
+     */
+    public static WormholeWorld getWormholeWorld(final World world) {
+        return worldList.get(world.getName());
     }
 
     /**
@@ -586,18 +508,38 @@ public class WorldManager {
     }
 
     /**
+     * Checks if is wormhole world.
+     * 
+     * @param world
+     *            the world
+     * @return true, if is wormhole world
+     */
+    public static boolean isWormholeWorld(final World world) {
+        if ((world != null) && worldList.containsKey(world.getName())) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Load autoconnect worlds.
      * 
      * @return the int number of worlds loaded.
      */
-    public static int loadAutoconnectWorlds() {
+    public static int loadAutoloadWorlds() {
         int loaded = 0;
-        for (final WormholeWorld wormholeWorld : getAllWorlds()) {
-            if (wormholeWorld.isAutoconnectWorld()) {
-                if (loadWorld(wormholeWorld)) {
-                    loaded++;
+        if (getAllWorlds().length > 0) {
+            for (final WormholeWorld wormholeWorld : getAllWorlds()) {
+                if (wormholeWorld.isWorldAutoload()) {
+                    if (loadWorld(wormholeWorld)) {
+                        loaded++;
+                    }
                 }
             }
+        }
+        else {
+            createDefaultWorld();
+            loaded++;
         }
         return loaded;
     }
@@ -613,9 +555,9 @@ public class WorldManager {
         if (wormholeWorld != null) {
             wormholeWorld.setWorldLoaded(true);
             wormholeWorld.setThisWorld(wormholeWorld.getWorldSeed() == 0
-                ? thisPlugin.getServer().createWorld(wormholeWorld.getWorldName(), wormholeWorld.isNetherWorld()
+                ? thisPlugin.getServer().createWorld(wormholeWorld.getWorldName(), wormholeWorld.isWorldTypeNether()
                     ? Environment.NETHER : Environment.NORMAL)
-                : thisPlugin.getServer().createWorld(wormholeWorld.getWorldName(), wormholeWorld.isNetherWorld()
+                : thisPlugin.getServer().createWorld(wormholeWorld.getWorldName(), wormholeWorld.isWorldTypeNether()
                     ? Environment.NETHER : Environment.NORMAL, wormholeWorld.getWorldSeed()));
             wormholeWorld.getThisWorld().setSpawnLocation(wormholeWorld.getWorldCustomSpawn()[0], wormholeWorld.getWorldCustomSpawn()[1], wormholeWorld.getWorldCustomSpawn()[2]);
             wormholeWorld.setWorldSpawn(wormholeWorld.getThisWorld().getSpawnLocation());
@@ -703,7 +645,7 @@ public class WorldManager {
      */
     public static void setWorldPvP(final WormholeWorld wormholeWorld) {
         if (wormholeWorld.isWorldLoaded()) {
-            wormholeWorld.getThisWorld().setPVP(wormholeWorld.isAllowPvP());
+            wormholeWorld.getThisWorld().setPVP(wormholeWorld.isWorldAllowPvP());
         }
     }
 
@@ -714,9 +656,9 @@ public class WorldManager {
      *            the new world weather
      */
     public static void setWorldWeather(final WormholeWorld wormholeWorld) {
-        if (wormholeWorld.isWeatherLock()) {
+        if (wormholeWorld.isWorldWeatherLock()) {
             final World world = wormholeWorld.getThisWorld();
-            switch (wormholeWorld.getWeatherLockType()) {
+            switch (wormholeWorld.getWorldWeatherLockType()) {
                 case CLEAR :
                     world.setStorm(false);
                     world.setThundering(false);
